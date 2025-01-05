@@ -147,7 +147,7 @@
                             $('#product-list_stock').empty();
                             if (data.length > 0) {
                                 data.forEach(product => {
-                                    $('#product-list_stock').append(`<a href="#" class="list-group-item list-group-item-action">${product}</a>`);
+                                    $('#product-list_stock').append(`<a href="#" class="list-group-item list-group-item-action">${product.title}</a>`);
                                 });
                             } else {
                                 $('#product-list_stock').append(`<div class="list-group-item">No products found</div>`);

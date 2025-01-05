@@ -581,7 +581,7 @@ class AdminController extends Controller
         $search = $request->input('query');
         $products = Product::where('title', 'LIKE', "%{$search}%")
                             ->orWhere('barcode', 'LIKE', "%{$search}%")
-                            ->pluck('title');
+                            ->get(['id', 'title']); // Fetch both 'id' and 'title'
 
         return response()->json($products);
     }

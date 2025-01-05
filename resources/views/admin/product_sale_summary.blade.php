@@ -33,116 +33,123 @@
                             <form action="{{ route('search.product.report') }}" method="POST" id="product_sales_form">
                                 @csrf
                                 <div class="row">
-                                    <div class="col-lg-3 col-md-4 mb-3">
+                                    <div class="col-lg-2 col-md-4 mb-3">
                                         <label class="form-label">From Date</label>
                                         <input type="date" class="form-control form-control-sm" name="from_date">
                                     </div>
-                                    <div class="col-lg-3 col-md-4 mb-3">
+                                    <div class="col-lg-2 col-md-4 mb-3">
                                         <label class="form-label">To Date</label>
                                         <input type="date" class="form-control form-control-sm" name="to_date">
                                     </div>
-                                    <div class="col-lg-3 col-md-4 mb-3">
-                                        <label class="form-label">Invoice No</label>
-                                        <input type="text" class="form-control form-control-sm" name="invoice">
+                                    <div class="col-lg-3 col-md-4 mb-3 position-relative">
+                                        <label>Product Name/Code</label>
+                                        <input type="text" id="product-search_stock" name="product" class="form-control form-control-sm" placeholder="Search Product..." autocomplete="off">
+                                        <input type="hidden" id="productID" name="productID">
+                                        <div id="product-list_stock" class="list-group"></div>
+                                    </div>
+                                    <div class="col-lg-2 col-md-4 mb-3">
+                                        <label class="form-label">Batch Number</label>
+                                        <input type="number" class="form-control form-control-sm" name="batchNo">
                                     </div>
                                     <div class="col-lg-3 col-md-4 mb-3">
+                                        <label class="form-label">Product Category</label>
+                                        <select class="form-control form-control-sm form-select" name="category" aria-label="Default select example">
+                                            <option value="" selected>Select One</option>
+
+                                            @foreach ($categories as $category)
+                                                <option value="{{$category->category_name}}">{{$category->category_name}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-2 col-md-4 mb-3">
+                                        <label class="form-label">Sub Category</label>
+                                        <select class="form-control form-control-sm form-select" name="subcategory" aria-label="Default select example">
+                                            <option value="" selected>Select One</option>
+
+                                            @foreach ($subcategories as $subcategory)
+                                                <option value="{{$subcategory->sub_category}}">{{$subcategory->sub_category}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-2 col-md-4 mb-3">
+                                        <label class="form-label">Brand</label>
+                                        <select class="form-control form-control-sm form-select" name="brand" aria-label="Default select example">
+                                            <option value="" selected>Select One</option>
+
+                                            @foreach ($brands as $brand)
+                                                <option value="{{$brand->brand_name}}">{{$brand->brand_name}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-3 col-md-4 mb-3 position-relative">
                                         <label class="form-label">Customer Name</label>
-                                        <select class="form-control form-control-sm form-select" name="c_name" aria-label="Default select example">
-                                            <option value="" selected>Select One</option>
-                                            @foreach ($customers as $customer)
-                                                <option value="{{$customer->id}}">{{$customer->name}}</option>
-                                            @endforeach
-                                        </select>
+                                        <input type="text" name="customer" class="form-control form-control-sm customer_search" autocomplete="off" placeholder="Search Customer...">
+                                        <input type="hidden" name="customerID" class="customerID">
+                                        <div class="customer_search_list list-group"></div>
                                     </div>
-                                    <div class="col-lg-3 col-md-4 mb-3">
-                                        <label class="form-label">Customer Type</label>
-                                        <select class="form-control form-control-sm form-select" name="c_type" aria-label="Default select example">
-                                            <option value="" selected>Select One</option>
-                                            <option value="Basic">Basic</option>
-                                            @foreach ($customer_types as $customer_type)
-                                                <option value="{{$customer_type->type_name}}">{{$customer_type->type_name}}</option>
-                                            @endforeach
-                                        </select>
+                                    <div class="col-lg-3 col-md-4 mb-3 position-relative">
+                                        <label class="form-label">Supplier</label>
+                                        <input type="text" id="supplier_search" name="supplier" class="form-control form-control-sm" autocomplete="off" placeholder="Search Supplier...">
+                                        <input type="hidden" name="supplierID" id="supplierID">
+                                        <div id="supplier_search_list" class="list-group" style="width: 90%;"></div>
                                     </div>
-                                    <div class="col-lg-3 col-md-4 mb-3">
-                                        <label class="form-label">Sold By</label>
-                                        <select class="form-control form-control-sm form-select" name="user" aria-label="Default select example">
-                                            <option value="" selected>Select One</option>
-                                            @foreach ($users as $user)
-                                                <option value="{{$user->name}}">{{$user->name}}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="col-lg-3 col-md-4 mb-3">
-                                        <input type="submit" class="btn btn-primary mt-lg-4 px-5" value="Search">
+
+                                    <div class="col-lg-2 col-md-4 mb-3">
+                                        <button type="submit" class="btn btn-primary mt-lg-4 px-4"><i class="icon-magnifying-glass-browser"></i> Search</button>
                                     </div>
                                 </div>
                             </form>
                         </div>
-                        <div class="block table-responsive text-center">
-                            <table class="table table-striped table-hover" id="sales_invoice_table">
-                                <thead>
-                                    <tr class="text-primary">
-                                        <th scope="col">SL.</th>
-                                        <th scope="col">Invoice No</th>
-                                        <th scope="col">Sold By</th>
-                                        <th scope="col">Customer</th>
-                                        <th scope="col">Discount Amount</th>
-                                        <th scope="col">Sale Price</th>
-                                        <th scope="col">Cash</th>
-                                        <th scope="col">Card</th>
-                                        <th scope="col">Mobile</th>
-                                        <th scope="col">Due Amount</th>
-                                        <th scope="col">View</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @if ($sale_details->isNotEmpty())
-                                        @foreach ($sale_details as $sale_detail)
+                        @if ($sales->isNotEmpty())
+                            <div class="block table-responsive text-center">
+                                <table class="table table-striped table-hover" id="sales_invoice_table">
+                                    <thead>
+                                        <tr class="text-primary">
+                                            <th scope="col">SL.</th>
+                                            <th scope="col">Date</th>
+                                            <th scope="col">Invoice No</th>
+                                            <th scope="col">Product Name</th>
+                                            <th scope="col">Batch Number</th>
+                                            <th scope="col">Customer</th>
+                                            <th scope="col">Category/Subcategory</th>
+                                            <th scope="col">Brand</th>
+                                            <th scope="col">Unit Price</th>
+                                            <th scope="col">Qty</th>
+                                            <th scope="col">Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($sales as $sale)
                                             <tr>
                                                 <td>{{$loop->iteration}}</td>
-                                                <td><strong>
-                                                        {{$sale_detail->invoiceNo}}
-                                                    </strong><br>
-                                                    <span style="font-size: 11px;">
-                                                        {{ \Carbon\Carbon::parse($sale_detail->created_at)->format('d M, Y h:i A') }}
-                                                    </span>
-                                                </td>
-                                                <td>{{$sale_detail->user}}</td>
-                                                <td>{{ $sale_detail->customer_name ?? 'N/A' }} <br>
-                                                    <span style="background-color: #019bee; color:white; border-radius: 3px; padding: 0px 5px; font-size: 10px;">{{ $sale_detail->customer_type }}</span>
-                                                </td>
-                                                <td>{{$sale_detail->cashDiscount}}</td>
-                                                <td>{{$sale_detail->cashTotal}}</td>
-                                                <td>{{$sale_detail->cashAmount}}</td>
-                                                <td>{{$sale_detail->cardAmount}}</td>
-                                                <td>{{$sale_detail->mobileAmount}}</td>
-                                                <td>{{$sale_detail->cashDue ?? 0.00 }}</td>
-                                                <td>
-                                                    <a href="javascript:void(0);" id="sale-detail{{$sale_detail->id}}" class="view-sales-modal" data-id="{{$sale_detail->id}}" style="text-decoration: none;">
-                                                        <button class="btn btn-outline-success btn-xs">
-                                                            <i class="fas fa-eye"></i>
-                                                        </button>
-                                                    </a>
-                                                </td>
+                                                <td>{{ \Carbon\Carbon::parse($sale->created_at)->format('d M, Y h:i A') }}</td>
+                                                <td>{{$sale->sales_invoice}}</td>
+                                                <td>{{$sale->product_name}}</td>
+                                                <td>{{$sale->batch_no}}</td>
+                                                <td>{{$sale->sales_customer ?? 'N/A'}}</td>
+                                                <td>{{$sale->product_cat}}/{{$sale->product_sub_cat}}</td>
+                                                <td>{{$sale->product_brand}}</td>
+                                                <td>{{$sale->price}}</td>
+                                                <td>{{$sale->so_qty}}</td>
+                                                <td>{{$sale->total}}</td>
                                             </tr>
                                         @endforeach
-                                    @endif
-                                </tbody>
-                                <tfoot>
-                                    <tr class="text-primary">
-                                        <th scope="col" colspan="4" class="text-right">Totals:</th>
-                                        <th scope="col">0.00</th>
-                                        <th scope="col">0.00</th>
-                                        <th scope="col">0.00</th>
-                                        <th scope="col">0.00</th>
-                                        <th scope="col">0.00</th>
-                                        <th scope="col">0.00</th>
-                                        <th></th>
-                                    </tr>
-                                </tfoot>
-                            </table>
-                        </div>
+                                    </tbody>
+                                    {{-- <tfoot>
+                                        <tr class="text-primary">
+                                            <th scope="col" colspan="4" class="text-right">Totals:</th>
+                                            <th scope="col">0.00</th>
+                                            <th scope="col">0.00</th>
+                                            <th scope="col">0.00</th>
+                                            <th scope="col">0.00</th>
+                                            <th scope="col">0.00</th>
+                                            <th scope="col">0.00</th>
+                                            <th></th>
+                                        </tr>
+                                    </tfoot> --}}
+                                </table>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -192,6 +199,163 @@
                 // Prevent form submission if any field is invalid
                 if (!isValid) {
                     e.preventDefault();
+                }
+            });
+        });
+    </script>
+    <!-- JS For customer search -->
+    <script>
+        $(document).ready(function () {
+            $('.customer_search').on('keyup', function () {
+                let query = $(this).val();
+
+                // Clear the phone and due if the input is empty
+                if (!query) {
+                    $('.customer_search_list').html('');
+                    $('.customerID').val('');
+                    return;
+                }
+
+                $.ajax({
+                    url: "{{ route('search.sales.customers') }}",
+                    type: "GET",
+                    data: { query: query },
+                    success: function (data) {
+                        let html = '';
+
+                        if (data.length > 0) {
+                            data.forEach(customer => {
+                                html += `<a href="#" class="list-group-customer list-group-customer-action"
+                                             data-id="${customer.id}">
+                                             ${customer.name.trim()} (${customer.phone.trim()})
+                                         </a>`;
+                            });
+                        } else {
+                            html = '<a href="#" class="list-group-customer">No customers found</a>';
+                        }
+
+                        $('.customer_search_list').html(html);
+                    },
+                    error: function () {
+                        $('.customer_search_list').html('<a href="#" class="list-group-customer">An error occurred</a>');
+                    }
+                });
+            });
+
+            // Event delegation for dynamically added elements
+            $(document).on('click', '.customer_search_list .list-group-customer', function (e) {
+                e.preventDefault();
+
+                let selectedName = $(this).text().trim();
+                let customerId = $(this).data('id');
+
+                $('.customer_search').val(selectedName);
+                $('.customerID').val(customerId);
+                $('.customer_search_list').html(''); // Clear the suggestions list
+            });
+
+            // Listen for changes to the .customer_search field
+            $('.customer_search').on('input', function () {
+                if (!$(this).val().trim()) {
+                    $('.customerID').val(''); // Clear hidden customer ID
+                    $('.customer_search_list').html(''); // Clear suggestions
+                }
+            });
+        });
+    </script>
+    <!-- JS For product search -->
+    <script>
+        $(document).ready(function() {
+            $('#product-search_stock').on('keyup', function() {
+                let query = $(this).val();
+                if (query.length > 0) { // Changed from > 1 to > 0
+                    $.ajax({
+                        url: "{{ route('search.products') }}",
+                        type: "GET",
+                        data: { query: query },
+                        success: function(data) {
+                            $('#product-list_stock').empty();
+                            if (data.length > 0) {
+                                data.forEach(product => {
+                                    $('#product-list_stock').append(`<a href="#" class="list-group-item list-group-item-action" data-id="${product.id}">${product.title}</a>`);
+                                });
+                            } else {
+                                $('#product-list_stock').append(`<div class="list-group-item">No products found</div>`);
+                            }
+                        }
+                    });
+                } else {
+                    $('#product-list_stock').empty();
+                }
+            });
+
+            // Fill input when suggestion is clicked
+            $(document).on('click', '.list-group-item-action', function(e) {
+                e.preventDefault();
+
+                let productId = $(this).data('id');
+
+                $('#product-search_stock').val($(this).text());
+                $('#productID').val(productId);
+                $('#product-list_stock').empty();
+            });
+        });
+    </script>
+    <!-- JS For Supplier search -->
+    <script>
+        $(document).ready(function () {
+            $('#supplier_search').on('keyup', function () {
+                let query = $(this).val();
+
+                // Clear the phone and due if the input is empty
+                if (!query) {
+                    $('#supplier_search_list').html('');
+                    $('#customerID').val(''); // Clear hidden customer ID
+                    return;
+                }
+
+                $.ajax({
+                    url: "{{ route('search.suppliers') }}",
+                    type: "GET",
+                    data: { query: query },
+                    success: function (data) {
+                        let html = '';
+
+                        if (data.length > 0) {
+                            data.forEach(supplier => {
+                                html += `<a href="#" class="list-group-supplier list-group-supplier-action" data-id="${supplier.id}">
+                                            ${supplier.supplier_name.trim()} (${supplier.phone.trim()})
+                                         </a>`;
+                            });
+                        } else {
+                            html = '<a href="#" class="list-group-supplier">No supplier found</a>';
+                        }
+
+                        $('#supplier_search_list').html(html);
+                    },
+                    error: function () {
+                        $('#supplier_search_list').html('<a href="#" class="list-group-supplier">An error occurred</a>');
+                    }
+                });
+            });
+
+            // Event delegation for dynamically added elements
+            $(document).on('click', '#supplier_search_list .list-group-supplier', function (e) {
+                e.preventDefault();
+
+                let selectedName = $(this).text().trim();
+                let supplierId = $(this).data('id');
+
+                $('#supplier_search').val(selectedName);
+                $('#supplierID').val(supplierId);
+                $('#supplier_search_list').html('');
+            });
+
+            // Listen for changes to the #supplier_search field
+            $('#supplier_search').on('input', function () {
+                if (!$(this).val().trim()) {
+                    $('#supplierID').val('');
+                    $('#supplier_search_list').html(''); // Clear suggestions
                 }
             });
         });

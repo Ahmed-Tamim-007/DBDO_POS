@@ -297,39 +297,53 @@ class ReportController extends Controller
     // Sales Reports Functions
     public function priduct_sale_report()
     {
-        $sale_details = collect(); // Empty collection by default
+        $sales = collect();
+        $products = Product::all();
         $customers = Customer::all();
-        $customer_types = CustomerType::all();
-        $users = PosUser::all();
+        $categories = Category::all();
+        $subcategories = Subcategory::all();
+        $brands = Brand::all();
 
-        return view('admin.product_sale_summary', compact('sale_details', 'customers', 'customer_types', 'users'));
+        return view('admin.product_sale_summary', compact('sales', 'products', 'customers', 'categories', 'subcategories', 'brands'));
     }
     public function searchProductReport(Request $request)
     {
         $fromDate = $request->from_date;
         $toDate = $request->to_date ? Carbon::parse($request->to_date)->endOfDay() : null;
 
-        $sale_details = DB::table('sale_details')
-            ->leftJoin('customers', 'sale_details.customerID', '=', 'customers.id')
+        $sales = DB::table('sales')
+            ->leftJoin('products', 'sales.product_id', '=', 'products.id')
+            ->leftJoin('sale_details', 'sales.sales_ID', '=', 'sale_details.id')
             ->select(
-                'sale_details.*',
-                'customers.name as customer_name',
-                'customers.type as customer_type'
+                'sales.*',
+                'products.title as product_name',
+                'products.category as product_cat',
+                'products.sub_category as product_sub_cat',
+                'products.brand as product_brand',
+                'products.supplier as product_supplier',
+                'sale_details.invoiceNo as sales_invoice',
+                'sale_details.customerID as sales_customer'
             )
             ->when($fromDate && $toDate, function ($query) use ($fromDate, $toDate) {
-                $query->whereBetween('sale_details.created_at', [$fromDate, $toDate]);
+                $query->whereBetween('sales.created_at', [$fromDate, $toDate]);
             })
-            ->when($request->invoice, function ($query) use ($request) {
-                $query->where('sale_details.invoiceNo', 'like', '%' . $request->invoice . '%');
+            ->when($request->productID, function ($query) use ($request) {
+                $query->where('products.id', $request->productID);
             })
-            ->when($request->c_name, function ($query) use ($request) {
-                $query->where('customers.id', $request->c_name);
+            ->when($request->batchNo, function ($query) use ($request) {
+                $query->where('sales.batch_no', $request->batchNo);
             })
-            ->when($request->c_type, function ($query) use ($request) {
-                $query->where('customers.type', $request->c_type);
+            ->when($request->category, function ($query) use ($request) {
+                $query->where('products.category', $request->category);
             })
-            ->when($request->user, function ($query) use ($request) {
-                $query->where('sale_details.user', $request->user);
+            ->when($request->subcategory, function ($query) use ($request) {
+                $query->where('products.sub_category', $request->subcategory);
+            })
+            ->when($request->brand, function ($query) use ($request) {
+                $query->where('products.brand', $request->brand);
+            })
+            ->when($request->supplier, function ($query) use ($request) {
+                $query->where('products.supplier', $request->supplier);
             })
             ->get();
 
@@ -340,6 +354,6 @@ class ReportController extends Controller
         $sales = Sale::all();
 
         // Return the view
-        return view('admin.sales_list', compact('sale_details', 'customers', 'customer_types', 'users', 'sales'));
+        return view('admin.product_sale_summary', compact('sales', 'customers', 'customer_types', 'users', 'sales'));
     }
 }
