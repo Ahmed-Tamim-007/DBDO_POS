@@ -293,4 +293,53 @@ class ReportController extends Controller
         // Return the view
         return view('admin.summary_page', compact('fromDate', 'toDate', 'employee_returns'));
     }
+
+    // Sales Reports Functions
+    public function priduct_sale_report()
+    {
+        $sale_details = collect(); // Empty collection by default
+        $customers = Customer::all();
+        $customer_types = CustomerType::all();
+        $users = PosUser::all();
+
+        return view('admin.product_sale_summary', compact('sale_details', 'customers', 'customer_types', 'users'));
+    }
+    public function searchProductReport(Request $request)
+    {
+        $fromDate = $request->from_date;
+        $toDate = $request->to_date ? Carbon::parse($request->to_date)->endOfDay() : null;
+
+        $sale_details = DB::table('sale_details')
+            ->leftJoin('customers', 'sale_details.customerID', '=', 'customers.id')
+            ->select(
+                'sale_details.*',
+                'customers.name as customer_name',
+                'customers.type as customer_type'
+            )
+            ->when($fromDate && $toDate, function ($query) use ($fromDate, $toDate) {
+                $query->whereBetween('sale_details.created_at', [$fromDate, $toDate]);
+            })
+            ->when($request->invoice, function ($query) use ($request) {
+                $query->where('sale_details.invoiceNo', 'like', '%' . $request->invoice . '%');
+            })
+            ->when($request->c_name, function ($query) use ($request) {
+                $query->where('customers.id', $request->c_name);
+            })
+            ->when($request->c_type, function ($query) use ($request) {
+                $query->where('customers.type', $request->c_type);
+            })
+            ->when($request->user, function ($query) use ($request) {
+                $query->where('sale_details.user', $request->user);
+            })
+            ->get();
+
+        // Additional data
+        $customers = Customer::all();
+        $customer_types = CustomerType::all();
+        $users = PosUser::all();
+        $sales = Sale::all();
+
+        // Return the view
+        return view('admin.sales_list', compact('sale_details', 'customers', 'customer_types', 'users', 'sales'));
+    }
 }

@@ -105,13 +105,16 @@
             </ul>
         </li>
 
-        <li class="{{ Request::is('daily_summary') || Request::is('sale_list') ? 'active' : '' }}"><a href="#report_manage" aria-expanded="false" data-toggle="collapse"> <i class="fas fa-chart-bar"></i><span>Reports</span></a>
-            <ul id="report_manage" class="collapse list-unstyled {{ Request::is('daily_summary') || Request::is('sale_list') ? 'show' : '' }}">
+        <li class="{{ Request::is('daily_summary') || Request::is('sale_list') || Request::is('priduct_sale_report') ? 'active' : '' }}"><a href="#report_manage" aria-expanded="false" data-toggle="collapse"> <i class="fas fa-chart-bar"></i><span>Reports</span></a>
+            <ul id="report_manage" class="collapse list-unstyled {{ Request::is('daily_summary') || Request::is('sale_list') || Request::is('priduct_sale_report') ? 'show' : '' }}">
                 <li class="{{ Request::is('daily_summary') ? 'active' : '' }}">
                     <a href="{{ url('daily_summary') }}">Daily/Monthly Summary</a>
                 </li>
                 <li class="{{ Request::is('sale_list') ? 'active' : '' }}">
                     <a href="{{ url('sale_list') }}">Sell Invoices</a>
+                </li>
+                <li class="{{ Request::is('priduct_sale_report') ? 'active' : '' }}">
+                    <a href="{{ url('priduct_sale_report') }}">Product Sale Summary</a>
                 </li>
             </ul>
         </li>

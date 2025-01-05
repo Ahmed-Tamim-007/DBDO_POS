@@ -198,3 +198,7 @@ Route::get('/office/expense/summary', [ReportController::class, 'office_expense_
 Route::get('/office/income/summary', [ReportController::class, 'office_income_summary'])->name('office.income.summary');
 Route::get('/employee/payment/summary', [ReportController::class, 'employee_payment_summary'])->name('employee.payment.summary');
 Route::get('/employee/return/summary', [ReportController::class, 'employee_return_summary'])->name('employee.return.summary');
+
+// Product Sale Report Routes
+route::get('priduct_sale_report', [ReportController::class, 'priduct_sale_report'])-> middleware('auth', 'admin');
+Route::post('/search-product-report', [ReportController::class, 'searchProductReport'])->name('search.product.report');

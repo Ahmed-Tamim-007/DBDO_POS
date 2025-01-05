@@ -356,10 +356,9 @@
                 $('#sale_returns_table tfoot tr th').eq(1).text(totalQty.toFixed(2));
                 $('#sale_returns_table tfoot tr th').eq(2).text(totalAmt.toFixed(2));
             }
-            // Call the function to update totals on page load
             updateSaleReturnsTableFooter();
 
-            // Function to calculate and update sales return footer totals
+            // Function to calculate and update supplier transaction footer totals
             function updateSupplierTableFooter() {
                 // Initialize total variables
                 let totalAmt = 0;
@@ -373,10 +372,9 @@
                 // Update the footer with calculated totals
                 $('#supplier_trans_table tfoot tr th').eq(1).text(totalAmt.toFixed(2));
             }
-            // Call the function to update totals on page load
             updateSupplierTableFooter();
 
-            // Function to calculate and update sales return footer totals
+            // Function to calculate and update office expense footer totals
             function updateOfficeExpenseTableFooter() {
                 // Initialize total variables
                 let totalAmt = 0;
@@ -390,10 +388,9 @@
                 // Update the footer with calculated totals
                 $('#office_expense_table tfoot tr th').eq(1).text(totalAmt.toFixed(2));
             }
-            // Call the function to update totals on page load
             updateOfficeExpenseTableFooter();
 
-            // Function to calculate and update sales return footer totals
+            // Function to calculate and update office income footer totals
             function updateOfficeIncomeTableFooter() {
                 // Initialize total variables
                 let totalAmt = 0;
@@ -407,10 +404,9 @@
                 // Update the footer with calculated totals
                 $('#office_income_table tfoot tr th').eq(1).text(totalAmt.toFixed(2));
             }
-            // Call the function to update totals on page load
             updateOfficeIncomeTableFooter();
 
-            // Function to calculate and update sales return footer totals
+            // Function to calculate and update employee payment footer totals
             function updateEmployeePaymentTableFooter() {
                 // Initialize total variables
                 let totalAmt = 0;
@@ -424,10 +420,9 @@
                 // Update the footer with calculated totals
                 $('#employee_payment_table tfoot tr th').eq(1).text(totalAmt.toFixed(2));
             }
-            // Call the function to update totals on page load
             updateEmployeePaymentTableFooter();
 
-            // Function to calculate and update sales return footer totals
+            // Function to calculate and update employee return footer totals
             function updateEmployeeReturnTableFooter() {
                 // Initialize total variables
                 let totalAmt = 0;
@@ -441,7 +436,6 @@
                 // Update the footer with calculated totals
                 $('#employee_return_table tfoot tr th').eq(1).text(totalAmt.toFixed(2));
             }
-            // Call the function to update totals on page load
             updateEmployeeReturnTableFooter();
         });
     </script>
