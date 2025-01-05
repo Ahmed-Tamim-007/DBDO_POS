@@ -1,0 +1,31 @@
+.team_section .profile-card {
+    border: none;
+    background-color: #f8f9fa;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.team_section .profile-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+.team_section .profile-image {
+    border-radius: 50%;
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+}
+.team_section .profile-info h5 {
+    font-size: 1.25rem;
+    margin-top: 15px;
+}
+.team_section .profile-info p {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+.team_section .social-icons a {
+    color: #007bff;
+    margin: 0 10px;
+    transition: color 0.2s ease-in-out;
+}
+.team_section .social-icons a:hover {
+    color: #0056b3;
+}

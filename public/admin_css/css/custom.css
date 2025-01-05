@@ -1,0 +1,332 @@
+.required-label::after {
+    content: " *";
+    color: red;
+    font-size: large;
+}
+
+/* Style for search list on add stock page */
+#product-list_stock {
+    position: absolute;
+    top: calc(100% + 5px); /* Position just below the input field */
+    left: 0;
+    right: 0; /* Ensures it takes the full width of the parent */
+    z-index: 1000; /* Ensures it appears above other elements */
+    width: 90%;
+    margin: 0 auto;
+    max-height: 250px; /* Optional: Set a max height with overflow */
+    overflow-y: auto; /* Enable scrolling if the content is too long */
+}
+
+/* Style for product search list on Sales page */
+#sales_search #product_search_list {
+    width: 97%;
+    max-height: 300px;
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    right: 0;
+    z-index: 1001;
+    margin: 0 auto;
+    overflow-y: auto;
+}
+
+#sales_table .batch-input {
+    width: 100px; /* Default width */
+}
+
+/* Adjust width for tablets (screen width 768px and below) */
+@media screen and (max-width: 768px) {
+    #sales_table .batch-input {
+        width: 80px;
+    }
+}
+
+/* Adjust width for smartphones (screen width 480px and below) */
+@media screen and (max-width: 480px) {
+    #sales_table .batch-input {
+        width: 60px;
+    }
+}
+
+/* Style for side-nav */
+#sales_content nav#sidebar {
+    width: 80px;
+    margin-left: -80px;
+}
+#sales_content nav#sidebar .sidebar-header {
+    padding: 10px;
+}
+#sales_content nav#sidebar .sidebar-header .title {
+    display: none;
+}
+#sales_content nav#sidebar span.heading {
+    margin-left: 0;
+    display: block;
+    text-align: center;
+    font-size: 1rem;
+}
+#sales_content nav#sidebar ul {
+    max-height: none;
+}
+#sales_content nav#sidebar ul a {
+    padding: 12px 5px;
+    display: block;
+    font-weight: 400;
+    text-align: center;
+    font-size: 0.8rem;
+}
+#sales_content nav#sidebar ul i {
+    font-size: 1.2rem;
+    text-align: center !important;
+    width: 100%;
+    display: block !important;
+    border: none !important;
+    padding: 0 !important;
+}
+#sales_content nav#sidebar ul ul a {
+    padding-left: 10px;
+}
+#sales_content nav#sidebar.shrinked {
+    margin-left: 0;
+}
+#sales_content nav#sidebar a[data-toggle="collapse"]::after {
+    content: '\f107';
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    position: absolute;
+    top: 88%;
+    left: 50%;
+}
+#sales_content nav#sidebar a[aria-expanded="true"]::after {
+    content: '\f106';
+}
+
+/* Hide the default radio button */
+.custom-radio input[type="radio"] {
+    display: none;
+}
+
+/* Style the label to look like a button */
+.custom-radio {
+    display: inline-block;
+    border: 2px solid #019bee;
+    border-radius: 0.2rem;
+    padding: 4px 10px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+    text-align: center;
+    color: #019bee;
+    font-size: 16px;
+}
+
+/* Add hover effect */
+.custom-radio:hover {
+    background-color: #019bee;
+    color: #fff;
+}
+
+/* Full background color for the selected radio button */
+.custom-radio:has(input[type="radio"]:checked) {
+    background-color: #019bee;
+    color: #fff;
+    border-color: #019bee;
+}
+
+
+
+/* Customer search list in Sales page */
+#supplier_search_list {
+    position: absolute;
+    z-index: 1000;
+    width: 96%;
+    max-height: 250px;
+    overflow-y: auto;
+    background-color: #fff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.list-group-supplier {
+    padding: 10px;
+    font-size: 14px;
+    color: #333;
+    text-decoration: none; /* Removes the default underline from anchor tags */
+    cursor: pointer;
+}
+
+.list-group-supplier:hover {
+    background-color: #f8f9fa; /* Light gray hover effect */
+    text-decoration: none;
+}
+
+.list-group-supplier-action {
+    display: block; /* Ensures the item spans the entire width */
+}
+
+/* Styling for the "No customers found" or error message */
+.list-group-supplier-action:last-child,
+.list-group-supplier:last-child {
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+}
+
+#customer_search_list {
+    position: absolute;
+    z-index: 1000;
+    width: 96%;
+    max-height: 250px;
+    overflow-y: auto;
+    background-color: #fff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.list-group-customer {
+    padding: 10px;
+    font-size: 14px;
+    color: #333;
+    text-decoration: none; /* Removes the default underline from anchor tags */
+    cursor: pointer;
+}
+
+.list-group-customer:hover {
+    background-color: #f8f9fa; /* Light gray hover effect */
+    text-decoration: none;
+}
+
+.list-group-customer-action {
+    display: block; /* Ensures the item spans the entire width */
+}
+
+/* Styling for the "No customers found" or error message */
+.list-group-customer-action:last-child,
+.list-group-customer:last-child {
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+}
+
+
+/* Switch for round in sales page */
+#round_td .label-switch-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Adjust spacing between label and switch */
+}
+
+/* Switch wrapper */
+#round_td .switch {
+    position: relative;
+    display: inline-block;
+    width: 40px; /* Smaller width */
+    height: 20px; /* Smaller height */
+}
+
+/* Hide default checkbox */
+#round_td .switch input {
+    display: none;
+}
+
+/* Slider */
+#round_td .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    border-radius: 20px; /* Adjust for smaller size */
+    transition: 0.4s;
+}
+
+/* Slider circle */
+#round_td .slider:before {
+    position: absolute;
+    content: "";
+    height: 16px; /* Smaller circle */
+    width: 16px; /* Smaller circle */
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    border-radius: 50%;
+    transition: 0.4s;
+}
+
+/* When checked */
+#round_td input:checked + .slider {
+    background-color: #019bee; /* Updated color */
+}
+
+#round_td input:checked + .slider:before {
+    transform: translateX(20px); /* Adjust translation for smaller size */
+}
+
+#round_td label {
+    margin-bottom: .1rem;
+}
+
+
+/* Custom Checkbox */
+.custom-checkbox {
+    display: inline-block;
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+}
+
+.custom-checkbox input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.custom-checkbox span {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background-color: #fff;
+    border: 2px solid #019bee;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.custom-checkbox input:checked + span {
+    background-color: #019bee; /* Change background color when checked */
+    border-color: #019bee;
+}
+
+/* Remove the checkmark styles */
+.custom-checkbox span:after {
+    display: none;
+}
+
+
+/* Styles for Nav-pill */
+.nav-pills .nav-link {
+    margin-right: 5px;
+    padding: 4px 10px;
+    color: #019bee;
+    background-color: transparent;
+    border: 2px solid #019bee;
+    transition: all 0.3s ease;
+}
+.nav-pills .nav-link.active {
+    background-color: #019bee;
+    color: white;
+}
+.nav-pills .nav-link:hover {
+    background-color: #019bee;
+    color: white;
+}
+.nav-pills .nav-link:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+
+table.dataTable>tbody>tr>td {
+    padding: 4px 8px !important;
+}
+
+table.dataTable th.dt-type-numeric, table.dataTable th.dt-type-date, table.dataTable td.dt-type-numeric, table.dataTable td.dt-type-date {
+    text-align: left !important;
+}

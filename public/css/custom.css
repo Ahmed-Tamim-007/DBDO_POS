@@ -1,0 +1,197 @@
+/* Category Card Style */
+#category_cont .category-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 5px;
+    height: 250px;
+    margin: 8px;
+    background-size: cover;
+    background-position: center;
+    transition: transform 0.3s, filter 0.3s;
+}
+#category_cont .category-card:hover {
+    transform: scale(1.02);
+    filter: brightness(0.8);
+}
+#category_cont .category-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    color: white;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+#category_cont .category-card:hover .category-content {
+    opacity: 1;
+}
+#category_cont .category-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+#category_cont .category-tags {
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+}
+#category_cont .category-btn {
+    font-size: 1rem;
+    width: 50%;
+    margin: 0 auto;
+    border: 2px solid #fff;
+    background-color: transparent;
+    color: #fff;
+    text-transform: uppercase;
+    transition: background-color 0.3s, color 0.3s;
+}
+#category_cont .category-btn:hover {
+    background-color: #fff;
+    color: #333;
+}
+
+/* Product Card Style */
+.shop_section .heading_container {
+    margin-bottom: 20px;
+}
+
+.shop_section .product-card {
+    border: none;
+    background-color: #f8f9fa;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    margin: 5px;
+}
+.shop_section .product-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+.shop_section .product-image {
+    border-radius: 5px !important;
+    height: 150px;
+    width: auto;
+    object-fit: cover;
+}
+.shop_section .detail-box h6 {
+    font-size: 1.1rem;
+    margin-top: 10px;
+}
+.shop_section .detail-box span {
+    color: #007bff;
+    font-weight: bold;
+}
+.shop_section .new-badge {
+    padding: 5px;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #019bee;
+    color: white;
+}
+
+.shop_section .detail-box a {
+    display: inline-block;
+    padding: 10px 40px;
+    background-color: #0384c9;
+    color: #ffffff;
+    border: 1px solid #0384c9;
+    border-radius: 5px;
+    -webkit-transition: all .3s;
+    transition: all .3s;
+    margin-top: 25px;
+    text-transform: uppercase;
+}
+
+.shop_section .detail-box a:hover {
+    background-color: transparent;
+    color: #0384c9;
+    border: 1px solid #0384c9;
+}
+
+
+/* Sticky Wrapper for both Category and Filter */
+.sticky-nav-wrapper {
+    position: -webkit-sticky; /* For Safari */
+    position: sticky;
+    top: 20px; /* Distance from the top when it becomes sticky */
+    z-index: 10;
+    max-height: calc(100vh - 20px); /* Prevent overflow beyond viewport height */
+    overflow-y: auto; /* Add scroll if content overflows */
+}
+
+/* Category Nav Styles */
+.category-nav {
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    padding: 0;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    max-height: 300px; /* Set a fixed max height for the scroll area */
+    overflow-y: auto; /* Enable scrolling if the list exceeds max height */
+}
+
+/* List items within Category Nav */
+.category-nav a .list-group-item {
+    border: none;
+    border-radius: 0px;
+    padding: 12px 16px;
+    color: #333;
+    font-weight: 500;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.category-nav .list-group-item:hover,
+.category-nav .list-group-item:focus {
+    background-color: #007bff;
+    color: #fff;
+}
+
+.category-nav a .list-group-item.active {
+    background-color: #007bff;
+    color: #fff;
+}
+
+/* Filter Nav Styles */
+.filter-nav {
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    padding: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+}
+
+.filter-nav h5, .filter-nav h6 {
+    color: #007bff;
+    margin-bottom: 10px;
+}
+
+.filter-nav .filter-group {
+    margin-bottom: 15px;
+}
+
+.filter-nav .form-control {
+    border-radius: 5px;
+    padding: 8px;
+    transition: border-color 0.3s;
+}
+
+.filter-nav .form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
+}
+
+.filter-nav #apply-price-filter {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    transition: background-color 0.3s;
+}
+
+.filter-nav #apply-price-filter:hover {
+    background-color: #0056b3;
+}

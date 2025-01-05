@@ -1,0 +1,229 @@
+/* Base Styling */
+#saleSummaryContent {
+    font-family: Tahoma, sans-serif;
+    color: black;
+}
+
+/* Header Section */
+#saleSummaryContent .text-center p {
+    font-size: 13px;
+    margin: 5px 0px;
+}
+
+#saleSummaryContent #p_address {
+    margin-bottom: 20px !important;
+}
+
+#saleSummaryContent #p_info {
+    margin-top: 40px !important;
+}
+
+#saleSummaryContent #p_invoice {
+    font-weight: bold !important;
+}
+
+/* Details Section */
+#saleSummaryContent .my-1 {
+    font-size: 13px;
+}
+
+#saleSummaryContent .my-1 p {
+    margin: 5px 0px;
+    line-height: 1.5;
+}
+
+/* Invoice Title */
+#saleSummaryContent h5.text-center {
+    font-size: 18px;
+    font-weight: 400;
+}
+
+/* Table Styles */
+#saleSummaryContent table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#saleSummaryContent table thead {
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+}
+
+#saleSummaryContent #p_top hr {
+    border-top: 1px solid black;
+    margin: 0;
+    padding: 0;
+}
+
+#saleSummaryContent table thead td {
+    font-weight: bold;
+    padding: 0px !important;
+}
+
+#saleSummaryContent table td {
+    border: none !important;
+    padding: 0px !important;
+}
+
+#saleSummaryContent table tbody {
+    font-size: 13px;
+}
+
+#saleSummaryContent table tfoot tr {
+    font-size: 13px;
+}
+
+#saleSummaryContent .bottom_border {
+    border-bottom: 1px solid black !important;
+}
+
+#saleSummaryContent .dash_border {
+    border-bottom: 1px dashed black !important;
+}
+
+#saleSummaryContent table tfoot tr:first-child {
+    border-top: 1px solid black;
+}
+
+#saleSummaryContent table tfoot tr.mt-1 {
+    margin-top: 0.5rem;
+}
+
+#saleSummaryContent table tfoot tr.mt-2 {
+    margin-top: 1rem;
+}
+
+/* Footer Section */
+#saleSummaryContent .text-center {
+    font-size: 13px;
+    margin-top: 30px;
+}
+
+#saleSummaryContent p {
+    margin-bottom: 5px !important;
+    line-height: 2 !important;
+}
+
+#saleSummaryContent #p_address {
+    margin-bottom: 50px !important;
+}
+
+#saleSummaryContent .text-center .font-weight-bold {
+    font-weight: bold;
+}
+
+#saleSummaryModal #modal_footer #print_btn {
+    background-color: brown !important;
+}
+
+#saleSummaryContent #p_head {
+    font-size: 100 !important;
+    font-weight: bold;
+}
+
+
+
+
+
+/* Base Styling */
+.printModal {
+    font-family: Tahoma, sans-serif;
+    color: black;
+}
+
+.printModal #p_address {
+    margin-bottom: 10px !important;
+}
+
+.printModal #p_invoice {
+    margin: 0px;
+}
+
+/* Details Section */
+.printModal .my-1 {
+    font-size: 13px;
+}
+
+.printModal .my-1 p {
+    margin: 5px 0px;
+    line-height: 1.5;
+}
+
+/* Invoice Title */
+.printModal h5.text-center {
+    font-size: 18px;
+    font-weight: 400;
+}
+
+/* Table Styles */
+.printModal table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.printModal #p_top hr {
+    border-top: 1px solid black;
+    margin: 0;
+    padding: 0;
+}
+
+.printModal table thead td {
+    padding: 0px !important;
+}
+
+.printModal table td {
+    border: none !important;
+    padding: 0px !important;
+}
+
+.printModal table tbody {
+    font-size: 13px;
+}
+
+.printModal table tfoot tr {
+    font-size: 13px;
+}
+
+.printModal .bottom_border {
+    border-bottom: 1px solid black !important;
+}
+
+.printModal .dash_border {
+    border-bottom: 1px dashed black !important;
+}
+
+.printModal table tfoot tr:first-child {
+    border-top: 1px solid black;
+}
+
+.printModal table tfoot tr.mt-1 {
+    margin-top: 0.5rem;
+}
+
+.printModal table tfoot tr.mt-2 {
+    margin-top: 1rem;
+}
+
+/* Footer Section */
+.printModal .text-center {
+    font-size: 13px;
+    margin-top: 30px;
+}
+
+.printModal p {
+    line-height: 1 !important;
+}
+
+.printModal #p_vat {
+    font-size: 13px;
+    margin: 5px 0px !important;
+}
+
+.printModal .text-center .font-weight-bold {
+    font-weight: bold;
+}
+
+.printModal #p_head {
+    font-size: 100 !important;
+    font-weight: bold;
+}
