@@ -303,8 +303,9 @@ class ReportController extends Controller
         $categories = Category::all();
         $subcategories = Subcategory::all();
         $brands = Brand::all();
+        $users = PosUser::all();
 
-        return view('admin.product_sale_summary', compact('sales', 'products', 'customers', 'categories', 'subcategories', 'brands'));
+        return view('admin.product_sale_summary', compact('sales', 'products', 'customers', 'categories', 'subcategories', 'brands', 'users'));
     }
     public function searchProductReport(Request $request)
     {
@@ -314,6 +315,7 @@ class ReportController extends Controller
         $sales = DB::table('sales')
             ->leftJoin('products', 'sales.product_id', '=', 'products.id')
             ->leftJoin('sale_details', 'sales.sales_ID', '=', 'sale_details.id')
+            ->leftJoin('customers', 'sale_details.customerID', '=', 'customers.id')
             ->select(
                 'sales.*',
                 'products.title as product_name',
@@ -322,7 +324,8 @@ class ReportController extends Controller
                 'products.brand as product_brand',
                 'products.supplier as product_supplier',
                 'sale_details.invoiceNo as sales_invoice',
-                'sale_details.customerID as sales_customer'
+                'sale_details.user as sales_invoice',
+                'customers.name as customer_name'
             )
             ->when($fromDate && $toDate, function ($query) use ($fromDate, $toDate) {
                 $query->whereBetween('sales.created_at', [$fromDate, $toDate]);
@@ -342,18 +345,100 @@ class ReportController extends Controller
             ->when($request->brand, function ($query) use ($request) {
                 $query->where('products.brand', $request->brand);
             })
+            ->when($request->customerID, function ($query) use ($request) {
+                $query->where('sale_details.customerID', $request->customerID);
+            })
             ->when($request->supplier, function ($query) use ($request) {
                 $query->where('products.supplier', $request->supplier);
+            })
+            ->when($request->user, function ($query) use ($request) {
+                $query->where('sale_details.user', $request->user);
             })
             ->get();
 
         // Additional data
+        $products = Product::all();
         $customers = Customer::all();
-        $customer_types = CustomerType::all();
+        $categories = Category::all();
+        $subcategories = Subcategory::all();
+        $brands = Brand::all();
         $users = PosUser::all();
-        $sales = Sale::all();
 
         // Return the view
-        return view('admin.product_sale_summary', compact('sales', 'customers', 'customer_types', 'users', 'sales'));
+        return view('admin.product_sale_summary', compact('sales', 'products', 'customers', 'categories', 'subcategories', 'brands', 'users', 'fromDate', 'toDate'));
+    }
+
+    // Employee Transaction Reports Functions
+    public function employee_trans_report()
+    {
+        $transactions = collect();
+        $users = PosUser::all();
+
+        return view('admin.employee_trans_report', compact('transactions', 'users'));
+    }
+    public function employeeTransReport(Request $request)
+    {
+        $fromDate = $request->from_date;
+        $toDate = $request->to_date ? Carbon::parse($request->to_date)->endOfDay() : null;
+
+        $transactions = DB::table('employee_transactions')
+            ->leftJoin('accounts', 'employee_transactions.account', '=', 'accounts.id')
+            ->select(
+                'employee_transactions.*',
+                'accounts.acc_name as account_name'
+            )
+            ->when($fromDate && $toDate, function ($query) use ($fromDate, $toDate) {
+                $query->whereBetween('employee_transactions.created_at', [$fromDate, $toDate]);
+            })
+            ->when($request->employee, function ($query) use ($request) {
+                $query->where('employee_transactions.employee', $request->employee);
+            })
+            ->when($request->trans_type, function ($query) use ($request) {
+                $query->where('employee_transactions.trans_type', $request->trans_type);
+            })
+            ->get();
+
+        // Additional data
+        $users = PosUser::all();
+
+        // Return the view
+        return view('admin.employee_trans_report', compact('transactions', 'users', 'fromDate', 'toDate'));
+    }
+
+    // Office Transaction Reports Functions
+    public function office_trans_report()
+    {
+        $transactions = collect();
+        $categories = ExpenseCategory::all();
+
+        return view('admin.office_trans_report', compact('transactions', 'categories'));
+    }
+    public function officeTransReport(Request $request)
+    {
+        $fromDate = $request->from_date;
+        $toDate = $request->to_date ? Carbon::parse($request->to_date)->endOfDay() : null;
+
+        $transactions = DB::table('office_transactions')
+            ->leftJoin('accounts', 'office_transactions.account', '=', 'accounts.id')
+            ->select(
+                'office_transactions.*',
+                'accounts.acc_name as account_name'
+            )
+            ->when($fromDate && $toDate, function ($query) use ($fromDate, $toDate) {
+                $query->whereBetween('office_transactions.created_at', [$fromDate, $toDate]);
+            })
+            ->when($request->type, function ($query) use ($request) {
+                $query->where('office_transactions.type', $request->type);
+            })
+            ->when($request->exp_type, function ($query) use ($request) {
+                $query->where('office_transactions.exp_type', $request->exp_type);
+            })
+            ->get();
+
+        // Additional data
+        $categories = ExpenseCategory::all();
+
+        // Return the view
+        return view('admin.office_trans_report', compact('transactions', 'categories', 'fromDate', 'toDate'));
     }
 }

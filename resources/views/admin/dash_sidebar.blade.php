@@ -105,8 +105,8 @@
             </ul>
         </li>
 
-        <li class="{{ Request::is('daily_summary') || Request::is('sale_list') || Request::is('priduct_sale_report') ? 'active' : '' }}"><a href="#report_manage" aria-expanded="false" data-toggle="collapse"> <i class="fas fa-chart-bar"></i><span>Reports</span></a>
-            <ul id="report_manage" class="collapse list-unstyled {{ Request::is('daily_summary') || Request::is('sale_list') || Request::is('priduct_sale_report') ? 'show' : '' }}">
+        <li class="{{ Request::is('daily_summary') || Request::is('sale_list') || Request::is('priduct_sale_report') || Request::is('employee_trans_report') || Request::is('office_trans_report') || Request::is('supplier_trans_report') ? 'active' : '' }}"><a href="#report_manage" aria-expanded="false" data-toggle="collapse"> <i class="fas fa-chart-bar"></i><span>Reports</span></a>
+            <ul id="report_manage" class="collapse list-unstyled {{ Request::is('daily_summary') || Request::is('sale_list') || Request::is('priduct_sale_report') || Request::is('employee_trans_report') || Request::is('office_trans_report') || Request::is('supplier_trans_report') ? 'show' : '' }}">
                 <li class="{{ Request::is('daily_summary') ? 'active' : '' }}">
                     <a href="{{ url('daily_summary') }}">Daily/Monthly Summary</a>
                 </li>
@@ -115,6 +115,15 @@
                 </li>
                 <li class="{{ Request::is('priduct_sale_report') ? 'active' : '' }}">
                     <a href="{{ url('priduct_sale_report') }}">Product Sale Summary</a>
+                </li>
+                <li class="{{ Request::is('employee_trans_report') ? 'active' : '' }}">
+                    <a href="{{ url('employee_trans_report') }}">Employee Transaction Report</a>
+                </li>
+                <li class="{{ Request::is('office_trans_report') ? 'active' : '' }}">
+                    <a href="{{ url('office_trans_report') }}">Office Transaction Report</a>
+                </li>
+                <li class="{{ Request::is('supplier_trans_report') ? 'active' : '' }}">
+                    <a href="{{ url('supplier_trans_report') }}">Supplier Transaction Report</a>
                 </li>
             </ul>
         </li>

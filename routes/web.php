@@ -202,3 +202,11 @@ Route::get('/employee/return/summary', [ReportController::class, 'employee_retur
 // Product Sale Report Routes
 route::get('priduct_sale_report', [ReportController::class, 'priduct_sale_report'])-> middleware('auth', 'admin');
 Route::post('/search-product-report', [ReportController::class, 'searchProductReport'])->name('search.product.report');
+
+// Employee Transaction Report Routes
+route::get('employee_trans_report', [ReportController::class, 'employee_trans_report'])-> middleware('auth', 'admin');
+Route::post('/employee-trans-report', [ReportController::class, 'employeeTransReport'])->name('employee.trans.report');
+
+// Office Transaction Report Routes
+route::get('office_trans_report', [ReportController::class, 'office_trans_report'])-> middleware('auth', 'admin');
+Route::post('/office-trans-report', [ReportController::class, 'officeTransReport'])->name('office.trans.report');

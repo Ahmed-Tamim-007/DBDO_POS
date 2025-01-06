@@ -93,16 +93,27 @@
                                         <input type="hidden" name="supplierID" id="supplierID">
                                         <div id="supplier_search_list" class="list-group" style="width: 90%;"></div>
                                     </div>
-
                                     <div class="col-lg-2 col-md-4 mb-3">
-                                        <button type="submit" class="btn btn-primary mt-lg-4 px-4"><i class="icon-magnifying-glass-browser"></i> Search</button>
+                                        <label class="form-label">User</label>
+                                        <select class="form-control form-control-sm form-select" name="user" aria-label="Default select example">
+                                            <option value="" selected>Select One</option>
+
+                                            @foreach ($users as $user)
+                                                <option value="{{$user->name}}">{{$user->name}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div class="col-lg-2 col-md-4 my-2 mx-auto">
+                                        <button type="submit" class="btn btn-primary mt-md-3 mt-lg-0 px-5"><i class="icon-magnifying-glass-browser"></i> Search</button>
                                     </div>
                                 </div>
                             </form>
                         </div>
                         @if ($sales->isNotEmpty())
-                            <div class="block table-responsive text-center">
-                                <table class="table table-striped table-hover" id="sales_invoice_table">
+                            <div class="block table-responsive">
+                                <h5 class="text-center">Product Sales From: {{ \Carbon\Carbon::parse($fromDate)->format('d M, Y') }} &nbsp;- To: {{ \Carbon\Carbon::parse($toDate)->format('d M, Y') }}</h5>
+                                <table class="table table-hover" id="product_sales_table">
                                     <thead>
                                         <tr class="text-primary">
                                             <th scope="col">SL.</th>
@@ -122,11 +133,11 @@
                                         @foreach ($sales as $sale)
                                             <tr>
                                                 <td>{{$loop->iteration}}</td>
-                                                <td>{{ \Carbon\Carbon::parse($sale->created_at)->format('d M, Y h:i A') }}</td>
+                                                <td>{{ \Carbon\Carbon::parse($sale->created_at)->format('d M, Y') }}</td>
                                                 <td>{{$sale->sales_invoice}}</td>
                                                 <td>{{$sale->product_name}}</td>
                                                 <td>{{$sale->batch_no}}</td>
-                                                <td>{{$sale->sales_customer ?? 'N/A'}}</td>
+                                                <td>{{$sale->customer_name ?? 'N/A'}}</td>
                                                 <td>{{$sale->product_cat}}/{{$sale->product_sub_cat}}</td>
                                                 <td>{{$sale->product_brand}}</td>
                                                 <td>{{$sale->price}}</td>
@@ -135,18 +146,13 @@
                                             </tr>
                                         @endforeach
                                     </tbody>
-                                    {{-- <tfoot>
+                                    <tfoot>
                                         <tr class="text-primary">
-                                            <th scope="col" colspan="4" class="text-right">Totals:</th>
+                                            <th scope="col" colspan="9" class="text-right">Totals:</th>
                                             <th scope="col">0.00</th>
                                             <th scope="col">0.00</th>
-                                            <th scope="col">0.00</th>
-                                            <th scope="col">0.00</th>
-                                            <th scope="col">0.00</th>
-                                            <th scope="col">0.00</th>
-                                            <th></th>
                                         </tr>
-                                    </tfoot> --}}
+                                    </tfoot>
                                 </table>
                             </div>
                         @endif
@@ -324,8 +330,7 @@
                         if (data.length > 0) {
                             data.forEach(supplier => {
                                 html += `<a href="#" class="list-group-supplier list-group-supplier-action" data-id="${supplier.id}">
-                                            ${supplier.supplier_name.trim()} (${supplier.phone.trim()})
-                                         </a>`;
+                                            ${supplier.supplier_name.trim()}</a>`;
                             });
                         } else {
                             html = '<a href="#" class="list-group-supplier">No supplier found</a>';
@@ -364,40 +369,23 @@
     <script>
         $(document).ready(function () {
             function updateFooterTotals() {
-                let totalDiscount = 0;
-                let totalSalePrice = 0;
-                let totalCash = 0;
-                let totalCard = 0;
-                let totalMobile = 0;
-                let totalDue = 0;
+                let totalQty = 0;
+                let totalPrice = 0;
 
                 // Iterate through each row in the tbody
-                $("#sales_invoice_table tbody tr").each(function () {
-                    totalDiscount += parseFloat($(this).find("td").eq(4).text()) || 0; // Discount Amount
-                    totalSalePrice += parseFloat($(this).find("td").eq(5).text()) || 0; // Sale Price
-                    totalCash += parseFloat($(this).find("td").eq(6).text()) || 0; // Cash
-                    totalCard += parseFloat($(this).find("td").eq(7).text()) || 0; // Card
-                    totalMobile += parseFloat($(this).find("td").eq(8).text()) || 0; // Mobile
-                    totalDue += parseFloat($(this).find("td").eq(9).text()) || 0; // Due Amount
+                $("#product_sales_table tbody tr").each(function () {
+                    totalQty += parseFloat($(this).find("td").eq(9).text()) || 0;
+                    totalPrice += parseFloat($(this).find("td").eq(10).text()) || 0;
                 });
 
                 // Update the footer with the calculated totals
-                let $tfoot = $("#sales_invoice_table tfoot tr");
-                $tfoot.find("th").eq(1).text(totalDiscount.toFixed(2)); // Update Discount Total
-                $tfoot.find("th").eq(2).text(totalSalePrice.toFixed(2)); // Update Sale Price Total
-                $tfoot.find("th").eq(3).text(totalCash.toFixed(2)); // Update Cash Total
-                $tfoot.find("th").eq(4).text(totalCard.toFixed(2)); // Update Card Total
-                $tfoot.find("th").eq(5).text(totalMobile.toFixed(2)); // Update Mobile Total
-                $tfoot.find("th").eq(6).text(totalDue.toFixed(2)); // Update Due Total
+                let $tfoot = $("#product_sales_table tfoot tr");
+                $tfoot.find("th").eq(1).text(totalQty.toFixed(2));
+                $tfoot.find("th").eq(2).text(totalPrice.toFixed(2));
             }
 
             // Call the function on page load
             updateFooterTotals();
-
-            // Optionally, re-calculate totals if the table data changes dynamically
-            $(document).on("change", "#sales_invoice_table tbody", function () {
-                updateFooterTotals();
-            });
         });
     </script>
   </body>
