@@ -294,8 +294,8 @@ class ReportController extends Controller
         return view('admin.summary_page', compact('fromDate', 'toDate', 'employee_returns'));
     }
 
-    // Sales Reports Functions
-    public function priduct_sale_report()
+    // Product Sales Reports Functions
+    public function product_sale_report()
     {
         $sales = collect();
         $products = Product::all();
@@ -440,5 +440,275 @@ class ReportController extends Controller
 
         // Return the view
         return view('admin.office_trans_report', compact('transactions', 'categories', 'fromDate', 'toDate'));
+    }
+
+    // Supplier Transaction Reports Functions
+    public function supplier_trans_report()
+    {
+        $transactions = collect();
+
+        return view('admin.supplier_trans_report', compact('transactions'));
+    }
+    public function supplierTransReport(Request $request)
+    {
+        $fromDate = $request->from_date;
+        $toDate = $request->to_date ? Carbon::parse($request->to_date)->endOfDay() : null;
+
+        $transactions = DB::table('supplier_transactions')
+            ->leftJoin('accounts', 'supplier_transactions.account', '=', 'accounts.id')
+            ->leftJoin('suppliers', 'supplier_transactions.supplierID', '=', 'suppliers.id')
+            ->select(
+                'supplier_transactions.*',
+                'accounts.acc_name as account_name',
+                'suppliers.supplier_name as supplier_name'
+            )
+            ->when($fromDate && $toDate, function ($query) use ($fromDate, $toDate) {
+                $query->whereBetween('supplier_transactions.created_at', [$fromDate, $toDate]);
+            })
+            ->when($request->supplierID, function ($query) use ($request) {
+                $query->where('supplier_transactions.supplierID', $request->supplierID);
+            })
+            ->get();
+
+
+        // Return the view
+        return view('admin.supplier_trans_report', compact('transactions', 'fromDate', 'toDate'));
+    }
+
+    // Supplier Transaction Reports Functions
+    public function fund_transfer_report()
+    {
+        $transfers = collect();
+        $users = PosUser::all();
+        $accounts = Account::all();
+
+        return view('admin.fund_transfer_report', compact('transfers', 'users', 'accounts'));
+    }
+    public function fundTransferReport(Request $request)
+    {
+        $fromDate = $request->from_date;
+        $toDate = $request->to_date ? Carbon::parse($request->to_date)->endOfDay() : null;
+
+        $transfers = DB::table('fund_transfers')
+            ->select(
+                'fund_transfers.*',
+                'account_from.acc_name as account_from_name',
+                'account_from.acc_no as account_from_no',
+                'account_to.acc_name as account_to_name',
+                'account_to.acc_no as account_to_no'
+            )
+            ->join('accounts as account_from', 'fund_transfers.accountFrom', '=', 'account_from.id')
+            ->join('accounts as account_to', 'fund_transfers.accountTo', '=', 'account_to.id')
+            ->when($fromDate && $toDate, function ($query) use ($fromDate, $toDate) {
+                $query->whereBetween('fund_transfers.created_at', [$fromDate, $toDate]);
+            })
+            ->when($request->accountFrom, function ($query) use ($request) {
+                $query->where('fund_transfers.accountFrom', $request->accountFrom);
+            })
+            ->when($request->accountTo, function ($query) use ($request) {
+                $query->where('fund_transfers.accountTo', $request->accountTo);
+            })
+            ->when($request->user, function ($query) use ($request) {
+                $query->where('fund_transfers.user', $request->user);
+            })
+            ->get();
+
+        $users = PosUser::all();
+        $accounts = Account::all();
+
+        // Return the view
+        return view('admin.fund_transfer_report', compact('transfers', 'users', 'accounts', 'fromDate', 'toDate'));
+    }
+
+    // Stock Reports Functions
+    public function stock_report()
+    {
+        $stocks = collect();
+        $products = Product::all();
+        $categories = Category::all();
+        $subcategories = Subcategory::all();
+        $brands = Brand::all();
+
+        return view('admin.stock_report', compact('stocks', 'products', 'categories', 'subcategories', 'brands'));
+    }
+    public function searchStockReport(Request $request)
+    {
+        $fromDate = $request->from_date;
+        $toDate = $request->to_date ? Carbon::parse($request->to_date)->endOfDay() : null;
+
+        $stocks = DB::table('stocks')
+            ->leftJoin('products', 'stocks.product_id', '=', 'products.id')
+            ->select(
+                'stocks.*',
+                'products.title as product_name',
+                'products.barcode as product_code',
+                'products.category as product_cat',
+                'products.sub_category as product_sub_cat',
+                'products.brand as product_brand'
+            )
+            ->when($fromDate && $toDate, function ($query) use ($fromDate, $toDate) {
+                $query->whereBetween('stocks.created_at', [$fromDate, $toDate]);
+            })
+            ->when($request->productID, function ($query) use ($request) {
+                $query->where('products.id', $request->productID);
+            })
+            ->when($request->batchNo, function ($query) use ($request) {
+                $query->where('stocks.batch_no', $request->batchNo);
+            })
+            ->when($request->category, function ($query) use ($request) {
+                $query->where('products.category', $request->category);
+            })
+            ->when($request->subcategory, function ($query) use ($request) {
+                $query->where('products.sub_category', $request->subcategory);
+            })
+            ->when($request->brand, function ($query) use ($request) {
+                $query->where('products.brand', $request->brand);
+            })
+            ->when($request->supplier, function ($query) use ($request) {
+                $query->where('stocks.supplier', $request->supplier);
+            })
+            ->get();
+
+        // Additional data
+        $products = Product::all();
+        $categories = Category::all();
+        $subcategories = Subcategory::all();
+        $brands = Brand::all();
+
+        // Return the view
+        return view('admin.stock_report', compact('stocks', 'products', 'categories', 'subcategories', 'brands', 'fromDate', 'toDate'));
+    }
+
+    // Stock In Summary Functions
+    public function stockIn_summary()
+    {
+        $stockIns = collect();
+        $products = Product::all();
+        $categories = Category::all();
+        $subcategories = Subcategory::all();
+        $brands = Brand::all();
+
+        return view('admin.stockIn_summary', compact('stockIns', 'products', 'categories', 'subcategories', 'brands'));
+    }
+    public function searchStockInSum(Request $request)
+    {
+        $fromDate = $request->from_date;
+        $toDate = $request->to_date ? Carbon::parse($request->to_date)->endOfDay() : null;
+
+        $sales = DB::table('stock_ins')
+            ->leftJoin('products', 'stock_ins.product_id', '=', 'products.id')
+            ->select(
+                'stock_ins.*',
+                'products.title as product_name',
+                'products.barcode as product_code',
+                'products.category as product_cat',
+                'products.sub_category as product_sub_cat',
+                'products.brand as product_brand'
+            )
+            ->when($fromDate && $toDate, function ($query) use ($fromDate, $toDate) {
+                $query->whereBetween('stock_ins.created_at', [$fromDate, $toDate]);
+            })
+            ->when($request->productID, function ($query) use ($request) {
+                $query->where('products.id', $request->productID);
+            })
+            ->when($request->batchNo, function ($query) use ($request) {
+                $query->where('stock_ins.batch_no', $request->batchNo);
+            })
+            ->when($request->category, function ($query) use ($request) {
+                $query->where('products.category', $request->category);
+            })
+            ->when($request->subcategory, function ($query) use ($request) {
+                $query->where('products.sub_category', $request->subcategory);
+            })
+            ->when($request->brand, function ($query) use ($request) {
+                $query->where('products.brand', $request->brand);
+            })
+            ->when($request->supplier, function ($query) use ($request) {
+                $query->where('stock_ins.supplier', $request->supplier);
+            })
+            ->get();
+
+        // Additional data
+        $products = Product::all();
+        $categories = Category::all();
+        $subcategories = Subcategory::all();
+        $brands = Brand::all();
+
+        // Return the view
+        return view('admin.stockIn_summary', compact('sales', 'products', 'categories', 'subcategories', 'brands', 'fromDate', 'toDate'));
+    }
+
+    // Stock Out Report Functions
+    public function stockOut_report()
+    {
+        $sales = collect();
+        $products = Product::all();
+        $customers = Customer::all();
+        $categories = Category::all();
+        $subcategories = Subcategory::all();
+        $brands = Brand::all();
+        $users = PosUser::all();
+
+        return view('admin.product_sale_summary', compact('sales', 'products', 'customers', 'categories', 'subcategories', 'brands', 'users'));
+    }
+    public function searchStockOutReport(Request $request)
+    {
+        $fromDate = $request->from_date;
+        $toDate = $request->to_date ? Carbon::parse($request->to_date)->endOfDay() : null;
+
+        $sales = DB::table('sales')
+            ->leftJoin('products', 'sales.product_id', '=', 'products.id')
+            ->leftJoin('sale_details', 'sales.sales_ID', '=', 'sale_details.id')
+            ->leftJoin('customers', 'sale_details.customerID', '=', 'customers.id')
+            ->select(
+                'sales.*',
+                'products.title as product_name',
+                'products.category as product_cat',
+                'products.sub_category as product_sub_cat',
+                'products.brand as product_brand',
+                'products.supplier as product_supplier',
+                'sale_details.invoiceNo as sales_invoice',
+                'sale_details.user as sales_invoice',
+                'customers.name as customer_name'
+            )
+            ->when($fromDate && $toDate, function ($query) use ($fromDate, $toDate) {
+                $query->whereBetween('sales.created_at', [$fromDate, $toDate]);
+            })
+            ->when($request->productID, function ($query) use ($request) {
+                $query->where('products.id', $request->productID);
+            })
+            ->when($request->batchNo, function ($query) use ($request) {
+                $query->where('sales.batch_no', $request->batchNo);
+            })
+            ->when($request->category, function ($query) use ($request) {
+                $query->where('products.category', $request->category);
+            })
+            ->when($request->subcategory, function ($query) use ($request) {
+                $query->where('products.sub_category', $request->subcategory);
+            })
+            ->when($request->brand, function ($query) use ($request) {
+                $query->where('products.brand', $request->brand);
+            })
+            ->when($request->customerID, function ($query) use ($request) {
+                $query->where('sale_details.customerID', $request->customerID);
+            })
+            ->when($request->supplier, function ($query) use ($request) {
+                $query->where('products.supplier', $request->supplier);
+            })
+            ->when($request->user, function ($query) use ($request) {
+                $query->where('sale_details.user', $request->user);
+            })
+            ->get();
+
+        // Additional data
+        $products = Product::all();
+        $customers = Customer::all();
+        $categories = Category::all();
+        $subcategories = Subcategory::all();
+        $brands = Brand::all();
+        $users = PosUser::all();
+
+        // Return the view
+        return view('admin.product_sale_summary', compact('sales', 'products', 'customers', 'categories', 'subcategories', 'brands', 'users', 'fromDate', 'toDate'));
     }
 }

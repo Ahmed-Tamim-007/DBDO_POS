@@ -105,16 +105,25 @@
             </ul>
         </li>
 
-        <li class="{{ Request::is('daily_summary') || Request::is('sale_list') || Request::is('priduct_sale_report') || Request::is('employee_trans_report') || Request::is('office_trans_report') || Request::is('supplier_trans_report') ? 'active' : '' }}"><a href="#report_manage" aria-expanded="false" data-toggle="collapse"> <i class="fas fa-chart-bar"></i><span>Reports</span></a>
-            <ul id="report_manage" class="collapse list-unstyled {{ Request::is('daily_summary') || Request::is('sale_list') || Request::is('priduct_sale_report') || Request::is('employee_trans_report') || Request::is('office_trans_report') || Request::is('supplier_trans_report') ? 'show' : '' }}">
+        <li class="{{ Request::is('daily_summary') || Request::is('sale_list') || Request::is('product_sale_report') || Request::is('stock_report') || Request::is('stockIn_summary') || Request::is('stockOut_report') || Request::is('employee_trans_report') || Request::is('office_trans_report') || Request::is('supplier_trans_report') || Request::is('fund_transfer_report') ? 'active' : '' }}"><a href="#report_manage" aria-expanded="false" data-toggle="collapse"> <i class="fas fa-chart-bar"></i><span>Reports</span></a>
+            <ul id="report_manage" class="collapse list-unstyled {{ Request::is('daily_summary') || Request::is('sale_list') || Request::is('product_sale_report') || Request::is('stock_report') || Request::is('stockIn_summary') || Request::is('stockOut_report') || Request::is('employee_trans_report') || Request::is('office_trans_report') || Request::is('supplier_trans_report') || Request::is('fund_transfer_report') ? 'show' : '' }}">
                 <li class="{{ Request::is('daily_summary') ? 'active' : '' }}">
                     <a href="{{ url('daily_summary') }}">Daily/Monthly Summary</a>
                 </li>
                 <li class="{{ Request::is('sale_list') ? 'active' : '' }}">
                     <a href="{{ url('sale_list') }}">Sell Invoices</a>
                 </li>
-                <li class="{{ Request::is('priduct_sale_report') ? 'active' : '' }}">
-                    <a href="{{ url('priduct_sale_report') }}">Product Sale Summary</a>
+                <li class="{{ Request::is('product_sale_report') ? 'active' : '' }}">
+                    <a href="{{ url('product_sale_report') }}">Product Sale Summary</a>
+                </li>
+                <li class="{{ Request::is('stock_report') ? 'active' : '' }}">
+                    <a href="{{ url('stock_report') }}">Stock Report</a>
+                </li>
+                <li class="{{ Request::is('stockIn_summary') ? 'active' : '' }}">
+                    <a href="{{ url('stockIn_summary') }}">Stock In Summary</a>
+                </li>
+                <li class="{{ Request::is('stockOut_report') ? 'active' : '' }}">
+                    <a href="{{ url('stockOut_report') }}">Stock Out Report</a>
                 </li>
                 <li class="{{ Request::is('employee_trans_report') ? 'active' : '' }}">
                     <a href="{{ url('employee_trans_report') }}">Employee Transaction Report</a>
@@ -124,6 +133,9 @@
                 </li>
                 <li class="{{ Request::is('supplier_trans_report') ? 'active' : '' }}">
                     <a href="{{ url('supplier_trans_report') }}">Supplier Transaction Report</a>
+                </li>
+                <li class="{{ Request::is('fund_transfer_report') ? 'active' : '' }}">
+                    <a href="{{ url('fund_transfer_report') }}">Fund Transfer Report</a>
                 </li>
             </ul>
         </li>

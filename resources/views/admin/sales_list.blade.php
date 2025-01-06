@@ -74,30 +74,30 @@
                                         </select>
                                     </div>
                                     <div class="col-lg-3 col-md-4 mb-3">
-                                        <input type="submit" class="btn btn-primary mt-lg-4 px-5" value="Search">
+                                        <button type="submit" class="btn btn-primary mt-lg-4 px-5"><i class="icon-magnifying-glass-browser"></i> Search</button>
                                     </div>
                                 </div>
                             </form>
                         </div>
-                        <div class="block table-responsive text-center">
-                            <table class="table table-striped table-hover" id="sales_invoice_table">
-                                <thead>
-                                    <tr class="text-primary">
-                                        <th scope="col">SL.</th>
-                                        <th scope="col">Invoice No</th>
-                                        <th scope="col">Sold By</th>
-                                        <th scope="col">Customer</th>
-                                        <th scope="col">Discount Amount</th>
-                                        <th scope="col">Sale Price</th>
-                                        <th scope="col">Cash</th>
-                                        <th scope="col">Card</th>
-                                        <th scope="col">Mobile</th>
-                                        <th scope="col">Due Amount</th>
-                                        <th scope="col">View</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @if ($sale_details->isNotEmpty())
+                        @if ($sale_details->isNotEmpty())
+                            <div class="block table-responsive text-center">
+                                <table class="table table-striped table-hover" id="sales_invoice_table">
+                                    <thead>
+                                        <tr class="text-primary">
+                                            <th scope="col">SL.</th>
+                                            <th scope="col">Invoice No</th>
+                                            <th scope="col">Sold By</th>
+                                            <th scope="col">Customer</th>
+                                            <th scope="col">Discount Amount</th>
+                                            <th scope="col">Sale Price</th>
+                                            <th scope="col">Cash</th>
+                                            <th scope="col">Card</th>
+                                            <th scope="col">Mobile</th>
+                                            <th scope="col">Due Amount</th>
+                                            <th scope="col">View</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
                                         @foreach ($sale_details as $sale_detail)
                                             <tr>
                                                 <td>{{$loop->iteration}}</td>
@@ -127,22 +127,22 @@
                                                 </td>
                                             </tr>
                                         @endforeach
-                                    @endif
-                                </tbody>
-                                <tfoot>
-                                    <tr class="text-primary">
-                                        <th scope="col" colspan="4" class="text-right">Totals:</th>
-                                        <th scope="col">0.00</th>
-                                        <th scope="col">0.00</th>
-                                        <th scope="col">0.00</th>
-                                        <th scope="col">0.00</th>
-                                        <th scope="col">0.00</th>
-                                        <th scope="col">0.00</th>
-                                        <th></th>
-                                    </tr>
-                                </tfoot>
-                            </table>
-                        </div>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr class="text-primary">
+                                            <th scope="col" colspan="4" class="text-right">Totals:</th>
+                                            <th scope="col">0.00</th>
+                                            <th scope="col">0.00</th>
+                                            <th scope="col">0.00</th>
+                                            <th scope="col">0.00</th>
+                                            <th scope="col">0.00</th>
+                                            <th scope="col">0.00</th>
+                                            <th></th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>

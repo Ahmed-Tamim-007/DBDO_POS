@@ -63,7 +63,7 @@
                                         </select>
                                     </div>
 
-                                    <div class="col-lg-2 col-md-4 my-2 mx-auto">
+                                    <div class="col-lg-2 col-md-4 my-2">
                                         <button type="submit" class="btn btn-primary mt-md-3 px-5"><i class="icon-magnifying-glass-browser"></i> Search</button>
                                     </div>
                                 </div>

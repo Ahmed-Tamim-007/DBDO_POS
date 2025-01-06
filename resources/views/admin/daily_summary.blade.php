@@ -42,7 +42,7 @@
                                         <input type="date" class="form-control form-control-sm" name="to_date">
                                     </div>
                                     <div class="col-md-4 mb-3">
-                                        <input type="submit" class="btn btn-primary mt-lg-4 px-5" value="Search">
+                                        <button type="submit" class="btn btn-primary mt-lg-4 px-5"><i class="icon-magnifying-glass-browser"></i> Search</button>
                                     </div>
                                 </div>
                             </form>

@@ -3,7 +3,7 @@
   <head>
     @include('admin.dash_head')
     <link rel="stylesheet" href="{{asset('admin_css/css/print.css')}}">
-    <title>Admin - Supplier Transaction Report</title>
+    <title>Admin - Fund Transfer Report</title>
     <style>
         .is-invalid {
             border: 1px solid red !important;
@@ -21,7 +21,7 @@
       <div class="page-content">
         <div class="page-header">
           <div class="container-fluid">
-            <h2 class="h5 no-margin-bottom">Reports / Supplier Transaction Report</h2>
+            <h2 class="h5 no-margin-bottom">Reports / Fund Transfer Report</h2>
           </div>
         </div>
 
@@ -30,7 +30,7 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="block">
-                            <form action="{{ route('supplier.trans.report') }}" method="POST" id="supplier_trans_form">
+                            <form action="{{ route('fund.transfer.report') }}" method="POST" id="fund_transfer_form">
                                 @csrf
                                 <div class="row">
                                     <div class="col-lg-2 col-md-4 mb-3">
@@ -41,48 +41,79 @@
                                         <label class="form-label">To Date</label>
                                         <input type="date" class="form-control form-control-sm" name="to_date">
                                     </div>
-                                    <div class="col-lg-3 col-md-4 mb-3 position-relative">
-                                        <label class="form-label">Supplier Name</label>
-                                        <input type="text" id="supplier_search" name="supplier" class="form-control form-control-sm" autocomplete="off" placeholder="Search Supplier...">
-                                        <input type="hidden" name="supplierID" id="supplierID">
-                                        <div id="supplier_search_list" class="list-group" style="width: 90%;"></div>
+                                    <div class="col-lg-3 col-md-4 mb-3">
+                                        <label class="form-label">Account From</label>
+                                        <select class="form-control form-control-sm form-select" name="accountFrom" aria-label="Default select example">
+                                            <option value="" selected>Select One</option>
+
+                                            @foreach ($accounts as $account)
+                                                <option value="{{ $account->id }}">
+                                                    {{ $account->acc_name }} &nbsp; {{ $account->acc_no }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-3 col-md-4 mb-3">
+                                        <label class="form-label">Account To</label>
+                                        <select class="form-control form-control-sm form-select" name="accountTo" aria-label="Default select example">
+                                            <option value="" selected>Select One</option>
+
+                                            @foreach ($accounts as $account)
+                                                <option value="{{ $account->id }}">
+                                                    {{ $account->acc_name }} &nbsp; {{ $account->acc_no }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-2 col-md-4 mb-3">
+                                        <label class="form-label">User</label>
+                                        <select class="form-control form-control-sm form-select" name="user" aria-label="Default select example">
+                                            <option value="" selected>Select One</option>
+                                            <option value="Admin">Admin</option>
+
+                                            @foreach ($users as $user)
+                                                <option value="{{$user->name}}">{{$user->name}}</option>
+                                            @endforeach
+                                        </select>
                                     </div>
 
                                     <div class="col-lg-2 col-md-4 my-2">
-                                        <button type="submit" class="btn btn-primary mt-md-3 px-5"><i class="icon-magnifying-glass-browser"></i> Search</button>
+                                        <button type="submit" class="btn btn-primary px-5"><i class="icon-magnifying-glass-browser"></i> Search</button>
                                     </div>
                                 </div>
                             </form>
                         </div>
-                        @if ($transactions->isNotEmpty())
+                        @if ($transfers->isNotEmpty())
                             <div class="block table-responsive">
-                                <h5 class="text-center">Supplier Transactions From: {{ \Carbon\Carbon::parse($fromDate)->format('d M, Y') }} &nbsp;- To: {{ \Carbon\Carbon::parse($toDate)->format('d M, Y') }}</h5>
-                                <table class="table table-hover" id="supplier_trans_table">
+                                <h5 class="text-center">Fund Transfers From: {{ \Carbon\Carbon::parse($fromDate)->format('d M, Y') }} &nbsp;- To: {{ \Carbon\Carbon::parse($toDate)->format('d M, Y') }}</h5>
+                                <table class="table table-hover" id="fund_transfer_table">
                                     <thead>
                                         <tr class="text-primary">
                                             <th scope="col">SL.</th>
                                             <th scope="col">Date</th>
-                                            <th scope="col">Trx No</th>
-                                            <th scope="col">Supplier Name</th>
-                                            <th scope="col">Account</th>
+                                            <th scope="col">Account From</th>
+                                            <th scope="col">Account To</th>
+                                            <th scope="col">Discription</th>
+                                            <th scope="col">User</th>
                                             <th scope="col">Amount</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($transactions as $transaction)
+                                        @foreach ($transfers as $transfer)
                                             <tr>
                                                 <td>{{$loop->iteration}}</td>
-                                                <td>{{ \Carbon\Carbon::parse($transaction->created_at)->format('d M, Y') }}</td>
-                                                <td>{{$transaction->transactionNO}}</td>
-                                                <td>{{$transaction->supplier_name}}</td>
-                                                <td>{{$transaction->account_name}}</td>
-                                                <td>{{$transaction->amt_paid}}</td>
+                                                <td>{{ \Carbon\Carbon::parse($transfer->created_at)->format('d M, Y') }}</td>
+                                                <td>{{$transfer->account_from_name}} {{$transfer->account_from_no}}</td>
+                                                <td>{{$transfer->account_to_name}} {{$transfer->account_to_no}}</td>
+                                                <td>{{$transfer->description}}</td>
+                                                <td>{{$transfer->user}}</td>
+                                                <td>{{$transfer->amount}}</td>
                                             </tr>
                                         @endforeach
                                     </tbody>
                                     <tfoot>
                                         <tr class="text-primary">
-                                            <th scope="col" colspan="5" class="text-right">Totals:</th>
+                                            <th scope="col" colspan="6" class="text-right">Totals:</th>
                                             <th scope="col">0.00</th>
                                         </tr>
                                     </tfoot>
@@ -107,7 +138,7 @@
     <script>
         $(document).ready(function () {
             // Attach a submit event to the form
-            $('#supplier_trans_form').on('submit', function (e) {
+            $('#fund_transfer_form').on('submit', function (e) {
                 // Get the values of the "From Date" and "To Date" fields
                 const fromDateField = $('input[name="from_date"]');
                 const toDateField = $('input[name="to_date"]');
@@ -142,64 +173,6 @@
             });
         });
     </script>
-    <!-- JS For Supplier search -->
-    <script>
-        $(document).ready(function () {
-            $('#supplier_search').on('keyup', function () {
-                let query = $(this).val();
-
-                // Clear the phone and due if the input is empty
-                if (!query) {
-                    $('#supplier_search_list').html('');
-                    $('#customerID').val(''); // Clear hidden customer ID
-                    return;
-                }
-
-                $.ajax({
-                    url: "{{ route('search.suppliers') }}",
-                    type: "GET",
-                    data: { query: query },
-                    success: function (data) {
-                        let html = '';
-
-                        if (data.length > 0) {
-                            data.forEach(supplier => {
-                                html += `<a href="#" class="list-group-supplier list-group-supplier-action" data-id="${supplier.id}">
-                                            ${supplier.supplier_name.trim()} (${supplier.phone.trim()})</a>`;
-                            });
-                        } else {
-                            html = '<a href="#" class="list-group-supplier">No supplier found</a>';
-                        }
-
-                        $('#supplier_search_list').html(html);
-                    },
-                    error: function () {
-                        $('#supplier_search_list').html('<a href="#" class="list-group-supplier">An error occurred</a>');
-                    }
-                });
-            });
-
-            // Event delegation for dynamically added elements
-            $(document).on('click', '#supplier_search_list .list-group-supplier', function (e) {
-                e.preventDefault();
-
-                let selectedName = $(this).text().trim();
-                let supplierId = $(this).data('id');
-
-                $('#supplier_search').val(selectedName);
-                $('#supplierID').val(supplierId);
-                $('#supplier_search_list').html('');
-            });
-
-            // Listen for changes to the #supplier_search field
-            $('#supplier_search').on('input', function () {
-                if (!$(this).val().trim()) {
-                    $('#supplierID').val('');
-                    $('#supplier_search_list').html(''); // Clear suggestions
-                }
-            });
-        });
-    </script>
     <!-- Updating Table Footer based on the table rows -->
     <script>
         $(document).ready(function () {
@@ -207,12 +180,12 @@
                 let totalAmt = 0;
 
                 // Iterate through each row in the tbody
-                $("#supplier_trans_table tbody tr").each(function () {
-                    totalAmt += parseFloat($(this).find("td").eq(5).text()) || 0;
+                $("#fund_transfer_table tbody tr").each(function () {
+                    totalAmt += parseFloat($(this).find("td").eq(6).text()) || 0;
                 });
 
                 // Update the footer with the calculated totals
-                let $tfoot = $("#supplier_trans_table tfoot tr");
+                let $tfoot = $("#fund_transfer_table tfoot tr");
                 $tfoot.find("th").eq(1).text(totalAmt.toFixed(2));
             }
 

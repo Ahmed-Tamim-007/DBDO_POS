@@ -3,7 +3,7 @@
   <head>
     @include('admin.dash_head')
     <link rel="stylesheet" href="{{asset('admin_css/css/print.css')}}">
-    <title>Admin - Supplier Transaction Report</title>
+    <title>Admin - Stock In Summary</title>
     <style>
         .is-invalid {
             border: 1px solid red !important;
@@ -21,7 +21,7 @@
       <div class="page-content">
         <div class="page-header">
           <div class="container-fluid">
-            <h2 class="h5 no-margin-bottom">Reports / Supplier Transaction Report</h2>
+            <h2 class="h5 no-margin-bottom">Reports / Stock In Summary</h2>
           </div>
         </div>
 
@@ -30,7 +30,7 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="block">
-                            <form action="{{ route('supplier.trans.report') }}" method="POST" id="supplier_trans_form">
+                            <form action="{{ route('search.stockIn.summary') }}" method="POST" id="stockIn_sum_form">
                                 @csrf
                                 <div class="row">
                                     <div class="col-lg-2 col-md-4 mb-3">
@@ -42,7 +42,47 @@
                                         <input type="date" class="form-control form-control-sm" name="to_date">
                                     </div>
                                     <div class="col-lg-3 col-md-4 mb-3 position-relative">
-                                        <label class="form-label">Supplier Name</label>
+                                        <label>Product Name/Code</label>
+                                        <input type="text" id="product-search_stock" name="product" class="form-control form-control-sm" placeholder="Search Product..." autocomplete="off">
+                                        <input type="hidden" id="productID" name="productID">
+                                        <div id="product-list_stock" class="list-group"></div>
+                                    </div>
+                                    <div class="col-lg-2 col-md-4 mb-3">
+                                        <label class="form-label">Batch Number</label>
+                                        <input type="number" class="form-control form-control-sm" name="batchNo">
+                                    </div>
+                                    <div class="col-lg-3 col-md-4 mb-3">
+                                        <label class="form-label">Product Category</label>
+                                        <select class="form-control form-control-sm form-select" name="category" aria-label="Default select example">
+                                            <option value="" selected>Select One</option>
+
+                                            @foreach ($categories as $category)
+                                                <option value="{{$category->category_name}}">{{$category->category_name}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-2 col-md-4 mb-3">
+                                        <label class="form-label">Sub Category</label>
+                                        <select class="form-control form-control-sm form-select" name="subcategory" aria-label="Default select example">
+                                            <option value="" selected>Select One</option>
+
+                                            @foreach ($subcategories as $subcategory)
+                                                <option value="{{$subcategory->sub_category}}">{{$subcategory->sub_category}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-2 col-md-4 mb-3">
+                                        <label class="form-label">Brand</label>
+                                        <select class="form-control form-control-sm form-select" name="brand" aria-label="Default select example">
+                                            <option value="" selected>Select One</option>
+
+                                            @foreach ($brands as $brand)
+                                                <option value="{{$brand->brand_name}}">{{$brand->brand_name}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-3 col-md-4 mb-3 position-relative">
+                                        <label class="form-label">Supplier</label>
                                         <input type="text" id="supplier_search" name="supplier" class="form-control form-control-sm" autocomplete="off" placeholder="Search Supplier...">
                                         <input type="hidden" name="supplierID" id="supplierID">
                                         <div id="supplier_search_list" class="list-group" style="width: 90%;"></div>
@@ -54,41 +94,52 @@
                                 </div>
                             </form>
                         </div>
-                        @if ($transactions->isNotEmpty())
+                        {{-- @if ($sales->isNotEmpty())
                             <div class="block table-responsive">
-                                <h5 class="text-center">Supplier Transactions From: {{ \Carbon\Carbon::parse($fromDate)->format('d M, Y') }} &nbsp;- To: {{ \Carbon\Carbon::parse($toDate)->format('d M, Y') }}</h5>
-                                <table class="table table-hover" id="supplier_trans_table">
+                                <h5 class="text-center">Product Sales From: {{ \Carbon\Carbon::parse($fromDate)->format('d M, Y') }} &nbsp;- To: {{ \Carbon\Carbon::parse($toDate)->format('d M, Y') }}</h5>
+                                <table class="table table-hover" id="product_sales_table">
                                     <thead>
                                         <tr class="text-primary">
                                             <th scope="col">SL.</th>
                                             <th scope="col">Date</th>
-                                            <th scope="col">Trx No</th>
-                                            <th scope="col">Supplier Name</th>
-                                            <th scope="col">Account</th>
-                                            <th scope="col">Amount</th>
+                                            <th scope="col">Invoice No</th>
+                                            <th scope="col">Product Name</th>
+                                            <th scope="col">Batch Number</th>
+                                            <th scope="col">Customer</th>
+                                            <th scope="col">Category/Subcategory</th>
+                                            <th scope="col">Brand</th>
+                                            <th scope="col">Unit Price</th>
+                                            <th scope="col">Qty</th>
+                                            <th scope="col">Total</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($transactions as $transaction)
+                                        @foreach ($sales as $sale)
                                             <tr>
                                                 <td>{{$loop->iteration}}</td>
-                                                <td>{{ \Carbon\Carbon::parse($transaction->created_at)->format('d M, Y') }}</td>
-                                                <td>{{$transaction->transactionNO}}</td>
-                                                <td>{{$transaction->supplier_name}}</td>
-                                                <td>{{$transaction->account_name}}</td>
-                                                <td>{{$transaction->amt_paid}}</td>
+                                                <td>{{ \Carbon\Carbon::parse($sale->created_at)->format('d M, Y') }}</td>
+                                                <td>{{$sale->sales_invoice}}</td>
+                                                <td>{{$sale->product_name}}</td>
+                                                <td>{{$sale->batch_no}}</td>
+                                                <td>{{$sale->customer_name ?? 'N/A'}}</td>
+                                                <td>{{$sale->product_cat}}/{{$sale->product_sub_cat}}</td>
+                                                <td>{{$sale->product_brand}}</td>
+                                                <td>{{$sale->price}}</td>
+                                                <td>{{$sale->so_qty}}</td>
+                                                <td>{{$sale->total}}</td>
                                             </tr>
                                         @endforeach
                                     </tbody>
                                     <tfoot>
                                         <tr class="text-primary">
-                                            <th scope="col" colspan="5" class="text-right">Totals:</th>
+                                            <th scope="col" colspan="9" class="text-right">Totals:</th>
+                                            <th scope="col">0.00</th>
                                             <th scope="col">0.00</th>
                                         </tr>
                                     </tfoot>
                                 </table>
                             </div>
-                        @endif
+                        @endif --}}
                     </div>
                 </div>
             </div>
@@ -107,7 +158,7 @@
     <script>
         $(document).ready(function () {
             // Attach a submit event to the form
-            $('#supplier_trans_form').on('submit', function (e) {
+            $('#stockIn_sum_form').on('submit', function (e) {
                 // Get the values of the "From Date" and "To Date" fields
                 const fromDateField = $('input[name="from_date"]');
                 const toDateField = $('input[name="to_date"]');
@@ -142,6 +193,44 @@
             });
         });
     </script>
+    <!-- JS For product search -->
+    <script>
+        $(document).ready(function() {
+            $('#product-search_stock').on('keyup', function() {
+                let query = $(this).val();
+                if (query.length > 0) { // Changed from > 1 to > 0
+                    $.ajax({
+                        url: "{{ route('search.products') }}",
+                        type: "GET",
+                        data: { query: query },
+                        success: function(data) {
+                            $('#product-list_stock').empty();
+                            if (data.length > 0) {
+                                data.forEach(product => {
+                                    $('#product-list_stock').append(`<a href="#" class="list-group-item list-group-item-action" data-id="${product.id}">${product.title}</a>`);
+                                });
+                            } else {
+                                $('#product-list_stock').append(`<div class="list-group-item">No products found</div>`);
+                            }
+                        }
+                    });
+                } else {
+                    $('#product-list_stock').empty();
+                }
+            });
+
+            // Fill input when suggestion is clicked
+            $(document).on('click', '.list-group-item-action', function(e) {
+                e.preventDefault();
+
+                let productId = $(this).data('id');
+
+                $('#product-search_stock').val($(this).text());
+                $('#productID').val(productId);
+                $('#product-list_stock').empty();
+            });
+        });
+    </script>
     <!-- JS For Supplier search -->
     <script>
         $(document).ready(function () {
@@ -165,7 +254,7 @@
                         if (data.length > 0) {
                             data.forEach(supplier => {
                                 html += `<a href="#" class="list-group-supplier list-group-supplier-action" data-id="${supplier.id}">
-                                            ${supplier.supplier_name.trim()} (${supplier.phone.trim()})</a>`;
+                                            ${supplier.supplier_name.trim()}</a>`;
                             });
                         } else {
                             html = '<a href="#" class="list-group-supplier">No supplier found</a>';
@@ -204,16 +293,19 @@
     <script>
         $(document).ready(function () {
             function updateFooterTotals() {
-                let totalAmt = 0;
+                let totalQty = 0;
+                let totalPrice = 0;
 
                 // Iterate through each row in the tbody
-                $("#supplier_trans_table tbody tr").each(function () {
-                    totalAmt += parseFloat($(this).find("td").eq(5).text()) || 0;
+                $("#product_sales_table tbody tr").each(function () {
+                    totalQty += parseFloat($(this).find("td").eq(9).text()) || 0;
+                    totalPrice += parseFloat($(this).find("td").eq(10).text()) || 0;
                 });
 
                 // Update the footer with the calculated totals
-                let $tfoot = $("#supplier_trans_table tfoot tr");
-                $tfoot.find("th").eq(1).text(totalAmt.toFixed(2));
+                let $tfoot = $("#product_sales_table tfoot tr");
+                $tfoot.find("th").eq(1).text(totalQty.toFixed(2));
+                $tfoot.find("th").eq(2).text(totalPrice.toFixed(2));
             }
 
             // Call the function on page load

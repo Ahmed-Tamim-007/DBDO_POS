@@ -200,7 +200,7 @@ Route::get('/employee/payment/summary', [ReportController::class, 'employee_paym
 Route::get('/employee/return/summary', [ReportController::class, 'employee_return_summary'])->name('employee.return.summary');
 
 // Product Sale Report Routes
-route::get('priduct_sale_report', [ReportController::class, 'priduct_sale_report'])-> middleware('auth', 'admin');
+route::get('product_sale_report', [ReportController::class, 'product_sale_report'])-> middleware('auth', 'admin');
 Route::post('/search-product-report', [ReportController::class, 'searchProductReport'])->name('search.product.report');
 
 // Employee Transaction Report Routes
@@ -210,3 +210,23 @@ Route::post('/employee-trans-report', [ReportController::class, 'employeeTransRe
 // Office Transaction Report Routes
 route::get('office_trans_report', [ReportController::class, 'office_trans_report'])-> middleware('auth', 'admin');
 Route::post('/office-trans-report', [ReportController::class, 'officeTransReport'])->name('office.trans.report');
+
+// Supplier Transaction Report Routes
+route::get('supplier_trans_report', [ReportController::class, 'supplier_trans_report'])-> middleware('auth', 'admin');
+Route::post('/supplier-trans-report', [ReportController::class, 'supplierTransReport'])->name('supplier.trans.report');
+
+// Fund Transfer Report Routes
+route::get('fund_transfer_report', [ReportController::class, 'fund_transfer_report'])-> middleware('auth', 'admin');
+Route::post('/fund-transfer-report', [ReportController::class, 'fundTransferReport'])->name('fund.transfer.report');
+
+// Stock Report Routes
+route::get('stock_report', [ReportController::class, 'stock_report'])-> middleware('auth', 'admin');
+Route::post('/search-stock-report', [ReportController::class, 'searchStockReport'])->name('search.stock.report');
+
+// Stock In Summary Routes
+route::get('stockIn_summary', [ReportController::class, 'stockIn_summary'])-> middleware('auth', 'admin');
+Route::post('/search-stockIn-summary', [ReportController::class, 'searchStockInSum'])->name('search.stockIn.summary');
+
+// Stock Out Report Routes
+route::get('stockOut_report', [ReportController::class, 'stockOut_report'])-> middleware('auth', 'admin');
+Route::post('/search-stockOut-report', [ReportController::class, 'searchStockOutReport'])->name('search.stockOut.report');
