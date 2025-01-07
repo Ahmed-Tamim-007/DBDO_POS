@@ -3,7 +3,7 @@
   <head>
     @include('admin.dash_head')
     <link rel="stylesheet" href="{{asset('admin_css/css/print.css')}}">
-    <title>Admin - Stock In Summary</title>
+    <title>Admin - Stock Out Report</title>
     <style>
         .is-invalid {
             border: 1px solid red !important;
@@ -21,7 +21,7 @@
       <div class="page-content">
         <div class="page-header">
           <div class="container-fluid">
-            <h2 class="h5 no-margin-bottom">Reports / Stock In Summary</h2>
+            <h2 class="h5 no-margin-bottom">Reports / Stock Out Report</h2>
           </div>
         </div>
 
@@ -30,7 +30,7 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="block">
-                            <form action="{{ route('search.stockIn.summary') }}" method="POST" id="stockIn_sum_form">
+                            <form action="{{ route('search.stockOut.report') }}" method="POST" id="stockOut_report_form">
                                 @csrf
                                 <div class="row">
                                     <div class="col-lg-2 col-md-4 mb-3">
@@ -94,10 +94,10 @@
                                 </div>
                             </form>
                         </div>
-                        @if ($stockIns->isNotEmpty())
+                        @if ($stockOuts->isNotEmpty())
                             <div class="block table-responsive">
-                                <h5 class="text-center">Stock In Summary From: {{ \Carbon\Carbon::parse($fromDate)->format('d M, Y') }} &nbsp;- To: {{ \Carbon\Carbon::parse($toDate)->format('d M, Y') }}</h5>
-                                <table class="table table-hover" id="stockIn_sum_table">
+                                <h5 class="text-center">Stock Out Report From: {{ \Carbon\Carbon::parse($fromDate)->format('d M, Y') }} &nbsp;- To: {{ \Carbon\Carbon::parse($toDate)->format('d M, Y') }}</h5>
+                                <table class="table table-hover" id="stockOut_report_table">
                                     <thead>
                                         <tr class="text-primary">
                                             <th scope="col">SL.</th>
@@ -105,42 +105,38 @@
                                             <th scope="col">Product</th>
                                             <th scope="col">Batch Number</th>
                                             <th scope="col">Category/Subcategory</th>
+                                            <th scope="col">Brand</th>
                                             <th scope="col">Supplier</th>
                                             <th scope="col">Reason</th>
-                                            <th scope="col">Purchase Price</th>
-                                            <th scope="col">Sale Price</th>
                                             <th scope="col">Quantity</th>
-                                            <th scope="col">Purchase Total</th>
-                                            <th scope="col">Sale Total</th>
+                                            <th scope="col">Purchase (&#2547;)</th>
+                                            <th scope="col">Total (&#2547;)</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($stockIns as $stockIn)
+                                        @foreach ($stockOuts as $stockOut)
                                             <tr>
                                                 <td>{{$loop->iteration}}</td>
-                                                <td>{{$stockIn->stock_date}}</td>
-                                                <td>{{$stockIn->product_name}} ({{$stockIn->product_code}})</td>
-                                                <td>{{$stockIn->batch_no}}</td>
-                                                <td>{{$stockIn->product_cat}}/{{$stockIn->product_sub_cat}}</td>
-                                                <td>{{$stockIn->supplier}}</td>
-                                                <td>{{$stockIn->stock_note}}</td>
-                                                <td>{{$stockIn->purchase_price}}</td>
-                                                <td>{{$stockIn->sale_price}}</td>
-                                                <td>{{$stockIn->quantity}}</td>
-                                                <td data-value="{{ $stockIn->purchase_price * $stockIn->quantity }}">
-                                                    {{ number_format($stockIn->purchase_price * $stockIn->quantity, 2) }}
-                                                </td>
-                                                <td data-value="{{ $stockIn->sale_price * $stockIn->quantity }}">
-                                                    {{ number_format($stockIn->sale_price * $stockIn->quantity, 2) }}
+                                                <td>{{$stockOut->stockOut_date}}</td>
+                                                <td>{{$stockOut->product_name}} ({{$stockOut->product_code}})</td>
+                                                <td>{{$stockOut->batch_no}}</td>
+                                                <td>{{$stockOut->product_cat}}/{{$stockOut->product_sub_cat}}</td>
+                                                <td>{{$stockOut->product_brand}}</td>
+                                                <td>{{$stockOut->supplier}}</td>
+                                                <td>{{$stockOut->stock_note}}</td>
+                                                <td>{{$stockOut->quantity}}</td>
+                                                <td>{{$stockOut->purchase_price}}</td>
+                                                <td data-value="{{ $stockOut->purchase_price * $stockOut->quantity }}">
+                                                    {{ number_format($stockOut->purchase_price * $stockOut->quantity, 2) }}
                                                 </td>
                                             </tr>
                                         @endforeach
                                     </tbody>
                                     <tfoot>
                                         <tr class="text-primary">
-                                            <th scope="col" colspan="9" class="text-right">Totals:</th>
+                                            <th scope="col" colspan="8" class="text-right">Totals:</th>
                                             <th scope="col">0.00</th>
-                                            <th scope="col">0.00</th>
+                                            <th scope="col"></th>
                                             <th scope="col">0.00</th>
                                         </tr>
                                     </tfoot>
@@ -165,7 +161,7 @@
     <script>
         $(document).ready(function () {
             // Attach a submit event to the form
-            $('#stockIn_sum_form').on('submit', function (e) {
+            $('#stockOut_report_form').on('submit', function (e) {
                 // Get the values of the "From Date" and "To Date" fields
                 const fromDateField = $('input[name="from_date"]');
                 const toDateField = $('input[name="to_date"]');
@@ -299,27 +295,24 @@
     <!-- Updating Table Footer based on the table rows -->
     <script>
         $(document).ready(function () {
-            function updateStockInFooterTotals() {
+            function updateStockOutFooterTotals() {
                 let totalQty = 0;
-                let total_P_Price = 0;
-                let total_S_Price = 0;
+                let totalPruchase = 0;
 
                 // Iterate through each row in the tbody
-                $("#stockIn_sum_table tbody tr").each(function () {
-                    totalQty += parseFloat($(this).find("td").eq(9).text()) || 0; // Quantity is numeric
-                    total_P_Price += parseFloat($(this).find("td").eq(10).data('value')) || 0; // Use data-value for Purchase Total
-                    total_S_Price += parseFloat($(this).find("td").eq(11).data('value')) || 0; // Use data-value for Sale Total
+                $("#stockOut_report_table tbody tr").each(function () {
+                    totalQty += parseFloat($(this).find("td").eq(8).text()) || 0;
+                    totalPruchase += parseFloat($(this).find("td").eq(10).data('value')) || 0;
                 });
 
                 // Update the footer with the calculated totals
-                let $tfoot = $("#stockIn_sum_table tfoot tr");
+                let $tfoot = $("#stockOut_report_table tfoot tr");
                 $tfoot.find("th").eq(1).text(totalQty.toFixed(2));
-                $tfoot.find("th").eq(2).text(total_P_Price.toFixed(2));
-                $tfoot.find("th").eq(3).text(total_S_Price.toFixed(2));
+                $tfoot.find("th").eq(3).text(totalPruchase.toFixed(2));
             }
 
             // Call the function on page load
-            updateStockInFooterTotals();
+            updateStockOutFooterTotals();
         });
     </script>
   </body>

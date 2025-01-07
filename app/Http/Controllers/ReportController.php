@@ -595,15 +595,18 @@ class ReportController extends Controller
         $fromDate = $request->from_date;
         $toDate = $request->to_date ? Carbon::parse($request->to_date)->endOfDay() : null;
 
-        $sales = DB::table('stock_ins')
+        $stockIns = DB::table('stock_ins')
             ->leftJoin('products', 'stock_ins.product_id', '=', 'products.id')
+            ->leftJoin('stock_details', 'stock_ins.batch_no', '=', 'stock_details.id')
             ->select(
                 'stock_ins.*',
                 'products.title as product_name',
                 'products.barcode as product_code',
                 'products.category as product_cat',
                 'products.sub_category as product_sub_cat',
-                'products.brand as product_brand'
+                'products.brand as product_brand',
+                'stock_details.stock_date as stock_date',
+                'stock_details.stock_note as stock_note'
             )
             ->when($fromDate && $toDate, function ($query) use ($fromDate, $toDate) {
                 $query->whereBetween('stock_ins.created_at', [$fromDate, $toDate]);
@@ -635,50 +638,46 @@ class ReportController extends Controller
         $brands = Brand::all();
 
         // Return the view
-        return view('admin.stockIn_summary', compact('sales', 'products', 'categories', 'subcategories', 'brands', 'fromDate', 'toDate'));
+        return view('admin.stockIn_summary', compact('stockIns', 'products', 'categories', 'subcategories', 'brands', 'fromDate', 'toDate'));
     }
 
     // Stock Out Report Functions
     public function stockOut_report()
     {
-        $sales = collect();
+        $stockOuts = collect();
         $products = Product::all();
-        $customers = Customer::all();
         $categories = Category::all();
         $subcategories = Subcategory::all();
         $brands = Brand::all();
-        $users = PosUser::all();
 
-        return view('admin.product_sale_summary', compact('sales', 'products', 'customers', 'categories', 'subcategories', 'brands', 'users'));
+        return view('admin.stockOut_report', compact('stockOuts', 'products', 'categories', 'subcategories', 'brands'));
     }
     public function searchStockOutReport(Request $request)
     {
         $fromDate = $request->from_date;
         $toDate = $request->to_date ? Carbon::parse($request->to_date)->endOfDay() : null;
 
-        $sales = DB::table('sales')
-            ->leftJoin('products', 'sales.product_id', '=', 'products.id')
-            ->leftJoin('sale_details', 'sales.sales_ID', '=', 'sale_details.id')
-            ->leftJoin('customers', 'sale_details.customerID', '=', 'customers.id')
+        $stockOuts = DB::table('stock_outs')
+            ->leftJoin('products', 'stock_outs.product_id', '=', 'products.id')
+            ->leftJoin('stock_out_details', 'stock_outs.detailID', '=', 'stock_out_details.id')
             ->select(
-                'sales.*',
+                'stock_outs.*',
                 'products.title as product_name',
+                'products.barcode as product_code',
                 'products.category as product_cat',
                 'products.sub_category as product_sub_cat',
                 'products.brand as product_brand',
-                'products.supplier as product_supplier',
-                'sale_details.invoiceNo as sales_invoice',
-                'sale_details.user as sales_invoice',
-                'customers.name as customer_name'
+                'stock_out_details.stock_date as stockOut_date',
+                'stock_out_details.stock_note as stock_note'
             )
             ->when($fromDate && $toDate, function ($query) use ($fromDate, $toDate) {
-                $query->whereBetween('sales.created_at', [$fromDate, $toDate]);
+                $query->whereBetween('stock_outs.created_at', [$fromDate, $toDate]);
             })
             ->when($request->productID, function ($query) use ($request) {
                 $query->where('products.id', $request->productID);
             })
             ->when($request->batchNo, function ($query) use ($request) {
-                $query->where('sales.batch_no', $request->batchNo);
+                $query->where('stock_outs.batch_no', $request->batchNo);
             })
             ->when($request->category, function ($query) use ($request) {
                 $query->where('products.category', $request->category);
@@ -689,26 +688,18 @@ class ReportController extends Controller
             ->when($request->brand, function ($query) use ($request) {
                 $query->where('products.brand', $request->brand);
             })
-            ->when($request->customerID, function ($query) use ($request) {
-                $query->where('sale_details.customerID', $request->customerID);
-            })
             ->when($request->supplier, function ($query) use ($request) {
-                $query->where('products.supplier', $request->supplier);
-            })
-            ->when($request->user, function ($query) use ($request) {
-                $query->where('sale_details.user', $request->user);
+                $query->where('stock_outs.supplier', $request->supplier);
             })
             ->get();
 
         // Additional data
         $products = Product::all();
-        $customers = Customer::all();
         $categories = Category::all();
         $subcategories = Subcategory::all();
         $brands = Brand::all();
-        $users = PosUser::all();
 
         // Return the view
-        return view('admin.product_sale_summary', compact('sales', 'products', 'customers', 'categories', 'subcategories', 'brands', 'users', 'fromDate', 'toDate'));
+        return view('admin.stockOut_report', compact('stockOuts', 'products', 'categories', 'subcategories', 'brands', 'fromDate', 'toDate'));
     }
 }

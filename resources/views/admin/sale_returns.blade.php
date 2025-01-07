@@ -3,6 +3,11 @@
   <head>
     @include('admin.dash_head')
     <title>Admin - Sale Returns</title>
+    <style>
+        #salesInfoTable td {
+            padding: 1px 2px !important;
+        }
+    </style>
   </head>
   <body>
     <!-- Header -->
@@ -54,6 +59,38 @@
                                 <tbody>
                                 </tbody>
                             </table>
+                            <div class="row">
+                                <div class="col-md-3 ml-auto">
+                                    <table class="table mt-3" id="salesInfoTable" style="font-size: 12px;">
+                                        <tbody>
+                                            <tr>
+                                                <td>Card Total</td>
+                                                <td class="text-right" id="card_total"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Discount</td>
+                                                <td class="text-right" id="sale_dis"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Total</td>
+                                                <td class="text-right" id="sale_total"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Round</td>
+                                                <td class="text-right" id="sale_round"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Paid Amount</td>
+                                                <td class="text-right" id="paid_amt"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Total Due</td>
+                                                <td class="text-right" id="sale_due"></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                             <div>
                                 <button type="button" id="addToreturn" class="btn btn-primary btn-sm mt-3">Add Return</button>
                             </div>
@@ -124,6 +161,26 @@
                     `);
                 });
 
+                let cardTotal = 0;
+                if (saleDetail) {
+                    $("#return_table tbody tr").each(function () {
+                        cardTotal += parseFloat($(this).find("td").eq(7).text()) || 0;
+                    });
+                    let saleTotal = parseFloat(saleDetail.cashTotal) || 0;
+                    let saleDiscount = saleDetail.cashDiscount;
+                    let saleRound = parseFloat(saleDetail.cashRound) || 0;
+                    let paidTotal = parseFloat(saleDetail.cashAmount + saleDetail.cardAmount + saleDetail.mobileAmount) || 0;
+                    let saleDue = parseFloat(saleDetail.cashDue) || 0;
+
+                    // Update table total quantity and price
+                    $('#salesInfoTable #card_total').text(cardTotal.toFixed(2));
+                    $('#salesInfoTable #sale_dis').text(saleDiscount);
+                    $('#salesInfoTable #sale_total').text(saleTotal.toFixed(2));
+                    $('#salesInfoTable #sale_round').text(saleRound.toFixed(2));
+                    $('#salesInfoTable #paid_amt').text(paidTotal.toFixed(2));
+                    $('#salesInfoTable #sale_due').text(saleDue.toFixed(2));
+                }
+
                 // Update the visibility of the return button
                 toggleReturn();
             }
@@ -132,6 +189,7 @@
             function toggleReturn() {
                 const hasRows = $('#return_table tbody tr').length > 0;
                 $('#addToreturn').toggle(hasRows); // Show or hide the button based on rows
+                $('#salesInfoTable').toggle(hasRows); // Show or hide the button based on rows
             }
 
             // Function to handle the add to return button logic

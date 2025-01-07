@@ -981,6 +981,44 @@ class AdminController extends Controller
             ], 500);
         }
     }
+    public function holdSales(Request $request){
+        try {
+            $invoiceNo = $request->invoiceNo;
+
+            // Process each row of stock data and store it in the hold_sale table
+            $rows = json_decode($request->rows, true);
+
+            foreach ($rows as $row) {
+                // Insert into hold_sales table
+                DB::table('hold_sales')->insert([
+                    'invoiceNo' => $invoiceNo,
+                    'product_id' => $row['product_id'],
+                    'product_name' => $row['product_name'],
+                    'batch_no' => $row['batch_no'],
+                    'so_qty' => $row['so_qty'],
+                    'price' => $row['price'],
+                    'total' => $row['total_price'],
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+
+            toastr()->timeOut(5000)->closeButton()->addSuccess('Sale held successfully!');
+            return redirect()->back();
+
+        } catch (\Exception $e) {
+            toastr()->timeOut(5000)->closeButton()->addError('An error occurred: ' . $e->getMessage());
+            return redirect()->back();
+        }
+    }
+    public function deleteHoldSale(Request $request)
+    {
+        $invoiceNo = $request->invoiceNo;
+
+        HoldSale::where('invoiceNo', $invoiceNo)->delete();
+
+        return response()->json(['message' => 'Sales Restored successfully.']);
+    }
     public function sale_returns() {
         $sales = Sale::all();
         $sale_details = SaleDetail::all();
@@ -1032,44 +1070,6 @@ class AdminController extends Controller
             toastr()->timeOut(5000)->closeButton()->addError('An error occurred: ' . $e->getMessage());
             return redirect()->back();
         }
-    }
-    public function holdSales(Request $request){
-        try {
-            $invoiceNo = $request->invoiceNo;
-
-            // Process each row of stock data and store it in the hold_sale table
-            $rows = json_decode($request->rows, true);
-
-            foreach ($rows as $row) {
-                // Insert into hold_sales table
-                DB::table('hold_sales')->insert([
-                    'invoiceNo' => $invoiceNo,
-                    'product_id' => $row['product_id'],
-                    'product_name' => $row['product_name'],
-                    'batch_no' => $row['batch_no'],
-                    'so_qty' => $row['so_qty'],
-                    'price' => $row['price'],
-                    'total' => $row['total_price'],
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
-            }
-
-            toastr()->timeOut(5000)->closeButton()->addSuccess('Sale held successfully!');
-            return redirect()->back();
-
-        } catch (\Exception $e) {
-            toastr()->timeOut(5000)->closeButton()->addError('An error occurred: ' . $e->getMessage());
-            return redirect()->back();
-        }
-    }
-    public function deleteHoldSale(Request $request)
-    {
-        $invoiceNo = $request->invoiceNo;
-
-        HoldSale::where('invoiceNo', $invoiceNo)->delete();
-
-        return response()->json(['message' => 'Sales Restored successfully.']);
     }
 
 
