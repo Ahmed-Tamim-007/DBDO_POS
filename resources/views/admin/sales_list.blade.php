@@ -81,6 +81,7 @@
                         </div>
                         @if ($sale_details->isNotEmpty())
                             <div class="block table-responsive text-center">
+                                <h5 class="text-center">Sales From: {{ \Carbon\Carbon::parse($fromDate)->format('d M, Y') }} &nbsp;- To: {{ \Carbon\Carbon::parse($toDate)->format('d M, Y') }}</h5>
                                 <table class="table table-striped table-hover" id="sales_invoice_table">
                                     <thead>
                                         <tr class="text-primary">

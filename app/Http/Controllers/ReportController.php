@@ -36,6 +36,73 @@ use App\Models\FundTransfer;
 
 class ReportController extends Controller
 {
+    // Stock Reports Functions
+    public function profit_loss_report()
+    {
+        $profitLossData = collect();
+        return view('admin.profit_loss_report', compact('profitLossData'));
+    }
+    public function searchProfitLossReport(Request $request)
+    {
+        $fromDate = $request->from_date ? Carbon::parse($request->from_date)->startOfDay() : null;
+        $toDate = $request->to_date ? Carbon::parse($request->to_date)->endOfDay() : null;
+
+        // Sales data with purchase price included
+        $sales = DB::table('sale_details')
+            ->leftJoin('sales', 'sale_details.id', '=', 'sales.sales_ID')
+            ->leftJoin('stock_ins', function ($join) {
+                $join->on('sales.product_id', '=', 'stock_ins.product_id')
+                    ->on('sales.batch_no', '=', 'stock_ins.batch_no');
+            })
+            ->selectRaw(
+                'DATE(sale_details.created_at) as date,
+                SUM(sale_details.cashPaid) as total_sales_amount,
+                SUM(stock_ins.purchase_price * sales.so_qty) as total_purchase_cost'
+            )
+            ->when($fromDate && $toDate, function ($query) use ($fromDate, $toDate) {
+                $query->whereBetween('sale_details.created_at', [$fromDate, $toDate]);
+            })
+            ->groupBy(DB::raw('DATE(sale_details.created_at)'))
+            ->get();
+
+        // Sale returns data as before
+        $saleReturns = DB::table('sale_returns')
+            ->selectRaw(
+                'DATE(created_at) as date,
+                SUM(total) as total_returns_amount'
+            )
+            ->when($fromDate && $toDate, function ($query) use ($fromDate, $toDate) {
+                $query->whereBetween('created_at', [$fromDate, $toDate]);
+            })
+            ->groupBy(DB::raw('DATE(created_at)'))
+            ->get();
+
+        // Merge and normalize data into a single dataset by date
+        $profitLossData = collect();
+
+        $dates = $sales->pluck('date')->merge($saleReturns->pluck('date'))->unique();
+
+        foreach ($dates as $date) {
+            $salesData = $sales->firstWhere('date', $date);
+            $returnsData = $saleReturns->firstWhere('date', $date);
+
+            $totalSalesAmount = $salesData->total_sales_amount ?? 0;
+            $totalPurchaseCost = $salesData->total_purchase_cost ?? 0;
+            $totalReturnsAmount = $returnsData->total_returns_amount ?? 0;
+
+            $profitLossData->push([
+                'date' => $date,
+                'total_sales_amount' => $totalSalesAmount,
+                'total_purchase_cost' => $totalPurchaseCost,
+                'total_returns_amount' => $totalReturnsAmount,
+                'profit_or_loss' => $totalSalesAmount - $totalPurchaseCost - $totalReturnsAmount,
+            ]);
+        }
+
+        // Return view with data
+        return view('admin.profit_loss_report', compact('profitLossData', 'fromDate', 'toDate'));
+    }
+
     // Sales Reports Functions
     public function sale_list()
     {
@@ -82,7 +149,7 @@ class ReportController extends Controller
         $sales = Sale::all();
 
         // Return the view
-        return view('admin.sales_list', compact('sale_details', 'customers', 'customer_types', 'users', 'sales'));
+        return view('admin.sales_list', compact('sale_details', 'customers', 'customer_types', 'users', 'sales', 'fromDate', 'toDate'));
     }
 
     // Daily Summary Reports Functions
@@ -366,6 +433,59 @@ class ReportController extends Controller
 
         // Return the view
         return view('admin.product_sale_summary', compact('sales', 'products', 'customers', 'categories', 'subcategories', 'brands', 'users', 'fromDate', 'toDate'));
+    }
+
+    // Stock In Summary Functions
+    public function sale_return_report()
+    {
+        $saleReturns = collect();
+        $products = Product::all();
+        $brands = Brand::all();
+
+        return view('admin.sale_return_report', compact('saleReturns', 'products', 'brands'));
+    }
+    public function searchSaleReturnReport(Request $request)
+    {
+        $fromDate = $request->from_date;
+        $toDate = $request->to_date ? Carbon::parse($request->to_date)->endOfDay() : null;
+
+        $saleReturns = DB::table('sale_returns')
+            ->leftJoin('products', 'sale_returns.product_id', '=', 'products.id')
+            ->leftJoin('sale_details', 'sale_returns.sales_ID', '=', 'sale_details.id')
+            ->leftJoin('customers', 'sale_details.customerID', '=', 'customers.id')
+            ->select(
+                'sale_returns.*',
+                'products.title as product_name',
+                'products.barcode as product_code',
+                'products.brand as product_brand',
+                'customers.name as customer_name'
+            )
+            ->when($fromDate && $toDate, function ($query) use ($fromDate, $toDate) {
+                $query->whereBetween('sale_returns.created_at', [$fromDate, $toDate]);
+            })
+            ->when($request->productID, function ($query) use ($request) {
+                $query->where('products.id', $request->productID);
+            })
+            ->when($request->batchNo, function ($query) use ($request) {
+                $query->where('sale_returns.batch_no', $request->batchNo);
+            })
+            ->when($request->brand, function ($query) use ($request) {
+                $query->where('products.brand', $request->brand);
+            })
+            ->when($request->invoiceNo, function ($query) use ($request) {
+                $query->where('sale_returns.invoice_no', $request->invoiceNo);
+            })
+            ->when($request->customerID, function ($query) use ($request) {
+                $query->where('sale_details.customerID', $request->customerID);
+            })
+            ->get();
+
+        // Additional data
+        $products = Product::all();
+        $brands = Brand::all();
+
+        // Return the view
+        return view('admin.sale_return_report', compact('saleReturns', 'products', 'brands', 'fromDate', 'toDate'));
     }
 
     // Employee Transaction Reports Functions

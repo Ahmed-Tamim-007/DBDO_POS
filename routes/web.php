@@ -184,10 +184,16 @@ route::get('fund_transfer', [AdminController::class, 'fund_transfer'])-> middlew
 Route::get('/get-account-balance', [AdminController::class, 'getBalance']);
 route::post('add_fund_trans', [AdminController::class, 'add_fund_trans'])-> middleware('auth', 'admin');
 
+// All Report Routes ------------------------------------------------------------>
+
+// Profit/Loss Report Routes
+route::get('profit_loss_report', [ReportController::class, 'profit_loss_report'])-> middleware('auth', 'admin');
+Route::post('/search-profit-loss-reports', [ReportController::class, 'searchProfitLossReport'])->name('search.profit.loss.reports');
 
 // Sell Invoice Report Routes
 route::get('sale_list', [ReportController::class, 'sale_list'])-> middleware('auth', 'admin');
 Route::post('/search-sales-reports', [ReportController::class, 'searchSalesReports'])->name('search.sales.reports');
+
 // Daily Summary Report Routes
 route::get('daily_summary', [ReportController::class, 'daily_summary'])-> middleware('auth', 'admin');
 Route::post('/daily-summary-reports', [ReportController::class, 'dailySummaryReports'])->name('daily.summary.reports');
@@ -202,6 +208,10 @@ Route::get('/employee/return/summary', [ReportController::class, 'employee_retur
 // Product Sale Report Routes
 route::get('product_sale_report', [ReportController::class, 'product_sale_report'])-> middleware('auth', 'admin');
 Route::post('/search-product-report', [ReportController::class, 'searchProductReport'])->name('search.product.report');
+
+// Sale Return Report Routes
+route::get('sale_return_report', [ReportController::class, 'sale_return_report'])-> middleware('auth', 'admin');
+Route::post('/search-saleReturn-report', [ReportController::class, 'searchSaleReturnReport'])->name('search.saleReturn.report');
 
 // Employee Transaction Report Routes
 route::get('employee_trans_report', [ReportController::class, 'employee_trans_report'])-> middleware('auth', 'admin');

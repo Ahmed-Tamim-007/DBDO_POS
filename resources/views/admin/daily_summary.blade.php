@@ -3,7 +3,7 @@
   <head>
     @include('admin.dash_head')
     <link rel="stylesheet" href="{{asset('admin_css/css/print.css')}}">
-    <title>Admin - Summary Report</title>
+    <title>Admin - Daily-Monthly Summary</title>
     <style>
         .is-invalid {
             border: 1px solid red !important;
@@ -21,15 +21,15 @@
       <div class="page-content">
         <div class="page-header">
           <div class="container-fluid">
-            <h2 class="h5 no-margin-bottom">Reports / Summary Reports</h2>
+            <h2 class="h5 no-margin-bottom">Reports / Daily-Monthly Summary</h2>
           </div>
         </div>
 
         <section class="no-padding-top">
             <div class="container-fluid">
                 <div class="row">
-                    <div class="col-md-8 mx-auto">
-                        <div class="block">
+                    <div class="col-md-12">
+                        <div class="block w-75 mx-auto">
                             <form action="{{ route('daily.summary.reports') }}" method="POST" id="daily_summary_form">
                                 @csrf
                                 <div class="row">
@@ -291,7 +291,7 @@
     <!-- JavaScript files-->
     @include('admin.dash_script')
 
-    <!-- Special Scripts -->
+    <!-- Form Date Validation and else -->
     <script>
         $(document).ready(function () {
             // Validating the For before submitting
