@@ -1060,6 +1060,11 @@ class AdminController extends Controller
                 ->update([
                     'returned' => DB::raw("IFNULL(returned, 0) + {$row['return_qty']}")
                 ]);
+
+                // Decrease amount from Primary Station
+                DB::table('accounts')
+                ->where('id', 4)
+                ->decrement('crnt_balance', $row['total_price']);
             }
 
             toastr()->timeOut(5000)->closeButton()->addSuccess('Sale Return has been successful!');
