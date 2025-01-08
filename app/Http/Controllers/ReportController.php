@@ -47,30 +47,34 @@ class ReportController extends Controller
         $fromDate = $request->from_date ? Carbon::parse($request->from_date)->startOfDay() : null;
         $toDate = $request->to_date ? Carbon::parse($request->to_date)->endOfDay() : null;
 
-        // Sales data with purchase price included
+        // Sales data grouped by day for cashPaid
         $sales = DB::table('sale_details')
-            ->leftJoin('sales', 'sale_details.id', '=', 'sales.sales_ID')
+            ->selectRaw('DATE(created_at) as date, SUM(cashPaid) as total_sales_amount, SUM(cashRound) as total_round_amount')
+            ->when($fromDate && $toDate, function ($query) use ($fromDate, $toDate) {
+                $query->whereBetween('created_at', [$fromDate, $toDate]);
+            })
+            ->groupBy(DB::raw('DATE(created_at)'))
+            ->get();
+
+        // Purchase cost data grouped by day
+        $purchaseCosts = DB::table('sales')
             ->leftJoin('stock_ins', function ($join) {
                 $join->on('sales.product_id', '=', 'stock_ins.product_id')
                     ->on('sales.batch_no', '=', 'stock_ins.batch_no');
             })
             ->selectRaw(
-                'DATE(sale_details.created_at) as date,
-                SUM(sale_details.cashPaid) as total_sales_amount,
+                'DATE(sales.created_at) as date,
                 SUM(stock_ins.purchase_price * sales.so_qty) as total_purchase_cost'
             )
             ->when($fromDate && $toDate, function ($query) use ($fromDate, $toDate) {
-                $query->whereBetween('sale_details.created_at', [$fromDate, $toDate]);
+                $query->whereBetween('sales.created_at', [$fromDate, $toDate]);
             })
-            ->groupBy(DB::raw('DATE(sale_details.created_at)'))
+            ->groupBy(DB::raw('DATE(sales.created_at)'))
             ->get();
 
-        // Sale returns data as before
+        // Sale returns data grouped by day
         $saleReturns = DB::table('sale_returns')
-            ->selectRaw(
-                'DATE(created_at) as date,
-                SUM(total) as total_returns_amount'
-            )
+            ->selectRaw('DATE(created_at) as date, SUM(total) as total_returns_amount')
             ->when($fromDate && $toDate, function ($query) use ($fromDate, $toDate) {
                 $query->whereBetween('created_at', [$fromDate, $toDate]);
             })
@@ -80,22 +84,28 @@ class ReportController extends Controller
         // Merge and normalize data into a single dataset by date
         $profitLossData = collect();
 
-        $dates = $sales->pluck('date')->merge($saleReturns->pluck('date'))->unique();
+        $dates = $sales->pluck('date')
+            ->merge($purchaseCosts->pluck('date'))
+            ->merge($saleReturns->pluck('date'))
+            ->unique();
 
         foreach ($dates as $date) {
             $salesData = $sales->firstWhere('date', $date);
+            $purchaseData = $purchaseCosts->firstWhere('date', $date);
             $returnsData = $saleReturns->firstWhere('date', $date);
 
             $totalSalesAmount = $salesData->total_sales_amount ?? 0;
-            $totalPurchaseCost = $salesData->total_purchase_cost ?? 0;
+            $totalPurchaseCost = $purchaseData->total_purchase_cost ?? 0;
             $totalReturnsAmount = $returnsData->total_returns_amount ?? 0;
+            $totalRoundAmount = $salesData->total_round_amount ?? 0;
 
             $profitLossData->push([
                 'date' => $date,
                 'total_sales_amount' => $totalSalesAmount,
                 'total_purchase_cost' => $totalPurchaseCost,
                 'total_returns_amount' => $totalReturnsAmount,
-                'profit_or_loss' => $totalSalesAmount - $totalPurchaseCost - $totalReturnsAmount,
+                'total_round_amount' => $totalRoundAmount,
+                'profit_or_loss' => $totalSalesAmount - $totalPurchaseCost - $totalReturnsAmount - $totalRoundAmount,
             ]);
         }
 

@@ -123,7 +123,6 @@ class AdminController extends Controller
     }
 
 
-
     // Customers functions ------------------------------------------>
     public function customer_info() {
         $customers = Customer::all();

@@ -45,13 +45,14 @@
                         @if ($profitLossData->isNotEmpty())
                             <div class="block table-responsive">
                                 <h5 class="text-center">Profit/Loss From: {{ \Carbon\Carbon::parse($fromDate)->format('d M, Y') }} &nbsp;- To: {{ \Carbon\Carbon::parse($toDate)->format('d M, Y') }}</h5>
-                                <table class="table table-hover" id="stock_report_table" style="border-bottom: 1px solid #019bee;">
+                                <table class="table table-hover" id="profit_loss_table">
                                     <thead>
                                         <tr class="text-primary">
                                             <th scope="col">Date</th>
-                                            <th scope="col">Total Sales Amount</th>
-                                            <th scope="col">Total Purchase Cost</th>
-                                            <th scope="col">Total Returns Amount</th>
+                                            <th scope="col">Sales Price</th>
+                                            <th scope="col">Buying Price</th>
+                                            <th scope="col">Return Sale</th>
+                                            <th scope="col">Round</th>
                                             <th scope="col">Profit/Loss</th>
                                         </tr>
                                     </thead>
@@ -59,13 +60,24 @@
                                         @foreach ($profitLossData as $data)
                                             <tr>
                                                 <td>{{ $data['date'] }}</td>
-                                                <td>{{ number_format($data['total_sales_amount'], 2) }}</td>
-                                                <td>{{ number_format($data['total_purchase_cost'], 2) }}</td>
-                                                <td>{{ number_format($data['total_returns_amount'], 2) }}</td>
-                                                <td>{{ number_format($data['profit_or_loss'], 2) }}</td>
+                                                <td data-value="{{ $data['total_sales_amount'] }}">{{ number_format($data['total_sales_amount'], 2) }}</td>
+                                                <td data-value="{{ $data['total_purchase_cost'] }}">{{ number_format($data['total_purchase_cost'], 2) }}</td>
+                                                <td data-value="{{ $data['total_returns_amount'] }}">{{ number_format($data['total_returns_amount'], 2) }}</td>
+                                                <td data-value="{{ $data['total_round_amount'] }}">{{ number_format($data['total_round_amount'], 2) }}</td>
+                                                <td data-value="{{ $data['profit_or_loss'] }}">{{ number_format($data['profit_or_loss'], 2) }}</td>
                                             </tr>
                                         @endforeach
                                     </tbody>
+                                    <tfoot>
+                                        <tr class="text-primary">
+                                            <th scope="col" class="text-right">Net Total:</th>
+                                            <th scope="col">0.00</th>
+                                            <th scope="col">0.00</th>
+                                            <th scope="col">0.00</th>
+                                            <th scope="col">0.00</th>
+                                            <th scope="col">0.00</th>
+                                        </tr>
+                                    </tfoot>
                                 </table>
                             </div>
                         @endif
@@ -122,36 +134,36 @@
             });
         });
     </script>
-    <!-- Updating Totals based on the table rows -->
+    <!-- Updating Table Footer based on the table rows -->
     <script>
         $(document).ready(function () {
-            function updateStockReportSummary() {
-                let totalQuantity = 0;
-                let totalItems = 0;
-                let totalStockValue = 0;
-                let estimatedSellingPrice = 0;
+            function updateProfitLossFooterTotals() {
+                let totalSales = 0;
+                let totalPurchase = 0;
+                let totalReturn = 0;
+                let totalRound = 0;
+                let totalProfit = 0;
 
                 // Iterate through each row in the tbody
-                $('#stock_report_table tbody tr').each(function () {
-                    const quantity = parseFloat($(this).find('td').eq(5).text().trim()) || 0;
-                    const purchasePrice = parseFloat($(this).find('td').eq(6).text().trim()) || 0;
-                    const sellingPrice = parseFloat($(this).find('td').eq(7).text().trim()) || 0;
-
-                    totalQuantity += quantity;
-                    totalStockValue += quantity * purchasePrice;
-                    estimatedSellingPrice += quantity * sellingPrice;
-                    totalItems++; // Count each row
+                $("#profit_loss_table tbody tr").each(function () {
+                    totalSales += parseFloat($(this).find("td").eq(1).data('value')) || 0;
+                    totalPurchase += parseFloat($(this).find("td").eq(2).data('value')) || 0;
+                    totalReturn += parseFloat($(this).find("td").eq(3).data('value')) || 0;
+                    totalRound += parseFloat($(this).find("td").eq(4).data('value')) || 0;
+                    totalProfit += parseFloat($(this).find("td").eq(5).data('value')) || 0;
                 });
 
-                // Update the spans
-                $('#t_qty').text(totalQuantity.toFixed(2));
-                $('#t_item').text(totalItems.toFixed(2));
-                $('#stock_val').text(totalStockValue.toFixed(2));
-                $('#est_price').text(estimatedSellingPrice.toFixed(2));
+                // Update the footer with the calculated totals
+                let $tfoot = $("#profit_loss_table tfoot tr");
+                $tfoot.find("th").eq(1).text(totalSales.toFixed(2));
+                $tfoot.find("th").eq(2).text(totalPurchase.toFixed(2));
+                $tfoot.find("th").eq(3).text(totalReturn.toFixed(2));
+                $tfoot.find("th").eq(4).text(totalRound.toFixed(2));
+                $tfoot.find("th").eq(5).text(totalProfit.toFixed(2));
             }
 
-            // Call the function to update the summary on page load
-            updateStockReportSummary();
+            // Call the function on page load
+            updateProfitLossFooterTotals();
         });
     </script>
   </body>

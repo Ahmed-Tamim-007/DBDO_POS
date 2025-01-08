@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use App\Models\Product;
+use App\Models\Account;
 use App\Models\User;
 use App\Models\Cart;
 use App\Models\Category;
@@ -17,11 +19,24 @@ class HomeController extends Controller
 {
     // Authorizing function
     public function index() {
-        $user = User::where('usertype', 'user')->get()->count();
-        $product = Product::all()->count();
-        $order = Order::all()->count();
-        $deliver = Order::where('status', 'Delivered')->get()->count();
-        return view('admin.index', compact('user', 'product', 'order', 'deliver'));
+        // Calculate the total stock value
+        $totalStockValue = DB::table('stocks')
+            ->sum(DB::raw('purchase_price * quantity'));
+
+        // Calculate the total quantity of products available in stock
+        $totalProductsInStock = DB::table('stocks')
+            ->sum('quantity');
+
+        // Calculate the total sales for the last week
+        $fromDate = now()->subWeek()->startOfDay();
+        $toDate = now()->endOfDay();
+        $lastWeekSales = DB::table('sale_details')
+            ->whereBetween('created_at', [$fromDate, $toDate])
+            ->sum('cashPaid');
+
+        $accounts = Account::all();
+
+        return view('admin.index', compact('totalStockValue', 'totalProductsInStock', 'lastWeekSales', 'fromDate', 'toDate', 'accounts'));
     }
 
     // Home page functions
