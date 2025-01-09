@@ -91,16 +91,13 @@
             </ul>
         </li>
 
-        <li class="{{ Request::is('transactions') || Request::is('fund_transfer') || Request::is('transaction_invoice') ? 'active' : '' }}"><a href="#accounts_manage" aria-expanded="false" data-toggle="collapse"> <i class="fas fa-money-check-alt"></i><span>Transactions</span></a>
-            <ul id="accounts_manage" class="collapse list-unstyled {{ Request::is('transactions') || Request::is('fund_transfer') || Request::is('transaction_invoice') ? 'show' : '' }}">
+        <li class="{{ Request::is('transactions') || Request::is('fund_transfer') ? 'active' : '' }}"><a href="#accounts_manage" aria-expanded="false" data-toggle="collapse"> <i class="fas fa-money-check-alt"></i><span>Transactions</span></a>
+            <ul id="accounts_manage" class="collapse list-unstyled {{ Request::is('transactions') || Request::is('fund_transfer') ? 'show' : '' }}">
                 <li class="{{ Request::is('transactions') ? 'active' : '' }}">
                     <a href="{{ url('transactions') }}">Transactions</a>
                 </li>
                 <li class="{{ Request::is('fund_transfer') ? 'active' : '' }}">
                     <a href="{{url('fund_transfer')}}">Fund Transfer</a>
-                </li>
-                <li class="{{ Request::is('transaction_invoice') ? 'active' : '' }}">
-                    <a href="{{url('transaction_invoice')}}">Transaction Invoices</a>
                 </li>
             </ul>
         </li>

@@ -419,6 +419,34 @@
 
     @include('admin.dash_script')
 
+    <!-- Script For Different Divs based on URL -->
+    <script>
+        $(document).ready(function() {
+            const currentUrl = window.location.pathname;
+
+            if (currentUrl === '/customer/transaction') {
+                $('#add_customer_trans').show();
+                $('#add_supplier_trans').hide();
+                $('#add_office_trans').hide();
+                $('#add_employee_trans').hide();
+            } else if (currentUrl === '/supplier/transaction') {
+                $('#add_supplier_trans').show();
+                $('#add_customer_trans').hide();
+                $('#add_office_trans').hide();
+                $('#add_employee_trans').hide();
+            } else if (currentUrl === '/office/transaction') {
+                $('#add_office_trans').show();
+                $('#add_customer_trans').hide();
+                $('#add_supplier_trans').hide();
+                $('#add_employee_trans').hide();
+            } else if (currentUrl === '/employee/transaction') {
+                $('#add_employee_trans').show();
+                $('#add_customer_trans').hide();
+                $('#add_supplier_trans').hide();
+                $('#add_office_trans').hide();
+            }
+        });
+    </script>
     <!-- JS for Others -->
     <script>
         $(document).ready(function() {
@@ -504,34 +532,7 @@
             });
         });
     </script>
-    <!-- Script For Different Divs based on URL -->
-    <script>
-        $(document).ready(function() {
-            const currentUrl = window.location.pathname;
 
-            if (currentUrl === '/customer/transaction') {
-                $('#add_customer_trans').show();
-                $('#add_supplier_trans').hide();
-                $('#add_office_trans').hide();
-                $('#add_employee_trans').hide();
-            } else if (currentUrl === '/supplier/transaction') {
-                $('#add_supplier_trans').show();
-                $('#add_customer_trans').hide();
-                $('#add_office_trans').hide();
-                $('#add_employee_trans').hide();
-            } else if (currentUrl === '/office/transaction') {
-                $('#add_office_trans').show();
-                $('#add_customer_trans').hide();
-                $('#add_supplier_trans').hide();
-                $('#add_employee_trans').hide();
-            } else if (currentUrl === '/employee/transaction') {
-                $('#add_employee_trans').show();
-                $('#add_customer_trans').hide();
-                $('#add_supplier_trans').hide();
-                $('#add_office_trans').hide();
-            }
-        });
-    </script>
     <!-- JS For customer search and customer Due and Submission -->
     <script>
         $(document).ready(function () {
