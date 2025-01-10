@@ -644,6 +644,48 @@
                 var cardAmt = parseFloat($('#m_card_paid').val());
                 var mobileAmt = parseFloat($('#m_mobile_paid').val());
 
+                const m_cardNumber = $('#m_card_number').val();
+                const m_cardType = $('#m_card_type').val();
+                const m_bankType = $('#m_bank_type').val();
+                const m_mobTrans = $('#m_trans_no').val();
+                const m_mobBank = $('#m_mobile_bank').val();
+
+                // Validating when card paying option is selected
+                if (cardAmt > 0) {
+                    // Check if card number is null or empty
+                    if (!m_cardNumber) {
+                        alert("Enter Card number to proceed!");
+                        return;
+                    }
+
+                    // Check if card type is not selected
+                    if (!m_cardType) {
+                        alert("Select a Card type to proceed!");
+                        return;
+                    }
+
+                    // Check if bank type is not selected
+                    if (!m_bankType) {
+                        alert("Select a Bank to proceed!");
+                        return;
+                    }
+                }
+
+                // Validating when mobile paying option is selected
+                if (mobileAmt > 0) {
+                    // Check if card type is not selected
+                    if (!m_mobTrans) {
+                        alert("Enter transaction no. to proceed!");
+                        return;
+                    }
+
+                    // Check if card number is null or empty
+                    if (!m_mobBank) {
+                        alert("Select a mobile bank to proceed!");
+                        return;
+                    }
+                }
+
                 let multiTotal = 0;
 
                 if (cashAmt > 0) {
@@ -1051,6 +1093,48 @@
                 if (cashDue > 0 && !customer_id) {
                     alert('Please enter a Customer to have Due!');
                     return;
+                }
+
+                // Validating when card paying option is selected
+                if (cardPay > 0) {
+                    // Check if card number is null or empty
+                    if (!s_cardNumber) {
+                        alert("Enter Card number to proceed!");
+                        return;
+                    }
+
+                    // Check if card type is not selected
+                    if (!s_cardType) {
+                        alert("Select a Card type to proceed!");
+                        return;
+                    }
+
+                    // Check if bank type is not selected
+                    if (!s_bankType) {
+                        alert("Select a Bank to proceed!");
+                        return;
+                    }
+                }
+
+                // Validating when mobile paying option is selected
+                if (mobilePay > 0) {
+                    // Check if card number is null or empty
+                    if (!s_mobBank) {
+                        alert("Select a mobile bank to proceed!");
+                        return;
+                    }
+
+                    // Check if card type is not selected
+                    if (!s_mobTrans) {
+                        alert("Enter transaction no. to proceed!");
+                        return;
+                    }
+
+                    // Check if bank type is not selected
+                    if (!s_mobRcv) {
+                        alert("Enter Reciever no. to proceed!");
+                        return;
+                    }
                 }
 
                 const rows = [];

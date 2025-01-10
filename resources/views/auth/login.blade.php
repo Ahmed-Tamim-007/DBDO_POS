@@ -20,8 +20,8 @@
                 <div class="info d-flex align-items-center" style="background-color: #17a2b8;">
                     <div class="content pl-3">
                         <div class="logo">
-                            <h1>Giftos</h1>
-                            <h3 class="my-4">Log In form</h3>
+                            <h1>SAFI2 POS</h1>
+                            <h3 class="my-4">Log In</h3>
                         </div>
                         <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque, ipsam velit. Unde esse maiores pariatur soluta velit dolores qui sunt!</p>
                         <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque, ipsam velit. Unde esse maiores pariatur soluta velit dolores qui sunt!</p>
