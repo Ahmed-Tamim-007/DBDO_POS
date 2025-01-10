@@ -1370,6 +1370,43 @@ class AdminController extends Controller
     }
 
     // Transaction related functions
+    public function transactions() {
+        $customer_transactions = CustomerTransaction::join('customers', 'customer_transactions.customerID', '=', 'customers.id')
+            ->join('accounts', 'customer_transactions.account', '=', 'accounts.id')
+            ->select(
+                'customer_transactions.*',
+                'customers.name as customer_name',
+                'accounts.acc_name as account_name',
+                'accounts.acc_no as account_no'
+            )
+            ->get();
+        $supplier_transactions = SupplierTransaction::join('suppliers', 'supplier_transactions.supplierID', '=', 'suppliers.id')
+            ->join('accounts', 'supplier_transactions.account', '=', 'accounts.id')
+            ->select(
+                'supplier_transactions.*',
+                'suppliers.supplier_name as supplier_name',
+                'accounts.acc_name as account_name',
+                'accounts.acc_no as account_no'
+            )
+            ->get();
+        $office_transactions = OfficeTransaction::join('accounts', 'office_transactions.account', '=', 'accounts.id')
+            ->select(
+                'office_transactions.*',
+                'accounts.acc_name as account_name',
+                'accounts.acc_no as account_no'
+            )
+            ->get();
+        $employee_transactions = EmployeeTransaction::join('accounts', 'employee_transactions.account', '=', 'accounts.id')
+            ->select(
+                'employee_transactions.*',
+                'accounts.acc_name as account_name',
+                'accounts.acc_no as account_no'
+            )
+            ->get();
+
+        return view('admin.transactions', compact('customer_transactions', 'supplier_transactions', 'office_transactions', 'employee_transactions'));
+    }
+
     public function customer_trans() {
         $accounts = Account::all();
         $categories = ExpenseCategory::all();

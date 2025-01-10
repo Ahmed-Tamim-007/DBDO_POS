@@ -164,7 +164,6 @@ route::get('delete_trans_cat/{id}', [AdminController::class, 'delete_trans_cat']
 
 // Transaction related routes
 route::get('transactions', [AdminController::class, 'transactions'])-> middleware('auth', 'admin');
-Route::get('/api/next-transaction-number', [AdminController::class, 'getNextTransactionNumber']);
 
 route::get('customer/transaction', [AdminController::class, 'customer_trans'])-> middleware('auth', 'admin');
 route::post('/save-customer-transaction', [AdminController::class, 'add_customer_trans'])->name('save.customer.transaction');

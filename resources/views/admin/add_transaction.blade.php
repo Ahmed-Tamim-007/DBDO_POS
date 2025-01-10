@@ -35,103 +35,10 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="block">
-                            <!-- Customer -->
-                            <div id="add_customer_trans">
-                                <h3>Add Customer Transaction</h3>
-                                <div class="row">
-                                    <div class="col-md-8">
-                                        <div class="row">
-                                            <div class="col-md-6 mb-4">
-                                                <label class="required-label">Transaction No</label>
-                                                <input type="text" class="form-control trans_no" name="transactionNO" value="{{ $nextTransactionNumber }}" readonly>
-                                            </div>
-                                            <div class="col-md-6 mb-4 position-relative">
-                                                <label class="required-label">Customer</label>
-                                                <input type="text" id="customer_search" name="customer" class="form-control" autocomplete="off" placeholder="Search Customer..." required>
-                                                <input type="hidden" name="customerID" id="customerID">
-                                                <div id="customer_search_list" class="list-group" style="width: 90%;"></div>
-                                            </div>
-
-                                            <div class="col-md-12 mb-4 d-none table-responsive" id="unpaid_orders">
-                                                <label class="required-label">Unpaid Orders</label>
-                                                <table class="table table-hover" id="due_table">
-                                                    <thead>
-                                                        <tr class="text-primary">
-                                                            <th scope="col">Invoice</th>
-                                                            <th scope="col">Total</th>
-                                                            <th scope="col">Due</th>
-                                                            <th scope="col">Pay</th>
-                                                            <th scope="col">Settle</th>
-                                                        </tr>
-                                                    </thead>
-
-                                                    <tbody>
-                                                    </tbody>
-
-                                                    <tfoot>
-                                                        <tr class="text-primary">
-                                                            <th scope="col" colspan="2" class="text-right">Total Due:</th>
-                                                            <th scope="col">0.00</th>
-                                                            <th scope="col">0.00</th>
-                                                            <th scope="col"></th>
-                                                        </tr>
-                                                    </tfoot>
-                                                </table>
-                                            </div>
-                                            <div class="col-md-6 mb-4">
-                                                <label class="required-label">Amount Paid</label>
-                                                <input type="text" class="form-control trans_amt" name="amt_paid" required>
-                                            </div>
-                                            <div class="col-md-6 mb-4">
-                                                <label class="required-label">Payment Date</label>
-                                                <input type="date" class="form-control trans_date" name="pay_date" readonly>
-                                            </div>
-                                            <div class="col-md-6 mb-4">
-                                                <label class="required-label">Account</label>
-                                                <select class="form-control form-select" name="account" aria-label="Default select example" required>
-                                                    <option value="" selected>Select One</option>
-
-                                                    @foreach ($accounts as $account)
-                                                        <option value="{{ $account->id }}">
-                                                            {{ $account->acc_name }} &nbsp; {{ $account->acc_no }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                            <div class="col-md-6 mb-4">
-                                                <label class="">Description</label>
-                                                <textarea name="description" class="form-control" rows="2"></textarea>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <h4 class="text-center" style="color: #019bee;">Documents</h4>
-                                        <div class="p-3" style="border: 1px solid #e0e0e0;">
-                                            <div class="mb-4">
-                                                <label class="">Name</label>
-                                                <input type="text" class="form-control form-control-sm" name="doc_name">
-                                            </div>
-                                            <div class="mb-4">
-                                                <label class="">Description</label>
-                                                <textarea name="doc_description" class="form-control form-control-sm" rows="2"></textarea>
-                                            </div>
-                                            <div class="">
-                                                <label class="">Select File</label>
-                                                <input type="file" class="form-control form-control-sm" id="image" name="image">
-                                                <p class="text-primary mb-0 text-bold" style="font-size: 12px">Use jpg,jpeg,png,xls,doc,pdf only.</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-12 text-center">
-                                        <input type="submit" id="customer_trans_submit" class="btn btn-primary mt-3 px-5" value="Submit">
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- Supplier -->
-                            <div id="add_supplier_trans">
-                                <h3>Add Supplier Transaction</h3>
-                                <form class="validate_form" action="{{url('add_supplier_trans')}}" method="POST" enctype="multipart/form-data">
-                                    @csrf
+                            @if (Request::is('customer/transaction'))
+                                <!-- Customer -->
+                                <div id="add_customer_trans">
+                                    <h3>Add Customer Transaction</h3>
                                     <div class="row">
                                         <div class="col-md-8">
                                             <div class="row">
@@ -140,110 +47,37 @@
                                                     <input type="text" class="form-control trans_no" name="transactionNO" value="{{ $nextTransactionNumber }}" readonly>
                                                 </div>
                                                 <div class="col-md-6 mb-4 position-relative">
-                                                    <label class="required-label">Supplier</label>
-                                                    <input type="text" id="supplier_search" name="supplier" class="form-control" autocomplete="off" placeholder="Search Supplier..." required>
-                                                    <input type="hidden" name="supplierID" id="supplierID">
-                                                    <div id="supplier_search_list" class="list-group" style="width: 90%;"></div>
+                                                    <label class="required-label">Customer</label>
+                                                    <input type="text" id="customer_search" name="customer" class="form-control" autocomplete="off" placeholder="Search Customer..." required>
+                                                    <input type="hidden" name="customerID" id="customerID">
+                                                    <div id="customer_search_list" class="list-group" style="width: 90%;"></div>
                                                 </div>
-                                                <div class="col-md-6 mb-4">
-                                                    <label class="required-label">Amount Advanced</label>
-                                                    <input type="text" class="form-control trans_amt" name="amt_paid" required>
-                                                </div>
-                                                <div class="col-md-6 mb-4">
-                                                    <label class="required-label">Payment Date</label>
-                                                    <input type="date" class="form-control trans_date" name="pay_date" readonly>
-                                                </div>
-                                                <div class="col-md-6 mb-4">
-                                                    <label class="required-label">Account</label>
-                                                    <select class="form-control form-select" name="account" aria-label="Default select example" required>
-                                                        <option value="" selected>Select One</option>
 
-                                                        @foreach ($accounts as $account)
-                                                            <option value="{{ $account->id }}">
-                                                                {{ $account->acc_name }} &nbsp; {{ $account->acc_no }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                                <div class="col-md-6 mb-4">
-                                                    <label class="">Description</label>
-                                                    <textarea name="description" class="form-control" rows="2"></textarea>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <h4 class="text-center" style="color: #019bee;">Documents</h4>
-                                            <div class="p-3" style="border: 1px solid #e0e0e0;">
-                                                <div class="mb-4">
-                                                    <label class="">Name</label>
-                                                    <input type="text" class="form-control form-control-sm" name="doc_name">
-                                                </div>
-                                                <div class="mb-4">
-                                                    <label class="">Description</label>
-                                                    <textarea name="doc_description" class="form-control form-control-sm" rows="2"></textarea>
-                                                </div>
-                                                <div class="">
-                                                    <label class="">Select File</label>
-                                                    <input type="file" class="form-control form-control-sm" id="image" name="image">
-                                                    <p class="text-primary mb-0 text-bold" style="font-size: 12px">Use jpg,jpeg,png,xls,doc,pdf only.</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-12 text-center">
-                                            <input type="submit" class="btn btn-primary mt-3 px-5" value="Submit">
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                            <!-- Office -->
-                            <div id="add_office_trans">
-                                <h3>Add Office Transaction</h3>
-                                <form class="validate_form" action="{{url('add_office_trans')}}" method="POST" enctype="multipart/form-data">
-                                    @csrf
-                                    <div class="row">
-                                        <div class="col-md-8">
-                                            <div class="row">
-                                                <div class="col-md-6 mb-4">
-                                                    <label class="required-label">Transaction No</label>
-                                                    <input type="text" class="form-control trans_no" name="transactionNO" value="{{ $nextTransactionNumber }}" readonly>
-                                                </div>
-                                                <div class="col-md-6 mb-4">
-                                                    <label for="type" class="required-label">Type</label>
-                                                    <div>
-                                                        <input type="radio" id="expense" class="custom-radio" name="type" value="Expense" checked>
-                                                        <label for="expense" class="mr-3">Expense</label>
+                                                <div class="col-md-12 mb-4 d-none table-responsive" id="unpaid_orders">
+                                                    <label class="required-label">Unpaid Orders</label>
+                                                    <table class="table table-hover" id="due_table">
+                                                        <thead>
+                                                            <tr class="text-primary">
+                                                                <th scope="col">Invoice</th>
+                                                                <th scope="col">Total</th>
+                                                                <th scope="col">Due</th>
+                                                                <th scope="col">Pay</th>
+                                                                <th scope="col">Settle</th>
+                                                            </tr>
+                                                        </thead>
 
-                                                        <input type="radio" id="income" class="custom-radio" name="type" value="Income">
-                                                        <label for="income" class="mr-3">Income</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6 mb-4" id="expense_div">
-                                                    <label class="required-label">Expense</label>
-                                                    <select class="form-control form-select" name="exp_type" aria-label="Default select example">
-                                                        <option value="" selected>Select One</option>
+                                                        <tbody>
+                                                        </tbody>
 
-                                                        @foreach ($categories as $category)
-                                                            @if ($category->catType == 'Expense')
-                                                                <option value="{{ $category->catName }}">
-                                                                    {{ $category->catName }}
-                                                                </option>
-                                                            @endif
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                                <div class="col-md-6 mb-4" id="income_div">
-                                                    <label class="required-label">Income</label>
-                                                    <select class="form-control form-select" name="exp_type" aria-label="Default select example">
-                                                        <option value="" selected>Select One</option>
-
-                                                        @foreach ($categories as $category)
-                                                            @if ($category->catType == 'Income')
-                                                                <option value="{{ $category->catName }}">
-                                                                    {{ $category->catName }}
-                                                                </option>
-                                                            @endif
-                                                        @endforeach
-                                                    </select>
+                                                        <tfoot>
+                                                            <tr class="text-primary">
+                                                                <th scope="col" colspan="2" class="text-right">Total Due:</th>
+                                                                <th scope="col">0.00</th>
+                                                                <th scope="col">0.00</th>
+                                                                <th scope="col"></th>
+                                                            </tr>
+                                                        </tfoot>
+                                                    </table>
                                                 </div>
                                                 <div class="col-md-6 mb-4">
                                                     <label class="required-label">Amount Paid</label>
@@ -290,121 +124,292 @@
                                             </div>
                                         </div>
                                         <div class="col-md-12 text-center">
-                                            <input type="submit" id="office_trans_submit" class="btn btn-primary mt-3 px-5" value="Submit">
+                                            <input type="submit" id="customer_trans_submit" class="btn btn-primary mt-3 px-5" value="Submit">
                                         </div>
                                     </div>
-                                </form>
-                            </div>
-                            <!-- Employee -->
-                            <div id="add_employee_trans">
-                                <h3>Add Employee Transaction</h3>
-                                <form class="validate_form" action="{{url('add_employee_trans')}}" method="POST" enctype="multipart/form-data">
-                                    @csrf
-                                    <div class="row">
-                                        <div class="col-md-8">
-                                            <div class="row">
-                                                <div class="col-md-6 mb-4">
-                                                    <label class="required-label">Transaction No</label>
-                                                    <input type="text" class="form-control trans_no" name="transactionNO" value="{{ $nextTransactionNumber }}" readonly>
-                                                </div>
-                                                <div class="col-md-6 mb-4">
-                                                    <label class="required-label">Employee</label>
-                                                    <select class="form-control form-select" name="employee" aria-label="Default select example" required>
-                                                        <option value="" selected>Select One</option>
-                                                        <option value="Employee A">Employee A</option>
-                                                        <option value="Employee B">Employee B</option>
-                                                        <option value="Employee C">Employee C</option>
+                                </div>
+                            @elseif (Request::is('supplier/transaction'))
+                                <!-- Supplier -->
+                                <div id="add_supplier_trans">
+                                    <h3>Add Supplier Transaction</h3>
+                                    <form class="validate_form" action="{{url('add_supplier_trans')}}" method="POST" enctype="multipart/form-data">
+                                        @csrf
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <div class="row">
+                                                    <div class="col-md-6 mb-4">
+                                                        <label class="required-label">Transaction No</label>
+                                                        <input type="text" class="form-control trans_no" name="transactionNO" value="{{ $nextTransactionNumber }}" readonly>
+                                                    </div>
+                                                    <div class="col-md-6 mb-4 position-relative">
+                                                        <label class="required-label">Supplier</label>
+                                                        <input type="text" id="supplier_search" name="supplier" class="form-control" autocomplete="off" placeholder="Search Supplier..." required>
+                                                        <input type="hidden" name="supplierID" id="supplierID">
+                                                        <div id="supplier_search_list" class="list-group" style="width: 90%;"></div>
+                                                    </div>
+                                                    <div class="col-md-6 mb-4">
+                                                        <label class="required-label">Amount Advanced</label>
+                                                        <input type="text" class="form-control trans_amt" name="amt_paid" required>
+                                                    </div>
+                                                    <div class="col-md-6 mb-4">
+                                                        <label class="required-label">Payment Date</label>
+                                                        <input type="date" class="form-control trans_date" name="pay_date" readonly>
+                                                    </div>
+                                                    <div class="col-md-6 mb-4">
+                                                        <label class="required-label">Account</label>
+                                                        <select class="form-control form-select" name="account" aria-label="Default select example" required>
+                                                            <option value="" selected>Select One</option>
 
-                                                        {{-- @foreach ($accounts as $account)
-                                                            <option value="{{ $account->id }}">
-                                                                {{ $account->acc_name }} &nbsp; {{ $account->acc_no }}
-                                                            </option>
-                                                        @endforeach --}}
-                                                    </select>
-                                                </div>
-                                                <div class="col-md-6 mb-4">
-                                                    <label for="trans_type" class="required-label">Type</label>
-                                                    <div>
-                                                        <input type="radio" id="payment" class="custom-radio" name="trans_type" value="Payment" checked>
-                                                        <label for="payment" class="mr-3">Payment</label>
-
-                                                        <input type="radio" id="return" class="custom-radio" name="trans_type" value="Return">
-                                                        <label for="return" class="mr-3">Return</label>
+                                                            @foreach ($accounts as $account)
+                                                                <option value="{{ $account->id }}">
+                                                                    {{ $account->acc_name }} &nbsp; {{ $account->acc_no }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-6 mb-4">
+                                                        <label class="">Description</label>
+                                                        <textarea name="description" class="form-control" rows="2"></textarea>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6 mb-4" id="payment_div">
-                                                    <label class="required-label">Payment</label>
-                                                    <select class="form-control form-select" name="emp_trans_type" aria-label="Default select example">
-                                                        <option value="" selected>Select One</option>
-
-                                                        <option value="Salary">Salary</option>
-                                                        <option value="Festival Bonus">Festival Bonus</option>
-                                                        <option value="Performance Bonus">Performance Bonus</option>
-                                                        <option value="Incentive">Incentive</option>
-                                                        <option value="Loan">Loan</option>
-                                                        <option value="Others">Others</option>
-                                                    </select>
-                                                </div>
-                                                <div class="col-md-6 mb-4" id="return_div">
-                                                    <label class="required-label">Return</label>
-                                                    <select class="form-control form-select" name="emp_trans_type" aria-label="Default select example">
-                                                        <option value="" selected>Select One</option>
-
-                                                        <option value="Fine">Fine</option>
-                                                        <option value="Loan Returns">Loan Returns</option>
-                                                        <option value="Others">Others</option>
-                                                    </select>
-                                                </div>
-                                                <div class="col-md-6 mb-4">
-                                                    <label class="required-label">Amount Paid</label>
-                                                    <input type="text" class="form-control trans_amt" name="amt_paid" required>
-                                                </div>
-                                                <div class="col-md-6 mb-4">
-                                                    <label class="required-label">Payment Date</label>
-                                                    <input type="date" class="form-control trans_date" name="pay_date" readonly>
-                                                </div>
-                                                <div class="col-md-6 mb-4">
-                                                    <label class="required-label">Account</label>
-                                                    <select class="form-control form-select" name="account" aria-label="Default select example" required>
-                                                        <option value="" selected>Select One</option>
-
-                                                        @foreach ($accounts as $account)
-                                                            <option value="{{ $account->id }}">
-                                                                {{ $account->acc_name }} &nbsp; {{ $account->acc_no }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                                <div class="col-md-6 mb-4">
-                                                    <label class="">Description</label>
-                                                    <textarea name="description" class="form-control" rows="2"></textarea>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h4 class="text-center" style="color: #019bee;">Documents</h4>
+                                                <div class="p-3" style="border: 1px solid #e0e0e0;">
+                                                    <div class="mb-4">
+                                                        <label class="">Name</label>
+                                                        <input type="text" class="form-control form-control-sm" name="doc_name">
+                                                    </div>
+                                                    <div class="mb-4">
+                                                        <label class="">Description</label>
+                                                        <textarea name="doc_description" class="form-control form-control-sm" rows="2"></textarea>
+                                                    </div>
+                                                    <div class="">
+                                                        <label class="">Select File</label>
+                                                        <input type="file" class="form-control form-control-sm" id="image" name="image">
+                                                        <p class="text-primary mb-0 text-bold" style="font-size: 12px">Use jpg,jpeg,png,xls,doc,pdf only.</p>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <h4 class="text-center" style="color: #019bee;">Documents</h4>
-                                            <div class="p-3" style="border: 1px solid #e0e0e0;">
-                                                <div class="mb-4">
-                                                    <label class="">Name</label>
-                                                    <input type="text" class="form-control form-control-sm" name="doc_name">
-                                                </div>
-                                                <div class="mb-4">
-                                                    <label class="">Description</label>
-                                                    <textarea name="doc_description" class="form-control form-control-sm" rows="2"></textarea>
-                                                </div>
-                                                <div class="">
-                                                    <label class="">Select File</label>
-                                                    <input type="file" class="form-control form-control-sm" id="image" name="image">
-                                                    <p class="text-primary mb-0 text-bold" style="font-size: 12px">Use jpg,jpeg,png,xls,doc,pdf only.</p>
-                                                </div>
+                                            <div class="col-md-12 text-center">
+                                                <input type="submit" class="btn btn-primary mt-3 px-5" value="Submit">
                                             </div>
                                         </div>
-                                        <div class="col-md-12 text-center">
-                                            <input type="submit" class="btn btn-primary mt-3 px-5" value="Submit">
+                                    </form>
+                                </div>
+                            @elseif (Request::is('office/transaction'))
+                                <!-- Office -->
+                                <div id="add_office_trans">
+                                    <h3>Add Office Transaction</h3>
+                                    <form class="validate_form" action="{{url('add_office_trans')}}" method="POST" enctype="multipart/form-data">
+                                        @csrf
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <div class="row">
+                                                    <div class="col-md-6 mb-4">
+                                                        <label class="required-label">Transaction No</label>
+                                                        <input type="text" class="form-control trans_no" name="transactionNO" value="{{ $nextTransactionNumber }}" readonly>
+                                                    </div>
+                                                    <div class="col-md-6 mb-4">
+                                                        <label for="type" class="required-label">Type</label>
+                                                        <div>
+                                                            <input type="radio" id="expense" class="custom-radio" name="type" value="Expense" checked>
+                                                            <label for="expense" class="mr-3">Expense</label>
+
+                                                            <input type="radio" id="income" class="custom-radio" name="type" value="Income">
+                                                            <label for="income" class="mr-3">Income</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 mb-4" id="expense_div">
+                                                        <label class="required-label">Expense</label>
+                                                        <select class="form-control form-select" name="exp_type" aria-label="Default select example">
+                                                            <option value="" selected>Select One</option>
+
+                                                            @foreach ($categories as $category)
+                                                                @if ($category->catType == 'Expense')
+                                                                    <option value="{{ $category->catName }}">
+                                                                        {{ $category->catName }}
+                                                                    </option>
+                                                                @endif
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-6 mb-4" id="income_div">
+                                                        <label class="required-label">Income</label>
+                                                        <select class="form-control form-select" name="exp_type" aria-label="Default select example">
+                                                            <option value="" selected>Select One</option>
+
+                                                            @foreach ($categories as $category)
+                                                                @if ($category->catType == 'Income')
+                                                                    <option value="{{ $category->catName }}">
+                                                                        {{ $category->catName }}
+                                                                    </option>
+                                                                @endif
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-6 mb-4">
+                                                        <label class="required-label">Amount Paid</label>
+                                                        <input type="text" class="form-control trans_amt" name="amt_paid" required>
+                                                    </div>
+                                                    <div class="col-md-6 mb-4">
+                                                        <label class="required-label">Payment Date</label>
+                                                        <input type="date" class="form-control trans_date" name="pay_date" readonly>
+                                                    </div>
+                                                    <div class="col-md-6 mb-4">
+                                                        <label class="required-label">Account</label>
+                                                        <select class="form-control form-select" name="account" aria-label="Default select example" required>
+                                                            <option value="" selected>Select One</option>
+
+                                                            @foreach ($accounts as $account)
+                                                                <option value="{{ $account->id }}">
+                                                                    {{ $account->acc_name }} &nbsp; {{ $account->acc_no }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-6 mb-4">
+                                                        <label class="">Description</label>
+                                                        <textarea name="description" class="form-control" rows="2"></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h4 class="text-center" style="color: #019bee;">Documents</h4>
+                                                <div class="p-3" style="border: 1px solid #e0e0e0;">
+                                                    <div class="mb-4">
+                                                        <label class="">Name</label>
+                                                        <input type="text" class="form-control form-control-sm" name="doc_name">
+                                                    </div>
+                                                    <div class="mb-4">
+                                                        <label class="">Description</label>
+                                                        <textarea name="doc_description" class="form-control form-control-sm" rows="2"></textarea>
+                                                    </div>
+                                                    <div class="">
+                                                        <label class="">Select File</label>
+                                                        <input type="file" class="form-control form-control-sm" id="image" name="image">
+                                                        <p class="text-primary mb-0 text-bold" style="font-size: 12px">Use jpg,jpeg,png,xls,doc,pdf only.</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12 text-center">
+                                                <input type="submit" id="office_trans_submit" class="btn btn-primary mt-3 px-5" value="Submit">
+                                            </div>
                                         </div>
-                                    </div>
-                                </form>
-                            </div>
+                                    </form>
+                                </div>
+                            @elseif (Request::is('employee/transaction'))
+                                <!-- Employee -->
+                                <div id="add_employee_trans">
+                                    <h3>Add Employee Transaction</h3>
+                                    <form class="validate_form" action="{{url('add_employee_trans')}}" method="POST" enctype="multipart/form-data">
+                                        @csrf
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <div class="row">
+                                                    <div class="col-md-6 mb-4">
+                                                        <label class="required-label">Transaction No</label>
+                                                        <input type="text" class="form-control trans_no" name="transactionNO" value="{{ $nextTransactionNumber }}" readonly>
+                                                    </div>
+                                                    <div class="col-md-6 mb-4">
+                                                        <label class="required-label">Employee</label>
+                                                        <select class="form-control form-select" name="employee" aria-label="Default select example" required>
+                                                            <option value="" selected>Select One</option>
+                                                            <option value="Employee A">Employee A</option>
+                                                            <option value="Employee B">Employee B</option>
+                                                            <option value="Employee C">Employee C</option>
+
+                                                            {{-- @foreach ($accounts as $account)
+                                                                <option value="{{ $account->id }}">
+                                                                    {{ $account->acc_name }} &nbsp; {{ $account->acc_no }}
+                                                                </option>
+                                                            @endforeach --}}
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-6 mb-4">
+                                                        <label for="trans_type" class="required-label">Type</label>
+                                                        <div>
+                                                            <input type="radio" id="payment" class="custom-radio" name="trans_type" value="Payment" checked>
+                                                            <label for="payment" class="mr-3">Payment</label>
+
+                                                            <input type="radio" id="return" class="custom-radio" name="trans_type" value="Return">
+                                                            <label for="return" class="mr-3">Return</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 mb-4" id="payment_div">
+                                                        <label class="required-label">Payment</label>
+                                                        <select class="form-control form-select" name="emp_trans_type" aria-label="Default select example">
+                                                            <option value="" selected>Select One</option>
+
+                                                            <option value="Salary">Salary</option>
+                                                            <option value="Festival Bonus">Festival Bonus</option>
+                                                            <option value="Performance Bonus">Performance Bonus</option>
+                                                            <option value="Incentive">Incentive</option>
+                                                            <option value="Loan">Loan</option>
+                                                            <option value="Others">Others</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-6 mb-4" id="return_div">
+                                                        <label class="required-label">Return</label>
+                                                        <select class="form-control form-select" name="emp_trans_type" aria-label="Default select example">
+                                                            <option value="" selected>Select One</option>
+
+                                                            <option value="Fine">Fine</option>
+                                                            <option value="Loan Returns">Loan Returns</option>
+                                                            <option value="Others">Others</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-6 mb-4">
+                                                        <label class="required-label">Amount Paid</label>
+                                                        <input type="text" class="form-control trans_amt" name="amt_paid" required>
+                                                    </div>
+                                                    <div class="col-md-6 mb-4">
+                                                        <label class="required-label">Payment Date</label>
+                                                        <input type="date" class="form-control trans_date" name="pay_date" readonly>
+                                                    </div>
+                                                    <div class="col-md-6 mb-4">
+                                                        <label class="required-label">Account</label>
+                                                        <select class="form-control form-select" name="account" aria-label="Default select example" required>
+                                                            <option value="" selected>Select One</option>
+
+                                                            @foreach ($accounts as $account)
+                                                                <option value="{{ $account->id }}">
+                                                                    {{ $account->acc_name }} &nbsp; {{ $account->acc_no }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-6 mb-4">
+                                                        <label class="">Description</label>
+                                                        <textarea name="description" class="form-control" rows="2"></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h4 class="text-center" style="color: #019bee;">Documents</h4>
+                                                <div class="p-3" style="border: 1px solid #e0e0e0;">
+                                                    <div class="mb-4">
+                                                        <label class="">Name</label>
+                                                        <input type="text" class="form-control form-control-sm" name="doc_name">
+                                                    </div>
+                                                    <div class="mb-4">
+                                                        <label class="">Description</label>
+                                                        <textarea name="doc_description" class="form-control form-control-sm" rows="2"></textarea>
+                                                    </div>
+                                                    <div class="">
+                                                        <label class="">Select File</label>
+                                                        <input type="file" class="form-control form-control-sm" id="image" name="image">
+                                                        <p class="text-primary mb-0 text-bold" style="font-size: 12px">Use jpg,jpeg,png,xls,doc,pdf only.</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12 text-center">
+                                                <input type="submit" class="btn btn-primary mt-3 px-5" value="Submit">
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -488,7 +493,7 @@
         });
     </script>
     <!-- Script For Different Divs based on URL -->
-    <script>
+    {{-- <script>
         $(document).ready(function() {
             const currentUrl = window.location.pathname;
 
@@ -514,7 +519,7 @@
                 $('#add_office_trans').hide();
             }
         });
-    </script>
+    </script> --}}
     <!-- JS For customer search and customer Due and Submission -->
     <script>
         $(document).ready(function () {
