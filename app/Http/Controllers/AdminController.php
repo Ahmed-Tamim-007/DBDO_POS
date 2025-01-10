@@ -1370,68 +1370,21 @@ class AdminController extends Controller
     }
 
     // Transaction related functions
-    public function transactions() {
-        $customer_transactions = CustomerTransaction::join('customers', 'customer_transactions.customerID', '=', 'customers.id')
-            ->join('accounts', 'customer_transactions.account', '=', 'accounts.id')
-            ->select(
-                'customer_transactions.*',
-                'customers.name as customer_name',
-                'accounts.acc_name as account_name',
-                'accounts.acc_no as account_no'
-            )
-            ->get();
-        $supplier_transactions = SupplierTransaction::join('suppliers', 'supplier_transactions.supplierID', '=', 'suppliers.id')
-            ->join('accounts', 'supplier_transactions.account', '=', 'accounts.id')
-            ->select(
-                'supplier_transactions.*',
-                'suppliers.supplier_name as supplier_name',
-                'accounts.acc_name as account_name',
-                'accounts.acc_no as account_no'
-            )
-            ->get();
-        $office_transactions = OfficeTransaction::join('accounts', 'office_transactions.account', '=', 'accounts.id')
-            ->select(
-                'office_transactions.*',
-                'accounts.acc_name as account_name',
-                'accounts.acc_no as account_no'
-            )
-            ->get();
-        $employee_transactions = EmployeeTransaction::join('accounts', 'employee_transactions.account', '=', 'accounts.id')
-            ->select(
-                'employee_transactions.*',
-                'accounts.acc_name as account_name',
-                'accounts.acc_no as account_no'
-            )
-            ->get();
-
-        return view('admin.transactions', compact('customer_transactions', 'supplier_transactions', 'office_transactions', 'employee_transactions'));
-    }
-    public function getNextTransactionNumber()
-    {
-        $customerTransaction = DB::table('customer_transactions')->max('transactionNO');
-        $supplierTransaction = DB::table('supplier_transactions')->max('transactionNO');
-        $officeTransaction = DB::table('office_transactions')->max('transactionNO');
-        $employeeTransaction = DB::table('employee_transactions')->max('transactionNO');
-
-        // Extract the numeric parts and find the max value
-        $maxTransactionNumber = collect([$customerTransaction, $supplierTransaction, $officeTransaction, $employeeTransaction])
-            ->filter() // Remove null values
-            ->map(function ($value) {
-                return (int) filter_var($value, FILTER_SANITIZE_NUMBER_INT);
-            })
-            ->max();
-
-        // Generate the next transaction number (normal integer increment)
-        $nextTransactionNumber = $maxTransactionNumber + 1;
-
-        return response()->json(['nextTransactionNumber' => $nextTransactionNumber]);
-    }
-
     public function customer_trans() {
         $accounts = Account::all();
         $categories = ExpenseCategory::all();
         $sale_details = SaleDetail::all();
-        return view('admin.add_transaction', compact('accounts', 'categories', 'sale_details'));
+
+        // Fetch the max transactionNO from all tables
+        $maxCustomerTransaction = DB::table('customer_transactions')->max('transactionNO');
+        $maxSupplierTransaction = DB::table('supplier_transactions')->max('transactionNO');
+        $maxOfficeTransaction = DB::table('office_transactions')->max('transactionNO');
+        $maxEmployeeTransaction = DB::table('employee_transactions')->max('transactionNO');
+
+        // Find the maximum of all values and increment by 1
+        $nextTransactionNumber = max($maxCustomerTransaction, $maxSupplierTransaction, $maxOfficeTransaction, $maxEmployeeTransaction) + 1;
+
+        return view('admin.add_transaction', compact('accounts', 'categories', 'sale_details', 'nextTransactionNumber'));
     }
     public function add_customer_trans(Request $request)
     {
@@ -1511,7 +1464,16 @@ class AdminController extends Controller
         $accounts = Account::all();
         $categories = ExpenseCategory::all();
         $sale_details = SaleDetail::all();
-        return view('admin.add_transaction', compact('accounts', 'categories', 'sale_details'));
+
+        // Fetch the max transactionNO from all tables
+        $maxCustomerTransaction = DB::table('customer_transactions')->max('transactionNO');
+        $maxSupplierTransaction = DB::table('supplier_transactions')->max('transactionNO');
+        $maxOfficeTransaction = DB::table('office_transactions')->max('transactionNO');
+        $maxEmployeeTransaction = DB::table('employee_transactions')->max('transactionNO');
+
+        // Find the maximum of all values and increment by 1
+        $nextTransactionNumber = max($maxCustomerTransaction, $maxSupplierTransaction, $maxOfficeTransaction, $maxEmployeeTransaction) + 1;
+        return view('admin.add_transaction', compact('accounts', 'categories', 'sale_details', 'nextTransactionNumber'));
     }
     public function supplier_search(Request $request)
     {
@@ -1554,7 +1516,16 @@ class AdminController extends Controller
         $accounts = Account::all();
         $categories = ExpenseCategory::all();
         $sale_details = SaleDetail::all();
-        return view('admin.add_transaction', compact('accounts', 'categories', 'sale_details'));
+
+        // Fetch the max transactionNO from all tables
+        $maxCustomerTransaction = DB::table('customer_transactions')->max('transactionNO');
+        $maxSupplierTransaction = DB::table('supplier_transactions')->max('transactionNO');
+        $maxOfficeTransaction = DB::table('office_transactions')->max('transactionNO');
+        $maxEmployeeTransaction = DB::table('employee_transactions')->max('transactionNO');
+
+        // Find the maximum of all values and increment by 1
+        $nextTransactionNumber = max($maxCustomerTransaction, $maxSupplierTransaction, $maxOfficeTransaction, $maxEmployeeTransaction) + 1;
+        return view('admin.add_transaction', compact('accounts', 'categories', 'sale_details', 'nextTransactionNumber'));
     }
     public function add_office_trans(Request $request) {
         $data = new OfficeTransaction;
@@ -1595,7 +1566,16 @@ class AdminController extends Controller
         $accounts = Account::all();
         $categories = ExpenseCategory::all();
         $sale_details = SaleDetail::all();
-        return view('admin.add_transaction', compact('accounts', 'categories', 'sale_details'));
+
+        // Fetch the max transactionNO from all tables
+        $maxCustomerTransaction = DB::table('customer_transactions')->max('transactionNO');
+        $maxSupplierTransaction = DB::table('supplier_transactions')->max('transactionNO');
+        $maxOfficeTransaction = DB::table('office_transactions')->max('transactionNO');
+        $maxEmployeeTransaction = DB::table('employee_transactions')->max('transactionNO');
+
+        // Find the maximum of all values and increment by 1
+        $nextTransactionNumber = max($maxCustomerTransaction, $maxSupplierTransaction, $maxOfficeTransaction, $maxEmployeeTransaction) + 1;
+        return view('admin.add_transaction', compact('accounts', 'categories', 'sale_details', 'nextTransactionNumber'));
     }
     public function add_employee_trans(Request $request) {
         $data = new EmployeeTransaction;

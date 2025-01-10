@@ -43,7 +43,7 @@
                                         <div class="row">
                                             <div class="col-md-6 mb-4">
                                                 <label class="required-label">Transaction No</label>
-                                                <input type="text" class="form-control trans_no" name="transactionNO" readonly>
+                                                <input type="text" class="form-control trans_no" name="transactionNO" value="{{ $nextTransactionNumber }}" readonly>
                                             </div>
                                             <div class="col-md-6 mb-4 position-relative">
                                                 <label class="required-label">Customer</label>
@@ -137,7 +137,7 @@
                                             <div class="row">
                                                 <div class="col-md-6 mb-4">
                                                     <label class="required-label">Transaction No</label>
-                                                    <input type="text" class="form-control trans_no" name="transactionNO" readonly>
+                                                    <input type="text" class="form-control trans_no" name="transactionNO" value="{{ $nextTransactionNumber }}" readonly>
                                                 </div>
                                                 <div class="col-md-6 mb-4 position-relative">
                                                     <label class="required-label">Supplier</label>
@@ -205,7 +205,7 @@
                                             <div class="row">
                                                 <div class="col-md-6 mb-4">
                                                     <label class="required-label">Transaction No</label>
-                                                    <input type="text" class="form-control trans_no" name="transactionNO" readonly>
+                                                    <input type="text" class="form-control trans_no" name="transactionNO" value="{{ $nextTransactionNumber }}" readonly>
                                                 </div>
                                                 <div class="col-md-6 mb-4">
                                                     <label for="type" class="required-label">Type</label>
@@ -305,7 +305,7 @@
                                             <div class="row">
                                                 <div class="col-md-6 mb-4">
                                                     <label class="required-label">Transaction No</label>
-                                                    <input type="text" class="form-control trans_no" name="transactionNO" readonly>
+                                                    <input type="text" class="form-control trans_no" name="transactionNO" value="{{ $nextTransactionNumber }}" readonly>
                                                 </div>
                                                 <div class="col-md-6 mb-4">
                                                     <label class="required-label">Employee</label>
@@ -419,34 +419,6 @@
 
     @include('admin.dash_script')
 
-    <!-- Script For Different Divs based on URL -->
-    <script>
-        $(document).ready(function() {
-            const currentUrl = window.location.pathname;
-
-            if (currentUrl === '/customer/transaction') {
-                $('#add_customer_trans').show();
-                $('#add_supplier_trans').hide();
-                $('#add_office_trans').hide();
-                $('#add_employee_trans').hide();
-            } else if (currentUrl === '/supplier/transaction') {
-                $('#add_supplier_trans').show();
-                $('#add_customer_trans').hide();
-                $('#add_office_trans').hide();
-                $('#add_employee_trans').hide();
-            } else if (currentUrl === '/office/transaction') {
-                $('#add_office_trans').show();
-                $('#add_customer_trans').hide();
-                $('#add_supplier_trans').hide();
-                $('#add_employee_trans').hide();
-            } else if (currentUrl === '/employee/transaction') {
-                $('#add_employee_trans').show();
-                $('#add_customer_trans').hide();
-                $('#add_supplier_trans').hide();
-                $('#add_office_trans').hide();
-            }
-        });
-    </script>
     <!-- JS for Others -->
     <script>
         $(document).ready(function() {
@@ -462,23 +434,6 @@
                     this.value = this.value.replace(/\.+$/, ''); // Remove extra decimals
                 }
             });
-
-            // jQuery to generate Transaction number
-            $.ajax({
-                url: '/api/next-transaction-number',
-                type: 'GET',
-                success: function (response) {
-                    if (response.nextTransactionNumber) {
-                        $('.trans_no').val(response.nextTransactionNumber);
-                    } else {
-                        console.error('Unable to fetch the next transaction number.');
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.error('Error fetching transaction number:', error);
-                }
-            });
-
 
             // Initially hide the Income category, show the Expense category, and set the name attribute
             $('#income_div').addClass('d-none');
@@ -532,7 +487,34 @@
             });
         });
     </script>
+    <!-- Script For Different Divs based on URL -->
+    <script>
+        $(document).ready(function() {
+            const currentUrl = window.location.pathname;
 
+            if (currentUrl === '/customer/transaction') {
+                $('#add_customer_trans').show();
+                $('#add_supplier_trans').hide();
+                $('#add_office_trans').hide();
+                $('#add_employee_trans').hide();
+            } else if (currentUrl === '/supplier/transaction') {
+                $('#add_supplier_trans').show();
+                $('#add_customer_trans').hide();
+                $('#add_office_trans').hide();
+                $('#add_employee_trans').hide();
+            } else if (currentUrl === '/office/transaction') {
+                $('#add_office_trans').show();
+                $('#add_customer_trans').hide();
+                $('#add_supplier_trans').hide();
+                $('#add_employee_trans').hide();
+            } else if (currentUrl === '/employee/transaction') {
+                $('#add_employee_trans').show();
+                $('#add_customer_trans').hide();
+                $('#add_supplier_trans').hide();
+                $('#add_office_trans').hide();
+            }
+        });
+    </script>
     <!-- JS For customer search and customer Due and Submission -->
     <script>
         $(document).ready(function () {
