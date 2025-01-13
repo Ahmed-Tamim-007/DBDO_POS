@@ -720,11 +720,10 @@
     </script>
     <!-- JS For Sales -->
     <script>
-        const stocks = @json($stocks);
-        const restoreSale = @json($restoreSale);
-    </script>
-    <script>
         $(document).ready(function () {
+            const stocks = @json($stocks);
+            const restoreSale = @json($restoreSale);
+
             function updateTotals() {
                 let totalQuantity = 0;
                 let totalOfAll = 0;
@@ -1059,6 +1058,12 @@
                     cashPay = parseFloat($('#cash_amt').val() || "0.00").toFixed(2);
                 } else {
                     cashPay = parseFloat(r_cashPay).toFixed(2);
+                }
+
+                // Conditioning the submit for Over Payment
+                if (cashAmount > cashTotal && !$('#round_check').is(':checked')) {
+                    alert('Over Payment is not allowed!');
+                    return;
                 }
 
                 const cardPay = parseFloat(r_cardPay).toFixed(2);

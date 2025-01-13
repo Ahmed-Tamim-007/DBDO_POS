@@ -401,7 +401,6 @@ class ReportController extends Controller
                 'products.brand as product_brand',
                 'products.supplier as product_supplier',
                 'sale_details.invoiceNo as sales_invoice',
-                'sale_details.user as sales_invoice',
                 'customers.name as customer_name'
             )
             ->when($fromDate && $toDate, function ($query) use ($fromDate, $toDate) {
