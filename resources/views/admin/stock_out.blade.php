@@ -171,40 +171,32 @@
     <!-- JS For Getting batch_no and ETC. -->
     <script>
         $(document).ready(function () {
+            const stocks = @json($stocks);
+
             // Getting the batch no based on the product name
             $('#product-list_stock').on('focusout', function () {
-                let productName = $("#product-search_stock").val().trim();
+                let productName = $("#product-search_stock").val().trim().toLowerCase();
 
                 if (productName) {
                     $('select[name="batch_no"]').html('<option value="" selected>Loading...</option>');
 
-                    $.ajax({
-                        url: '/get-product-batches',
-                        type: 'POST',
-                        data: {
-                            _token: $('input[name="_token"]').val(),
-                            product_name: productName,
-                        },
-                        success: function (response) {
-                            console.log('AJAX Success Response:', response);
+                    // Filter stocks for matching product name
+                    let matchingBatches = stocks.filter(stock =>
+                        stock.product_name.trim().toLowerCase() === productName
+                    );
 
-                            if (Array.isArray(response) && response.length > 0) {
-                                let options = '<option value="" selected>Select One</option>';
-                                response.forEach(function (batch) {
-                                    options += `<option value="${batch.id}">${batch.batch_no}</option>`;
-                                });
-                                $('select[name="batch_no"]').html(options);
-                            } else {
-                                $('select[name="batch_no"]').html('<option value="" selected>Select One</option>');
-                                alert('No batches found for the entered product.');
-                            }
-                        },
-                        error: function (xhr, status, error) {
-                            console.error('AJAX Error:', error);
-                            $('select[name="batch_no"]').html('<option value="" selected>Select One</option>');
-                            alert('Error fetching batches. Please try again.');
-                        }
-                    });
+                    if (matchingBatches.length > 0) {
+                        let options = '<option value="" selected>Select One</option>';
+                        matchingBatches.forEach(function (batch) {
+                            options += `<option value="${batch.id}">${batch.batch_no}</option>`;
+                        });
+                        $('select[name="batch_no"]').html(options);
+                    } else {
+                        $('select[name="batch_no"]').html('<option value="" selected>Select One</option>');
+                        alert('No batches found for the entered product.');
+                    }
+                    // setTimeout(function () {
+                    // }, 100);
                 } else {
                     $('select[name="batch_no"]').html('<option value="" selected>Select One</option>');
                 }
@@ -214,22 +206,12 @@
             $('select[name="batch_no"]').on('change', function () {
                 let batchId = $(this).val();
                 if (batchId) {
-                    $.ajax({
-                        url: '/get-batch-details',
-                        type: 'POST',
-                        data: {
-                            _token: $('input[name="_token"]').val(),
-                            batch_id: batchId, // Pass the id instead of batch_no
-                        },
-                        success: function (response) {
-                            $('input[name="supplier"]').val(response.supplier || '');
-                            $('input[name="quantity"]').val(response.quantity || '');
-                            $('input[name="exp_date"]').val(response.expiration_date || '');
-                        },
-                        error: function () {
-                            alert('Error fetching batch details. Please try again.');
-                        }
-                    });
+                    let selectedBatch = stocks.find(stock => stock.id == batchId);
+                    if (selectedBatch) {
+                        $('input[name="supplier"]').val(selectedBatch.supplier || '');
+                        $('input[name="quantity"]').val(selectedBatch.quantity || '');
+                        $('input[name="exp_date"]').val(selectedBatch.expiration_date || '');
+                    }
                 } else {
                     $('input[name="supplier"]').val('');
                     $('input[name="quantity"]').val('');
@@ -263,10 +245,9 @@
 
     <!-- JS For Table Row Append -->
     <script>
-        const stocks = @json($stocks);
-    </script>
-    <script>
         $(document).ready(function () {
+            const stocks = @json($stocks);
+
             function toggleForm() {
                 const hasRows = $('#stock_out_table tbody tr').length > 0;
                 $('#stock_out_hidden').toggle(hasRows); // Show or hide the form based on rows
@@ -319,6 +300,18 @@
                 $(this).closest('tr').remove();
                 updateTotals(); // Update totals after row removal
                 toggleForm();   // Toggle form visibility
+            });
+
+            // Validate that .so-qty-input does not exceed .qty-input
+            $('#stock_out_table').on('input', '.so-qty-input', function () {
+                const soQtyInput = $(this);
+                const soQty = parseFloat(soQtyInput.val().trim()) || 0;
+                const qtyInput = parseFloat(soQtyInput.closest('tr').find('.qty-input').val().trim()) || 0;
+
+                if (soQty > qtyInput) {
+                    alert('S.O. QTY cannot exceed the available Quantity.');
+                    soQtyInput.val(''); // Clear the input if the value exceeds the limit
+                }
             });
 
             // Initial form visibility check
