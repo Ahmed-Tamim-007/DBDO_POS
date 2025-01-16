@@ -100,6 +100,7 @@ route::get('delete_unit/{id}', [AdminController::class, 'delete_unit'])-> middle
 
 // Product Routes
 route::get('view_product', [AdminController::class, 'view_product'])-> middleware('auth', 'admin');
+Route::get('/search-product', [AdminController::class, 'searchProduct'])->name('search.product');
 route::post('upload_product', [AdminController::class, 'upload_product'])-> middleware('auth', 'admin');
 route::post('edit_products/{id}', [AdminController::class, 'edit_products'])-> middleware('auth', 'admin');
 route::get('delete_product/{id}', [AdminController::class, 'delete_product'])-> middleware('auth', 'admin');

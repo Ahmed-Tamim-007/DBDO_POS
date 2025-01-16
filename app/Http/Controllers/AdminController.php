@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\PosUser;
 use App\Models\Customer;
@@ -449,13 +450,13 @@ class AdminController extends Controller
 
 
     // All Product functions ------------------------------------------------------------------->
-    public function view_product() {
+    public function view_product(){
         $categories = Category::all();
-        $sub_ctgs = Subcategory::all();
+        $subcategories = Subcategory::all();
         $brands = Brand::all();
         $units = Unit::all();
 
-        // Join Product and Stock tables with aggregated quantity
+        // Join Product and Stock tables with aggregated quantity and paginate
         $products = Product::leftJoin('stocks', 'products.id', '=', 'stocks.product_id')
             ->select(
                 'products.*',
@@ -463,25 +464,75 @@ class AdminController extends Controller
                 DB::raw('SUM(stocks.quantity) as total_quantity') // Sum quantities for each product
             )
             ->groupBy('products.id') // Group by product ID
+            ->paginate(5); // Add pagination here
+
+        // Fetch all product batches without pagination
+        $product_batches = Stock::join('products', 'stocks.product_id', '=', 'products.id')
+            ->join('stock_details', 'stocks.batch_no', '=', 'stock_details.id') // Join with StockDetail table
+            ->select(
+                'stocks.product_id',
+                'stocks.product_name',
+                'stocks.batch_no',
+                'stocks.supplier',
+                'stocks.quantity',
+                'stocks.sale_price',
+                'stocks.expiration_date',
+                'stock_details.stock_date' // Replace with actual column names from StockDetail
+            )
+            ->orderBy('stocks.product_id') // Sort by product for easier grouping
             ->get();
 
-        // Fetch all product batches with details, including data from StockDetail table
-        $product_batches = Stock::join('products', 'stocks.product_id', '=', 'products.id')
-        ->join('stock_details', 'stocks.batch_no', '=', 'stock_details.id')  // Join with StockDetail table
-        ->select(
-            'stocks.product_id',
-            'stocks.product_name',
-            'stocks.batch_no',
-            'stocks.supplier',
-            'stocks.quantity',
-            'stocks.sale_price',
-            'stocks.expiration_date',
-            'stock_details.stock_date' // Replace with actual column names from StockDetail
-        )
-        ->orderBy('stocks.product_id') // Sort by product for easier grouping
-        ->get();
+        return view('admin.view_product', compact(
+            'categories', 'subcategories', 'brands', 'units', 'products', 'product_batches'
+        ));
+    }
 
-        return view('admin.view_product', compact('categories', 'sub_ctgs', 'brands', 'units', 'products', 'product_batches'));
+    public function searchProduct(Request $request)
+    {
+        $categories = Category::all();
+        $subcategories = Subcategory::all();
+        $brands = Brand::all();
+        $units = Unit::all();
+
+        $products = Product::leftJoin('stocks', 'products.id', '=', 'stocks.product_id')
+            ->select(
+                'products.*',
+                DB::raw('GROUP_CONCAT(stocks.batch_no SEPARATOR ", ") as batch_numbers'),
+                DB::raw('SUM(stocks.quantity) as total_quantity')
+            )
+            ->groupBy('products.id')
+            ->when($request->product, function ($query) use ($request) {
+                $query->where('products.title', 'LIKE', '%' . $request->product . '%');
+            })
+            ->when($request->category, function ($query) use ($request) {
+                $query->where('products.category', $request->category);
+            })
+            ->when($request->subcategory, function ($query) use ($request) {
+                $query->where('products.sub_category', $request->subcategory);
+            })
+            ->when($request->brand, function ($query) use ($request) {
+                $query->where('products.brand', $request->brand);
+            })
+            ->paginate(5);
+
+            // Fetch all product batches with details, including data from StockDetail table
+        $product_batches = Stock::join('products', 'stocks.product_id', '=', 'products.id')
+            ->join('stock_details', 'stocks.batch_no', '=', 'stock_details.id')  // Join with StockDetail table
+            ->select(
+                'stocks.product_id',
+                'stocks.product_name',
+                'stocks.batch_no',
+                'stocks.supplier',
+                'stocks.quantity',
+                'stocks.sale_price',
+                'stocks.expiration_date',
+                'stock_details.stock_date' // Replace with actual column names from StockDetail
+            )
+            ->orderBy('stocks.product_id') // Sort by product for easier grouping
+            ->get();
+
+        // Return the view
+        return view('admin.view_product', compact('categories', 'subcategories', 'brands', 'units', 'products', 'product_batches'));
     }
     public function upload_product(Request $request) {
         $data = new Product;
@@ -806,7 +857,10 @@ class AdminController extends Controller
         $restoreSale = HoldSale::all();
         $accounts = Account::all();
         $cardnames = CardName::all();
-        return view('admin.sales', compact('stocks', 'heldSales', 'restoreSale', 'accounts', 'cardnames'));
+        $sales = Sale::all();
+        $sale_details = SaleDetail::all();
+        $sale_returns = SaleReturn::all();
+        return view('admin.sales', compact('stocks', 'heldSales', 'restoreSale', 'accounts', 'cardnames', 'sales', 'sale_details', 'sale_returns'));
     }
     public function sales_search(Request $request)
     {

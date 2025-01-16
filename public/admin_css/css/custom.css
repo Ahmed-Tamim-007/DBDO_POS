@@ -340,3 +340,116 @@ table.dataTable>tbody>tr>td {
 table.dataTable th.dt-type-numeric, table.dataTable th.dt-type-date, table.dataTable td.dt-type-numeric, table.dataTable td.dt-type-date {
     text-align: left !important;
 }
+
+
+
+/* Pagination Styles */
+.pagination-container {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.pagination li.disabled span {
+    color: #aaa;
+    background: none;
+    cursor: default;
+    font-weight: bold;
+}
+
+.pagination-info {
+    font-size: 15px;
+    font-weight: 600;
+    color: #555;
+}
+
+.pagination-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.pagination li {
+    margin: 0 3px;
+}
+
+.pagination li a,
+.pagination li span {
+    display: inline-block;
+    padding: 11px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #ffffff;
+    background-color: #019bee;
+    border-color: #019bee;
+    border-radius: 50%;
+    text-decoration: none;
+    transition: all 0.3s ease-in-out;
+}
+
+.pagination li a:hover,
+.pagination li span:hover {
+    background-color: #007bff;
+    border-color: #007bff;
+    transform: translateY(-3px); /* Slight hover lift effect */
+}
+
+.pagination .disabled a,
+.pagination .disabled span {
+    background-color: #e0e0e0;
+    color: #aaa;
+    cursor: not-allowed;
+}
+
+.pagination .active a,
+.pagination .active span {
+    background-color: #007bff !important;
+    color: white;
+    border-color: #007bff !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow effect for active state */
+}
+
+.pagination .previous a,
+.pagination .next a {
+    font-weight: bold;
+    padding: 11px 16px;
+    border-radius: 50px; /* Round buttons */
+}
+
+.pagination .previous a:hover,
+.pagination .next a:hover {
+    background-color: #007bff;
+    transform: translateY(-3px); /* Hover lift effect */
+}
+
+.pagination .first a,
+.pagination .last a {
+    font-weight: bold;
+    padding: 11px 15px;
+    border-radius: 50px;
+    background-color: #019bee;
+    border-color: #019bee;
+    transition: all 0.3s ease-in-out;
+}
+
+.pagination .first a:hover,
+.pagination .last a:hover {
+    background-color: #007bff;
+    transform: translateY(-3px);
+}
+
+.pagination .previous a,
+.pagination .next a {
+    font-weight: bold;
+    padding: 11px 16px;
+    border-radius: 50px;
+    background-color: #019bee;
+    border-color: #019bee;
+    transition: all 0.3s ease-in-out;
+}
+
+.pagination .previous a:hover,
+.pagination .next a:hover {
+    background-color: #007bff;
+    transform: translateY(-3px);
+}

@@ -23,11 +23,56 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-12">
+                        <div class="block">
+                            <form action="{{ route('search.product') }}" method="GET">
+                                @csrf
+                                <div class="row">
+                                    <div class="col-lg-3 col-md-4 mb-3">
+                                        <label>Product Name/Code</label>
+                                        <input type="text" name="product" class="form-control form-control-sm" placeholder="Product Name/Code">
+                                    </div>
+                                    <div class="col-lg-3 col-md-4 mb-3">
+                                        <label class="form-label">Product Category</label>
+                                        <select class="form-control form-control-sm form-select" name="category" aria-label="Default select example">
+                                            <option value="" selected>Select One</option>
+
+                                            @foreach ($categories as $category)
+                                                <option value="{{$category->category_name}}">{{$category->category_name}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-2 col-md-4 mb-3">
+                                        <label class="form-label">Sub Category</label>
+                                        <select class="form-control form-control-sm form-select" name="subcategory" aria-label="Default select example">
+                                            <option value="" selected>Select One</option>
+
+                                            @foreach ($subcategories as $subcategory)
+                                                <option value="{{$subcategory->sub_category}}">{{$subcategory->sub_category}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-2 col-md-4 mb-3">
+                                        <label class="form-label">Brand</label>
+                                        <select class="form-control form-control-sm form-select" name="brand" aria-label="Default select example">
+                                            <option value="" selected>Select One</option>
+
+                                            @foreach ($brands as $brand)
+                                                <option value="{{$brand->brand_name}}">{{$brand->brand_name}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div class="col-lg-2 col-md-4 my-2">
+                                        <button type="submit" class="btn btn-primary mt-md-3 px-5"><i class="icon-magnifying-glass-browser"></i> Search</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
                         <div class="block table-responsive">
                             <div class="text-right">
                                 <button type="button" data-toggle="modal" data-target="#addProduct" class="btn btn-primary ms-auto">Add Product</button>
                             </div>
-                            <table class="datatable table table-hover" id="product_table">
+                            <table class="table table-hover" id="product_table">
                                 <thead>
                                     <tr class="text-primary">
                                         <th scope="col">No.</th>
@@ -229,6 +274,65 @@
                                     @endforeach
                                 </tbody>
                             </table>
+
+                            {{-- Pagination --}}
+                            <div class="pagination-container">
+                                <div class="pagination-info">
+                                    @if ($products->total() > 0)
+                                        Showing
+                                        {{ $products->firstItem() }}
+                                        to
+                                        {{ $products->lastItem() }}
+                                        of
+                                        {{ $products->total() }}
+                                        products
+                                    @else
+                                        No products available.
+                                    @endif
+                                </div>
+
+                                <div class="pagination-wrapper">
+                                    <ul class="pagination">
+                                        <!-- First Page Button -->
+                                        <li class="{{ $products->onFirstPage() ? 'disabled' : '' }}">
+                                            <a href="{{ $products->url(1) }}"><i class="fas fa-backward"></i></a>
+                                        </li>
+
+                                        <!-- Previous Page Button -->
+                                        <li class="{{ $products->previousPageUrl() ? '' : 'disabled' }}">
+                                            <a href="{{ $products->previousPageUrl() }}"><i class="fas fa-backward-step"></i></a>
+                                        </li>
+
+                                        <!-- Page Number Links -->
+                                        @php
+                                            $currentPage = $products->currentPage();
+                                            $lastPage = $products->lastPage();
+                                        @endphp
+
+                                        @for ($page = 1; $page <= $lastPage; $page++)
+                                            @if ($page == 1 || $page == $lastPage || ($page >= $currentPage - 2 && $page <= $currentPage + 2))
+                                                <li class="{{ $page == $currentPage ? 'active' : '' }}">
+                                                    <a href="{{ $products->url($page) }}">{{ $page }}</a>
+                                                </li>
+                                            @elseif ($page == 2 && $currentPage > 4)
+                                                <li class="disabled"><span>...</span></li>
+                                            @elseif ($page == $lastPage - 1 && $currentPage < $lastPage - 3)
+                                                <li class="disabled"><span>...</span></li>
+                                            @endif
+                                        @endfor
+
+                                        <!-- Next Page Button -->
+                                        <li class="{{ $products->nextPageUrl() ? '' : 'disabled' }}">
+                                            <a href="{{ $products->nextPageUrl() }}"><i class="fas fa-forward-step"></i></a>
+                                        </li>
+
+                                        <!-- Last Page Button -->
+                                        <li class="{{ $products->hasMorePages() ? '' : 'disabled' }}">
+                                            <a href="{{ $products->url($lastPage) }}"><i class="fas fa-forward"></i></a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -278,7 +382,7 @@
                                 <select class="form-control form-control-sm form-select" name="sub_category" aria-label="Default select example">
                                     <option value="" selected>Select One</option>
 
-                                    @foreach ($sub_ctgs as $sub_ctg)
+                                    @foreach ($subcategories as $sub_ctg)
                                     <option value="{{$sub_ctg->sub_category}}">{{$sub_ctg->sub_category}}</option>
                                     @endforeach
                                 </select>
@@ -451,7 +555,7 @@
                     $('select[name="sub_category"]').append('<option value="">Select One</option>');
 
                     // Fetch and filter subcategories based on the selected category
-                    const filteredSubcategories = @json($sub_ctgs).filter(sub => sub.category === selectedCategory);
+                    const filteredSubcategories = @json($subcategories).filter(sub => sub.category === selectedCategory);
 
                     // Append filtered subcategories to the dropdown
                     filteredSubcategories.forEach(subCategory => {
@@ -490,7 +594,7 @@
                     $('select[name="edit_sub_category"]').append('<option value="">Select One</option>');
 
                     // Fetch and filter subcategories based on the selected category
-                    const filteredSubcategories = @json($sub_ctgs).filter(sub => sub.category === selectedCategory);
+                    const filteredSubcategories = @json($subcategories).filter(sub => sub.category === selectedCategory);
 
                     // Append filtered subcategories to the dropdown
                     filteredSubcategories.forEach(subCategory => {
