@@ -246,7 +246,7 @@
                     const returned = parseFloat(row.find('td').eq(4).text()).toFixed(2);
                     const returnQty = parseFloat(row.find('td').eq(5).find('input').val()).toFixed(2);
                     const unitPrice = row.find('td').eq(6).text();
-                    const totalPrice = row.find('td').eq(7).text();
+                    const totalPrice = parseFloat(returnQty * unitPrice).toFixed(2);
                     const productID = row.find('td').eq(8).text();
                     const saleID = row.find('td').eq(9).text();
 

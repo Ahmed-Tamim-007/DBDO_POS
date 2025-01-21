@@ -604,51 +604,6 @@ class ReportController extends Controller
         return view('admin.supplier_trans_report', compact('transactions', 'fromDate', 'toDate'));
     }
 
-    // Supplier Transaction Reports Functions
-    public function fund_transfer_report()
-    {
-        $transfers = collect();
-        $users = PosUser::all();
-        $accounts = Account::all();
-
-        return view('admin.fund_transfer_report', compact('transfers', 'users', 'accounts'));
-    }
-    public function fundTransferReport(Request $request)
-    {
-        $fromDate = $request->from_date;
-        $toDate = $request->to_date ? Carbon::parse($request->to_date)->endOfDay() : null;
-
-        $transfers = DB::table('fund_transfers')
-            ->select(
-                'fund_transfers.*',
-                'account_from.acc_name as account_from_name',
-                'account_from.acc_no as account_from_no',
-                'account_to.acc_name as account_to_name',
-                'account_to.acc_no as account_to_no'
-            )
-            ->join('accounts as account_from', 'fund_transfers.accountFrom', '=', 'account_from.id')
-            ->join('accounts as account_to', 'fund_transfers.accountTo', '=', 'account_to.id')
-            ->when($fromDate && $toDate, function ($query) use ($fromDate, $toDate) {
-                $query->whereBetween('fund_transfers.created_at', [$fromDate, $toDate]);
-            })
-            ->when($request->accountFrom, function ($query) use ($request) {
-                $query->where('fund_transfers.accountFrom', $request->accountFrom);
-            })
-            ->when($request->accountTo, function ($query) use ($request) {
-                $query->where('fund_transfers.accountTo', $request->accountTo);
-            })
-            ->when($request->user, function ($query) use ($request) {
-                $query->where('fund_transfers.user', $request->user);
-            })
-            ->get();
-
-        $users = PosUser::all();
-        $accounts = Account::all();
-
-        // Return the view
-        return view('admin.fund_transfer_report', compact('transfers', 'users', 'accounts', 'fromDate', 'toDate'));
-    }
-
     // Stock Reports Functions
     public function stock_report()
     {
@@ -830,5 +785,93 @@ class ReportController extends Controller
 
         // Return the view
         return view('admin.stockOut_report', compact('stockOuts', 'products', 'categories', 'subcategories', 'brands', 'fromDate', 'toDate'));
+    }
+
+    // Fund Transfer Reports Functions
+    public function fund_transfer_report()
+    {
+        $transfers = collect();
+        $users = PosUser::all();
+        $accounts = Account::all();
+
+        return view('admin.fund_transfer_report', compact('transfers', 'users', 'accounts'));
+    }
+    public function fundTransferReport(Request $request)
+    {
+        $fromDate = $request->from_date;
+        $toDate = $request->to_date ? Carbon::parse($request->to_date)->endOfDay() : null;
+
+        $transfers = DB::table('fund_transfers')
+            ->select(
+                'fund_transfers.*',
+                'account_from.acc_name as account_from_name',
+                'account_from.acc_no as account_from_no',
+                'account_to.acc_name as account_to_name',
+                'account_to.acc_no as account_to_no'
+            )
+            ->join('accounts as account_from', 'fund_transfers.accountFrom', '=', 'account_from.id')
+            ->join('accounts as account_to', 'fund_transfers.accountTo', '=', 'account_to.id')
+            ->when($fromDate && $toDate, function ($query) use ($fromDate, $toDate) {
+                $query->whereBetween('fund_transfers.created_at', [$fromDate, $toDate]);
+            })
+            ->when($request->accountFrom, function ($query) use ($request) {
+                $query->where('fund_transfers.accountFrom', $request->accountFrom);
+            })
+            ->when($request->accountTo, function ($query) use ($request) {
+                $query->where('fund_transfers.accountTo', $request->accountTo);
+            })
+            ->when($request->user, function ($query) use ($request) {
+                $query->where('fund_transfers.user', $request->user);
+            })
+            ->get();
+
+        $users = PosUser::all();
+        $accounts = Account::all();
+
+        // Return the view
+        return view('admin.fund_transfer_report', compact('transfers', 'users', 'accounts', 'fromDate', 'toDate'));
+    }
+
+    // Customer Ledger Reports Functions
+    public function customer_ledger_report()
+    {
+        $transactions = collect();
+        $customers = Customer::all();
+
+        return view('admin.customer_ledger_report', compact('transactions', 'customers'));
+    }
+    public function customerLedgerReport(Request $request)
+    {
+        $fromDate = $request->from_date;
+        $toDate = $request->to_date ? Carbon::parse($request->to_date)->endOfDay() : null;
+
+        $transactions = DB::table('fund_transfers')
+            ->select(
+                'fund_transfers.*',
+                'account_from.acc_name as account_from_name',
+                'account_from.acc_no as account_from_no',
+                'account_to.acc_name as account_to_name',
+                'account_to.acc_no as account_to_no'
+            )
+            ->join('accounts as account_from', 'fund_transfers.accountFrom', '=', 'account_from.id')
+            ->join('accounts as account_to', 'fund_transfers.accountTo', '=', 'account_to.id')
+            ->when($fromDate && $toDate, function ($query) use ($fromDate, $toDate) {
+                $query->whereBetween('fund_transfers.created_at', [$fromDate, $toDate]);
+            })
+            ->when($request->accountFrom, function ($query) use ($request) {
+                $query->where('fund_transfers.accountFrom', $request->accountFrom);
+            })
+            ->when($request->accountTo, function ($query) use ($request) {
+                $query->where('fund_transfers.accountTo', $request->accountTo);
+            })
+            ->when($request->user, function ($query) use ($request) {
+                $query->where('fund_transfers.user', $request->user);
+            })
+            ->get();
+
+        $customers = Customer::all();
+
+        // Return the view
+        return view('admin.customer_ledger_report', compact('transactions', 'customers', 'fromDate', 'toDate'));
     }
 }

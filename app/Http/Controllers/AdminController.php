@@ -486,7 +486,6 @@ class AdminController extends Controller
             'categories', 'subcategories', 'brands', 'units', 'products', 'product_batches'
         ));
     }
-
     public function searchProduct(Request $request)
     {
         $categories = Category::all();
@@ -849,6 +848,7 @@ class AdminController extends Controller
 
     // Sales related Function ----------------------------------------->
     public function sales() {
+        $customer_types = CustomerType::all();
         $stocks = Stock::all();
         $heldSales = DB::table('hold_sales')
             ->selectRaw('invoiceNo, COUNT(*) as held_products, MAX(created_at) as date')
@@ -860,7 +860,7 @@ class AdminController extends Controller
         $sales = Sale::all();
         $sale_details = SaleDetail::all();
         $sale_returns = SaleReturn::all();
-        return view('admin.sales', compact('stocks', 'heldSales', 'restoreSale', 'accounts', 'cardnames', 'sales', 'sale_details', 'sale_returns'));
+        return view('admin.sales', compact('customer_types', 'stocks', 'heldSales', 'restoreSale', 'accounts', 'cardnames', 'sales', 'sale_details', 'sale_returns'));
     }
     public function sales_search(Request $request)
     {
@@ -885,15 +885,51 @@ class AdminController extends Controller
 
         return response()->json($customers);
     }
+    public function addCustomerSales(Request $request)
+    {
+        try {
+            $image = $request->file('imageFile');
+
+            if ($image) {
+                $imagename = time() . '.' . $image->getClientOriginalExtension();
+                $image->move(public_path('customers'), $imagename);
+            } else {
+                $imagename = null;
+            }
+
+            $data = new Customer;
+            $data->member_code = $request->memberCode;
+            $data->type = $request->cusType;
+            $data->name = $request->cusName;
+            $data->email = $request->cusEmail;
+            $data->phone = $request->cusPhone;
+            $data->gender = $request->cusGender;
+            $data->dob = $request->dateOfBirth;
+            $data->merital_st = $request->mStatus;
+            $data->anv_date = $request->anniversary;
+            $data->adrs_type = $request->adrsType;
+            $data->address = $request->adrs;
+            $data->due = 0;
+            $data->image = $imagename;
+
+            $data->save();
+
+            return response()->json(['success' => true, 'message' => 'Customer added successfully!']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
     public function saveSales(Request $request){
         try {
             // Extract the hidden stock form data
             $user = Auth::user()->name;
             $invoiceNo = $request->invoice_no;
+            $RinvoiceNo = $request->r_invoice_no;
             $cashTotal = $request->cash_total;
             $cashDiscount = $request->cash_dis;
             $cashRound = $request->cash_round;
             $cashDue = $request->cash_due;
+            $replaceAmount = $request->replace_amt;
             $customer_id = $request->customerID ?? null;
 
             $cashAmount = $request->s_cash_amt > 0 ? $request->s_cash_amt : ($request->m_cash_amt > 0 ? $request->m_cash_amt : 0.00);
@@ -929,6 +965,7 @@ class AdminController extends Controller
                 'cashDiscount' => $cashDiscount,
                 'cashRound' => $cashRound,
                 'cashDue' => $cashDue,
+                'replaceAmount' => $replaceAmount,
                 'customerID' => $customer_id,
                 'cashAmount' => $cashAmount,
                 'cashPaid' => $cashPaid,
@@ -1003,6 +1040,44 @@ class AdminController extends Controller
                 }
             }
 
+            $r_rows = json_decode($request->r_rows, true);
+
+            foreach ($r_rows as $row) {
+                // Insert into stock_outs table
+                DB::table('sale_returns')->insert([
+                    'invoice_no' => $RinvoiceNo,
+                    'sales_ID' => $row['r_sales_ID'],
+                    'product_id' => $row['r_product_id'],
+                    'product_name' => $row['r_product_name'],
+                    'batch_no' => $row['r_batch'],
+                    'return_qty' => $row['r_return_qty'],
+                    'price' => $row['r_price'],
+                    'total' => $row['r_total_price'],
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+
+                // Update the stocks table to increase the quantity
+                DB::table('stocks')
+                ->where('product_id', $row['r_product_id'])
+                ->where('batch_no', $row['r_batch'])
+                ->increment('quantity', $row['r_return_qty']);
+
+                // Update the sales table to increase the returned qty
+                DB::table('sales')
+                ->where('sales_ID', $row['r_sales_ID'])
+                ->where('product_id', $row['r_product_id'])
+                ->where('batch_no', $row['r_batch'])
+                ->update([
+                    'returned' => DB::raw("IFNULL(returned, 0) + {$row['r_return_qty']}")
+                ]);
+
+                // Decrease amount from Primary Station
+                DB::table('accounts')
+                ->where('id', 4)
+                ->decrement('crnt_balance', $row['r_total_price']);
+            }
+
             // Return JSON response with success message and data
             return response()->json([
                 'success' => true,
@@ -1018,6 +1093,7 @@ class AdminController extends Controller
                 'cashTotal' => $cashTotal,
                 'cashRound' => $cashRound,
                 'cashDue' => $cashDue,
+                'replaceAmount' => $replaceAmount,
                 'cashPaid' => $cashPaid,
                 'cashChange' => $cashChange,
                 'totalPaidAmt' => $totalPaidAmount,

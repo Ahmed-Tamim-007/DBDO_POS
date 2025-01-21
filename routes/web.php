@@ -127,6 +127,7 @@ route::post('/save-stock-out', [AdminController::class, 'saveStockOut'])->name('
 route::get('/sales', [AdminController::class, 'sales'])-> middleware('auth', 'admin')->name('sales.create');
 route::get('/search-sales-products', [AdminController::class, 'sales_search'])->name('search.sales.products');
 Route::get('/search-sales-customers', [AdminController::class, 'customer_search'])->name('search.sales.customers');
+Route::post('add_customer_sales', [AdminController::class, 'addCustomerSales'])->name('add.customer.sales');
 route::post('/save-sales', [AdminController::class, 'saveSales'])->name('save.sales');
 // Sale Rerurns routes
 route::get('sale_returns', [AdminController::class, 'sale_returns'])-> middleware('auth', 'admin');
@@ -225,10 +226,6 @@ Route::post('/office-trans-report', [ReportController::class, 'officeTransReport
 route::get('supplier_trans_report', [ReportController::class, 'supplier_trans_report'])-> middleware('auth', 'admin');
 Route::post('/supplier-trans-report', [ReportController::class, 'supplierTransReport'])->name('supplier.trans.report');
 
-// Fund Transfer Report Routes
-route::get('fund_transfer_report', [ReportController::class, 'fund_transfer_report'])-> middleware('auth', 'admin');
-Route::post('/fund-transfer-report', [ReportController::class, 'fundTransferReport'])->name('fund.transfer.report');
-
 // Stock Report Routes
 route::get('stock_report', [ReportController::class, 'stock_report'])-> middleware('auth', 'admin');
 Route::post('/search-stock-report', [ReportController::class, 'searchStockReport'])->name('search.stock.report');
@@ -240,3 +237,12 @@ Route::post('/search-stockIn-summary', [ReportController::class, 'searchStockInS
 // Stock Out Report Routes
 route::get('stockOut_report', [ReportController::class, 'stockOut_report'])-> middleware('auth', 'admin');
 Route::post('/search-stockOut-report', [ReportController::class, 'searchStockOutReport'])->name('search.stockOut.report');
+
+
+// Fund Transfer Report Routes
+route::get('fund_transfer_report', [ReportController::class, 'fund_transfer_report'])-> middleware('auth', 'admin');
+Route::post('/fund-transfer-report', [ReportController::class, 'fundTransferReport'])->name('fund.transfer.report');
+
+// Customer Ledger Report Routes
+route::get('customer_ledger_report', [ReportController::class, 'customer_ledger_report'])-> middleware('auth', 'admin');
+Route::post('/customer_ledger_report', [ReportController::class, 'customerLedgerReport'])->name('customer.ledger.report');

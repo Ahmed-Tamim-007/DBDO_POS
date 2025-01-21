@@ -15,6 +15,10 @@
         .table tr td {
             padding: 5px 7px;
         }
+
+        #salesInfoTable td {
+            padding: 1px 2px !important;
+        }
     </style>
   </head>
   <body>
@@ -33,23 +37,31 @@
                             <div class="block">
                                 <form id="product_form">
                                     <div class="row mb-3" id="sales_search">
-                                        <div class="col-lg-11 col-md-9 position-relative pr-md-0">
-                                            <input type="text" id="product_search" name="product" class="form-control" autocomplete="off" placeholder="Search Product...">
+                                        <div class="col-md-12 position-relative">
+                                            <div class="input-group">
+                                                <input type="text" id="product_search" name="product" class="form-control" autocomplete="off" placeholder="Search Product...">
+                                                <div class="input-group-append">
+                                                    <button type="submit" class="btn btn-info""><i class="icon-magnifying-glass-browser"></i></button>
+                                                </div>
+                                            </div>
+
                                             <div id="product_search_list" class="list-group"></div>
                                             <input type="hidden" name="batch_no" id="">
-                                        </div>
-                                        <div class="col-lg-1 col-md-3 pl-md-0">
-                                            <button type="submit" class="btn btn-info w-100" style="border-radius: 0px;"><i class="icon-magnifying-glass-browser"></i></button>
                                         </div>
                                     </div>
                                 </form>
                                 <div class="row">
-                                    <div class="col-md-5 position-relative pr-md-0">
-                                        <input type="text" id="customer_search" name="customer" class="form-control" autocomplete="off" placeholder="Search Customer...">
+                                    <div class="col-lg-5 col-md-7 position-relative pr-md-0">
+                                        <div class="input-group">
+                                            <input type="text" id="customer_search" name="customer" class="form-control" autocomplete="off" placeholder="Search Customer...">
+                                            <div class="input-group-append">
+                                                <button type="button" data-toggle="modal" data-target="#addCustomer" class="btn btn-info ms-auto"><i class="fa fa-plus"></i></button>
+                                            </div>
+                                        </div>
                                         <input type="hidden" name="customerID" id="customerID">
                                         <div id="customer_search_list" class="list-group"></div>
                                     </div>
-                                    <div class="col-md-3" style="font-size: 14px;">
+                                    <div class="col-md-5" style="font-size: 14px;">
                                         <div>PH: <span id="cus_phone"></span></div>
                                         <div>Due: <span id="cus_due"></span> &#2547;</div>
                                     </div>
@@ -96,13 +108,17 @@
                                 <table class="table table-hover" id="count_table" style="font-size: 13px;">
                                     <h6 class="text-center text-primary">CART TOTAL : <span id="cart_total">0</span> &#2547;</h6>
                                     <tbody>
-                                        <tr class="d-none font-weight-bold">
+                                        <tr class="d-none font-weight-bold" id="discount_tr">
                                             <td class="td_1">Discount <span id="dis_amt"></span></td>
                                             <td class="td_2" id="grand_discount">0</td>
                                         </tr>
                                         <tr>
                                             <td class="td_1">Total</td>
                                             <td class="td_2" id="grand_total">0</td>
+                                        </tr>
+                                        <tr class="d-none" id="replace_tr">
+                                            <td class="td_1">Replace Total</td>
+                                            <td class="td_2" id="grand_replace">0</td>
                                         </tr>
                                         <tr>
                                             <td class="td_1">Paid</td>
@@ -223,7 +239,7 @@
                                 <button class="btn btn-warning btn-sm px-4 mb-1 mx-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Discount" data-toggle="modal" data-target="#dis_modal"><i class="fa fa-percent"></i></button>
                                 <button class="btn btn-danger btn-sm px-4 mb-1 mx-auto" id="hold_sale_btn" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Hold Sale"><i class="fa fa-pause"></i></button>
                                 <button class="btn btn-secondary btn-sm px-4 mb-1 mx-auto" data-toggle="modal" data-target="#sales_restore_modal" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Restore"><i class="fa fa-rotate-left"></i></button>
-                                <button class="btn btn-info btn-sm px-4 mb-1 mx-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Sale Replace"><i class="fa fa-arrows-rotate"></i></button>
+                                <button class="btn btn-info btn-sm px-4 mb-1 mx-auto" data-toggle="modal" data-target="#sale_replace_modal" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Sale Replace"><i class="fa fa-arrows-rotate"></i></button>
                             </div>
                         </div>
                     </div>
@@ -236,6 +252,99 @@
         </div>
     </div>
 
+    <!-- Add Customer Modal -->
+    <div id="addCustomer" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" class="modal fade text-left">
+        <div role="document" class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header"><strong id="exampleModalLabel" class="modal-title">Add Customer</strong>
+                    <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span aria-hidden="true">×</span></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-4">
+                            <label class="required-label">Membership ID</label>
+                            <div class="d-flex">
+                                <input type="number" class="form-control form-control-sm me-2" id="member_id" required>
+                                <button class="btn btn-outline-info btn-sm member_id_generate"><i class="fas fa-sync-alt me-2"></i></button>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <label class="required-label">Customer Type</label>
+                            <select class="form-control form-control-sm form-select" id="c_type" aria-label="Default select example" required>
+                                <option value="" selected>Select One</option>
+                                <option value="Basic">Basic</option>
+
+                                @foreach ($customer_types as $customer_type)
+                                    <option value="{{$customer_type->type_name}}">{{$customer_type->type_name}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <label class="required-label">Full Name</label>
+                            <input type="text" class="form-control form-control-sm" id="c_name" required>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <label class="mt-1">Email</label>
+                            <input type="email" class="form-control form-control-sm" id="c_email">
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <label class="required-label">Phone</label>
+                            <input type="text" class="form-control form-control-sm" id="c_phone" required>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <label class="mt-1">Gender</label>
+                            <select class="form-control form-control-sm form-select" id="c_gender" aria-label="Default select example">
+                                <option value="" selected>Select One</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-4">
+                            <label class="mt-1">Date of Birth</label>
+                            <input type="date" class="form-control form-control-sm" id="dob">
+                        </div>
+                        <div class="col-md-3 mb-4">
+                            <label class="mt-1">Marital Status</label>
+                            <select class="form-control form-control-sm form-select" id="m_status" aria-label="Default select example">
+                                <option value="" selected>Select One</option>
+                                <option value="married">Married</option>
+                                <option value="unmarried">Unmarried</option>
+                                <option value="divorced">Divorced</option>
+                                <option value="widowed">Widowed</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-4">
+                            <label class="mt-1">Anniversary Date</label>
+                            <input type="date" class="form-control form-control-sm" id="anniversary">
+                        </div>
+                        <div class="col-md-3 mb-4">
+                            <label class="mt-1">Address Type</label>
+                            <select class="form-control form-control-sm form-select" id="adrs_type" aria-label="Default select example">
+                                <option value="" selected>Select One</option>
+                                <option value="present_address">Present Address</option>
+                                <option value="permanent_address">Permanent Address</option>
+                                <option value="shipping_address">Shipping Address</option>
+                                <option value="billing_address">Billing Address</option>
+                            </select>
+                        </div>
+                        <div class="col-md-5 mb-4">
+                            <label class="mt-1">Address</label>
+                            <textarea class="form-control form-control-sm" id="address" rows="1"></textarea>
+                        </div>
+                        <div class="col-lg-4 mb-2">
+                            <label class="mt-1">Photo/Logo</label>
+                            <input type="file" class="form-control form-control-sm" id="cusImage" name="imageFile">
+                            <p class="text-primary text-bold" style="font-size: 12px">Use jpg,jpeg,png,gif only.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" data-dismiss="modal" class="btn btn-secondary">Close</button>
+                    <input type="submit" id="addCustomerSubmit" class="btn btn-primary" value="Submit">
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- Discount Modal -->
     <div class="modal fade" id="dis_modal" tabindex="-1" role="dialog" aria-labelledby="dis_modalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -389,6 +498,88 @@
                 </table>
             </div>
           </div>
+        </div>
+    </div>
+    <!-- Sale Replace Modal -->
+    <div class="modal fade" id="sale_replace_modal" tabindex="-1" role="dialog" aria-labelledby="sale_replace_modalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content" id="">
+                <div class="modal-header">
+                    <h5 class="modal-title">Sale Replace</h5>
+                    <button type="button" class="close" id="sale_replace_close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body text-left">
+                    <div class="form-group my-0 mx-auto w-75" id="invoice_search">
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="invoice_search_input" placeholder="Search Invoice No...">
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-primary" id="invoice_search_btn"><i class="icon-magnifying-glass-browser"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive" id="return_table_div">
+                        <table class="table table-hover" id="return_table">
+                            <thead>
+                                <tr class="text-primary">
+                                    <th scope="col">Check</th>
+                                    <th scope="col">Product Name</th>
+                                    <th scope="col">Batch</th>
+                                    <th scope="col">Quantity</th>
+                                    <th scope="col">Returned</th>
+                                    <th scope="col" style="width: 140px;">Return Qty</th>
+                                    <th scope="col">Unit Price</th>
+                                    <th scope="col">Total Price</th>
+                                    <th scope="col" class="d-none">Product ID</th>
+                                    <th scope="col" class="d-none">Sale ID</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                        <div class="row">
+                            <div class="col-md-3 ml-auto">
+                                <table class="table mt-3" id="salesInfoTable" style="font-size: 12px;">
+                                    <tbody>
+                                        <tr>
+                                            <td>Card Total</td>
+                                            <td class="text-right" id="card_total"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Discount</td>
+                                            <td class="text-right" id="sale_dis"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Total</td>
+                                            <td class="text-right" id="sale_total"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Round</td>
+                                            <td class="text-right" id="sale_round"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Paid Amount</td>
+                                            <td class="text-right" id="paid_amt"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Total Due</td>
+                                            <td class="text-right" id="sale_due"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div>
+                            <button type="button" id="addToreturn" class="btn btn-primary btn-sm mt-3">Add Return</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -549,6 +740,93 @@
                     $('#customerID').val(''); // Clear hidden customer ID
                     $('#customer_search_list').html(''); // Clear suggestions
                 }
+            });
+        });
+    </script>
+    <!-- JS for generating barcode for Member ID -->
+    <script>
+        $(document).ready(function() {
+            $('.member_id_generate').click(function(e) {
+                e.preventDefault();
+                let barcode = Date.now();
+                $('input[id="member_id"]').val(barcode);
+            });
+            $('.member_id_generate2').click(function(e) {
+                e.preventDefault();
+                let barcode = Date.now();
+                $('input[id="member_id2"]').val(barcode);
+            });
+        });
+    </script>
+    <!-- JS For adding customer -->
+    <script>
+        $(document).ready(function () {
+            $('#addCustomerSubmit').on('click', function () {
+                const memberCode = $('#member_id').val();
+                const cusType = $('#c_type').val();
+                const cusName = $('#c_name').val();
+                const cusEmail = $('#c_email').val();
+                const cusPhone = $('#c_phone').val();
+                const cusGender = $('#c_gender').val();
+                const dateOfBirth = $('#dob').val();
+                const mStatus = $('#m_status').val();
+                const anniversary = $('#anniversary').val();
+                const adrsType = $('#adrs_type').val();
+                const adrs = $('#address').val();
+                const imageFile = $('#cusImage')[0].files[0];
+
+                // Prepare the form data including stock_hidden data
+                const formData = new FormData();
+                formData.append('_token', '{{ csrf_token() }}');
+                formData.append('memberCode', memberCode);
+                formData.append('cusType', cusType);
+                formData.append('cusName', cusName);
+                formData.append('cusEmail', cusEmail);
+                formData.append('cusPhone', cusPhone);
+                formData.append('cusGender', cusGender);
+                formData.append('dateOfBirth', dateOfBirth);
+                formData.append('mStatus', mStatus);
+                formData.append('anniversary', anniversary);
+                formData.append('adrsType', adrsType);
+                formData.append('adrs', adrs);
+                formData.append('imageFile', imageFile);
+
+                // Send data to the server via AJAX
+                $.ajax({
+                    url: '{{ route("add.customer.sales") }}', // Laravel route URL
+                    type: 'POST',
+                    data: formData,
+                    processData: false,  // Prevent jQuery from processing the data
+                    contentType: false,  // Prevent jQuery from setting the content type
+                    success: function (response) {
+                        if (response.success) {
+                            // Show success toastr notification
+                            toastr.success(response.message || 'Customer added successfully!', 'Success', {
+                                timeOut: 5000,
+                                closeButton: true,
+                                progressBar: true
+                            });
+
+                            // Close modal (if applicable)
+                            $('.close').click();
+                        } else {
+                            // Show error toastr notification
+                            toastr.error(response.message || 'An error occurred.', 'Error', {
+                                timeOut: 5000,
+                                closeButton: true,
+                                progressBar: true
+                            });
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        // Show error toastr notification
+                        toastr.error('An error occurred: ' + xhr.responseText, 'Error', {
+                            timeOut: 5000,
+                            closeButton: true,
+                            progressBar: true
+                        });
+                    },
+                });
             });
         });
     </script>
@@ -744,6 +1022,8 @@
                 // Update cart total
                 $('#cart_total').text(totalOfAll.toFixed(2));
 
+                const replaceTotal = $('#count_table #grand_replace').text();
+
                 // Fetch user inputs for discount
                 const disPer = parseFloat($('#dis_per').val()) || 0; // Percentage discount
                 const disTk = parseFloat($('#dis_tk').val()) || 0;   // Direct value discount
@@ -763,19 +1043,20 @@
 
                 // Update discounted total
                 const discountedTotal = totalOfAll - discount;
+                const discountedReplaceTotal = discountedTotal - replaceTotal;
 
                 // Remove `d-none` class if there is a discount, else add it
                 if (discount > 0) {
-                    $('#count_table tbody tr.d-none').removeClass('d-none');
+                    $('#count_table tbody #discount_tr.d-none').removeClass('d-none');
                     $('#count_table #dis_amt').eq(0).text(`${disPer > 0 ? disPer + '%' : disTk + 'TK'}`);
                     $('#count_table .td_2').eq(0).text(discountedTotal.toFixed(2));
                 } else {
-                    $('#count_table tbody tr').eq(0).addClass('d-none');
+                    $('#count_table tbody #discount_tr').eq(0).addClass('d-none');
                 }
 
                 // Set cash amount and update paid to discounted total
                 if (!$('#cash_amt').data('user-modified')) {
-                    $('#cash_amt').val(discountedTotal.toFixed(2));  // Set only if not modified by user
+                    $('#cash_amt').val(discountedReplaceTotal.toFixed(2));  // Set only if not modified by user
                 }
 
                 const actCashAmt = (parseFloat($('#cash_amt').val()) || 0);
@@ -784,7 +1065,7 @@
 
                 // Calculate total due
                 const round = $('#round_check').is(':checked') ? 0 : 0; // Initially no round applied
-                let totalDue = (discountedTotal - paid);
+                let totalDue = (discountedReplaceTotal - paid);
 
                 // Handle rounding
                 if ($('#round_check').is(':checked')) {
@@ -796,8 +1077,8 @@
 
                 // Update fields in count_table
                 $('#count_table .td_2').eq(1).text(discountedTotal.toFixed(2));
-                $('#count_table .td_2').eq(2).text(paid.toFixed(2));  // Paid amount
-                $('#count_table .td_2').eq(4).text(totalDue.toFixed(2)); // Total due
+                $('#count_table .td_2').eq(3).text(paid.toFixed(2));  // Paid amount
+                $('#count_table .td_2').eq(5).text(totalDue.toFixed(2)); // Total due
 
                 // Set default cash_paid to null (if not modified)
                 if (!$('#cash_paid').data('user-modified')) {
@@ -844,7 +1125,6 @@
                     $('#grand_due').text(parseFloat($('#grand_round').text()).toFixed(2));
                     $('#count_table #grand_round').text('0.00');
                 }
-
             });
 
             // Trigger updateTotals initially to set values
@@ -1040,13 +1320,247 @@
                 $('input[name="radio_amount"]:checked').trigger('change');
             });
 
-            // Sending Data to the BackEnd -------------->
+
+            // Sales Replace Functions --------------------------------------->
+            const sale_details = @json($sale_details);
+            const sales = @json($sales);
+
+            // Initially hide the return table div
+            $('#return_table_div').toggle();
+
+            // Function to handle the search logic
+            function searchInvoice() {
+                const saleInvoice = $('#invoice_search_input').val().trim();
+
+                // Find the matching sale detail
+                const saleDetail = sale_details.find(p => p.invoiceNo === saleInvoice);
+
+                if (!saleDetail) {
+                    alert("Invoice not found.");
+                    return;
+                }
+
+                // Find all sales related to this sale detail
+                const relatedSales = sales.filter(sale => sale.sales_ID === saleDetail.id);
+
+                if (relatedSales.length === 0) {
+                    alert("No sales found for this invoice.");
+                    return;
+                } else {
+                    $('#return_table_div').toggle();
+                }
+
+                // Clear the previous rows
+                $('#return_table tbody').empty();
+
+                // Append rows for each related sale
+                relatedSales.forEach(sale => {
+                    $('#return_table tbody').append(`
+                        <tr>
+                            <td class="td-check">
+                                <label class="custom-checkbox">
+                                    <input type="checkbox" value="">
+                                    <span></span>
+                                </label>
+                            </td>
+                            <td>${sale.product_name}</td>
+                            <td>${sale.batch_no}</td>
+                            <td>${sale.so_qty}</td>
+                            <td>${sale.returned || 0}</td>
+                            <td><input type="number" class="form-control form-control-sm return_qty" min="0"></td>
+                            <td>${sale.price}</td>
+                            <td>${sale.total}</td>
+                            <td class="d-none">${sale.product_id}</td>
+                            <td class="d-none">${sale.sales_ID}</td>
+                        </tr>
+                    `);
+                });
+
+                let cardTotal = 0;
+                if (saleDetail) {
+                    $("#return_table tbody tr").each(function () {
+                        cardTotal += parseFloat($(this).find("td").eq(7).text()) || 0;
+                    });
+                    let saleTotal = parseFloat(saleDetail.cashTotal) || 0;
+                    let saleDiscount = saleDetail.cashDiscount;
+                    let saleRound = parseFloat(saleDetail.cashRound) || 0;
+                    let paidTotal = parseFloat(saleDetail.cashAmount + saleDetail.cardAmount + saleDetail.mobileAmount) || 0;
+                    let saleDue = parseFloat(saleDetail.cashDue) || 0;
+
+                    // Update table total quantity and price
+                    $('#salesInfoTable #card_total').text(cardTotal.toFixed(2));
+                    $('#salesInfoTable #sale_dis').text(saleDiscount);
+                    $('#salesInfoTable #sale_total').text(saleTotal.toFixed(2));
+                    $('#salesInfoTable #sale_round').text(saleRound.toFixed(2));
+                    $('#salesInfoTable #paid_amt').text(paidTotal.toFixed(2));
+                    $('#salesInfoTable #sale_due').text(saleDue.toFixed(2));
+                }
+
+                // Update the visibility of the return button
+                toggleReturn();
+            }
+
+            // Function to toggle the visibility of the return button
+            function toggleReturn() {
+                const hasRows = $('#return_table tbody tr').length > 0;
+                $('#addToreturn').toggle(hasRows); // Show or hide the button based on rows
+                $('#salesInfoTable').toggle(hasRows); // Show or hide the button based on rows
+            }
+
+            // Function to handle the add to return button logic
+            function handleAddToReturn() {
+                // Get all checked rows
+                const checkedRows = $('#return_table tbody tr').filter(function () {
+                    return $(this).find('input[type="checkbox"]').is(':checked');
+                });
+
+                // If no rows are checked, show an alert and return
+                if (checkedRows.length === 0) {
+                    alert('Please select an item first');
+                    return;
+                }
+
+                // Create the second table if it doesn't exist
+                if ($('#appended_table').length === 0) {
+
+                    if ($('#sales_table tbody tr').length === 0) {
+                        alert('Please add product first!');
+                        return;
+                    }
+
+                    const appendedTableHtml = `
+                        <div class="table-responsive mt-5">
+                            <h6 class="pl-2">Replace Product List</h6>
+                            <table class="table table-hover" id="appended_table">
+                                <thead>
+                                    <tr class="text-primary">
+                                        <th scope="col">Product Name</th>
+                                        <th scope="col">Batch</th>
+                                        <th scope="col">Return Qty</th>
+                                        <th scope="col">Unit Price</th>
+                                        <th scope="col">Total Price</th>
+                                        <th scope="col" class="d-none">Product ID</th>
+                                        <th scope="col" class="d-none">Sale ID</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    `;
+
+                    // Append the table after the #addToreturn button
+                    $('#sales_table').after(appendedTableHtml);
+                    // Programmatically trigger the click event on #sale_replace_close
+                    $('#sale_replace_close').click();
+                }
+
+                // Clear previous appended rows in the second table
+                $('#appended_table tbody').empty();
+                $('#sale_replace_close').click();
+
+                // Append checked rows to the second table
+                checkedRows.each(function () {
+                    const row = $(this);
+                    const productName = row.find('td').eq(1).text();
+                    const batch = row.find('td').eq(2).text();
+                    const quantity = parseFloat(row.find('td').eq(3).text()).toFixed(2);
+                    const returned = parseFloat(row.find('td').eq(4).text()).toFixed(2);
+                    const returnQty = parseFloat(row.find('td').eq(5).find('input').val()).toFixed(2);
+                    const unitPrice = row.find('td').eq(6).text();
+                    const totalPrice = parseFloat(returnQty * unitPrice).toFixed(2);
+                    const productID = row.find('td').eq(8).text();
+                    const saleID = row.find('td').eq(9).text();
+
+                    // Check if Return Qty is empty or not a number
+                    if (!returnQty || isNaN(returnQty)) {
+                        alert(`Return quantity for ${productName} is empty. Please enter a valid quantity.`);
+                        $('#count_table #grand_replace').text(null);
+                        return; // Skip this row
+                    }
+
+                    // Check if the item is completely returned
+                    if (quantity === returned) {
+                        alert(`This item (${productName}) is completely returned.`);
+                        $('#count_table #grand_replace').text(null);
+                        return; // Skip this row
+                    }
+
+                    // Check if the return quantity exceeds the available quantity
+                    if (returnQty > (quantity - returned)) {
+                        alert(`Return quantity for ${productName} exceeds the available quantity.`);
+                        $('#count_table #grand_replace').text(null);
+                        return; // Skip this row
+                    }
+
+                    // Append to the appended table
+                    $('#appended_table tbody').append(`
+                        <tr>
+                            <td>${productName}</td>
+                            <td>${batch}</td>
+                            <td>${returnQty}</td>
+                            <td>${unitPrice}</td>
+                            <td>${totalPrice}</td>
+                            <td class="d-none">${productID}</td>
+                            <td class="d-none">${saleID}</td>
+                        </tr>
+                    `);
+                });
+
+                let totalReplace = 0;
+                // Loop through each row in the sale replace table
+                $('#appended_table tbody tr').each(function () {
+                    totalReplace += parseFloat($(this).find("td").eq(4).text()) || 0;
+                });
+
+                // Remove `d-none` class if there is a totalReplace, else add it
+                if (totalReplace > 0) {
+                    $('#count_table tbody #replace_tr.d-none').removeClass('d-none');
+                    $('#count_table #grand_replace').text(totalReplace.toFixed(2));
+                } else {
+                    $('#count_table tbody #replace_tr').addClass('d-none');
+                }
+
+                // Uncheck the checkboxes in the original table after moving rows
+                $('#return_table tbody input[type="checkbox"]').prop('checked', false);
+
+                // Toggle the visibility of the addToReturn button
+                toggleReturn();
+                updateTotals();
+            }
+
+            // Attach the click event to the add to return button
+            $('#addToreturn').on('click', function () {
+                handleAddToReturn();
+            });
+
+            // Click event for the search button
+            $('#invoice_search_btn').on('click', function () {
+                searchInvoice();
+            });
+
+            // Keydown event for the input field
+            $('#invoice_search_input').on('keydown', function (event) {
+                if (event.key === "Enter" || event.keyCode === 13) {
+                    event.preventDefault();
+                    searchInvoice();
+                }
+            });
+
+            // Initial check for the return button visibility on page load
+            $(document).ready(function () {
+                toggleReturn();
+            });
+
+
+            // Sending Data to the BackEnd ------------------------------->
             $('#add_sale_btn').on('click', function () {
 
                 const cashTotal = parseFloat($('#grand_total').text() || "0.00").toFixed(2);
                 const cashDiscount = $('#dis_amt').text() || "0.00";
                 const cashRound = parseFloat($('#grand_round').text() || "0.00").toFixed(2);
                 const cashDue = parseFloat($('#grand_due').text() || "0.00").toFixed(2);
+                const replaceAmount = parseFloat($('#grand_replace').text() || "0.00").toFixed(2);
                 const customer_id = $('#customerID').val();
 
                 const cashAmount = parseFloat($('#cash_amt').val() || "0.00").toFixed(2);
@@ -1061,9 +1575,12 @@
                 }
 
                 // Conditioning the submit for Over Payment
-                if (cashAmount > cashTotal && !$('#round_check').is(':checked')) {
-                    alert('Over Payment is not allowed!');
-                    return;
+                if (cashAmount > cashTotal) {
+                    if (!$('#round_check').is(':checked')) {
+                        alert('Over Payment is not allowed!');
+                        console.log(cashAmount, cashTotal);
+                        return;
+                    }
                 }
 
                 const cardPay = parseFloat(r_cardPay).toFixed(2);
@@ -1087,7 +1604,8 @@
                 const m_mobTrans = $('#m_trans_no').val();
                 const m_mobBank = $('#m_mobile_bank').val();
 
-                let invoice_no = Date.now();
+                let invoice_no = Date.now() + '01';
+                let return_invoice_no = Date.now() + '02';
 
                 // Validate required fields
                 if (cashTotal == 0) {
@@ -1143,7 +1661,6 @@
                 }
 
                 const rows = [];
-
                 // Loop through each row in the table and collect row data
                 $('#sales_table tbody tr').each(function () {
                     rows.push({
@@ -1156,14 +1673,30 @@
                     });
                 });
 
+                const r_rows = [];
+                // Loop through each row in the table and collect row data
+                $('#appended_table tbody tr').each(function () {
+                    r_rows.push({
+                        r_product_name: $(this).find('td:eq(0)').text(),
+                        r_batch: $(this).find('td:eq(1)').text(),
+                        r_return_qty: $(this).find('td:eq(2)').text(),
+                        r_price: $(this).find('td:eq(3)').text(),
+                        r_total_price: $(this).find('td:eq(4)').text(),
+                        r_product_id: $(this).find('td:eq(5)').text(),
+                        r_sales_ID: $(this).find('td:eq(6)').text(),
+                    });
+                });
+
                 // Preparing the Sales infos
                 const formData = new FormData();
                 formData.append('_token', '{{ csrf_token() }}');
                 formData.append('invoice_no', invoice_no);
+                formData.append('r_invoice_no', return_invoice_no);
                 formData.append('cash_total', cashTotal);
                 formData.append('cash_dis', cashDiscount);
                 formData.append('cash_round', cashRound);
                 formData.append('cash_due', cashDue);
+                formData.append('replace_amt', replaceAmount);
                 formData.append('customerID', customer_id);
 
                 formData.append('s_cash_amt', cashPay);
@@ -1189,6 +1722,7 @@
                 formData.append('s_mob_rcv', s_mobRcv);
 
                 formData.append('rows', JSON.stringify(rows));
+                formData.append('r_rows', JSON.stringify(r_rows));
 
                 // Send data to the server via AJAX
                 $.ajax({
@@ -1467,6 +2001,12 @@
                                 <tr>
                                     <td colspan="3">Mobile</td>
                                     <td>${parseFloat(response.mobileAmount).toFixed(2)}</td>
+                                </tr>
+                            ` : ''}
+                            ${response.replaceAmount > 0 ? `
+                                <tr>
+                                    <td colspan="3">Replace</td>
+                                    <td>${parseFloat(response.replaceAmount).toFixed(2)}</td>
                                 </tr>
                             ` : ''}
                             <tr class="bottom_border" style="border-bottom: 2px solid black;" class="mt-1">

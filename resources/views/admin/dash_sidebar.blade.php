@@ -102,8 +102,8 @@
             </ul>
         </li>
 
-        <li class="{{ Request::is('daily_summary') || Request::is('profit_loss_report') || Request::is('sale_list') || Request::is('product_sale_report') || Request::is('sale_return_report') || Request::is('stock_report') || Request::is('stockIn_summary') || Request::is('stockOut_report') || Request::is('employee_trans_report') || Request::is('office_trans_report') || Request::is('supplier_trans_report') || Request::is('fund_transfer_report') ? 'active' : '' }}"><a href="#report_manage" aria-expanded="false" data-toggle="collapse"> <i class="fas fa-chart-bar"></i><span>Reports</span></a>
-            <ul id="report_manage" class="collapse list-unstyled {{ Request::is('daily_summary') || Request::is('profit_loss_report') || Request::is('sale_list') || Request::is('product_sale_report') || Request::is('sale_return_report') || Request::is('stock_report') || Request::is('stockIn_summary') || Request::is('stockOut_report') || Request::is('employee_trans_report') || Request::is('office_trans_report') || Request::is('supplier_trans_report') || Request::is('fund_transfer_report') ? 'show' : '' }}">
+        <li class="{{ Request::is('daily_summary') || Request::is('profit_loss_report') || Request::is('sale_list') || Request::is('product_sale_report') || Request::is('sale_return_report') || Request::is('stock_report') || Request::is('stockIn_summary') || Request::is('stockOut_report') || Request::is('employee_trans_report') || Request::is('office_trans_report') || Request::is('supplier_trans_report') || Request::is('fund_transfer_report') || Request::is('customer_ledger_report') ? 'active' : '' }}"><a href="#report_manage" aria-expanded="false" data-toggle="collapse"> <i class="fas fa-chart-bar"></i><span>Reports</span></a>
+            <ul id="report_manage" class="collapse list-unstyled {{ Request::is('daily_summary') || Request::is('profit_loss_report') || Request::is('sale_list') || Request::is('product_sale_report') || Request::is('sale_return_report') || Request::is('stock_report') || Request::is('stockIn_summary') || Request::is('stockOut_report') || Request::is('employee_trans_report') || Request::is('office_trans_report') || Request::is('supplier_trans_report') || Request::is('fund_transfer_report') || Request::is('customer_ledger_report') ? 'show' : '' }}">
                 <li class="{{ Request::is('profit_loss_report') ? 'active' : '' }}">
                     <a href="{{ url('profit_loss_report') }}">Profit/Loss</a>
                 </li>
@@ -139,6 +139,9 @@
                 </li>
                 <li class="{{ Request::is('fund_transfer_report') ? 'active' : '' }}">
                     <a href="{{ url('fund_transfer_report') }}">Fund Transfer Report</a>
+                </li>
+                <li class="{{ Request::is('customer_ledger_report') ? 'active' : '' }}">
+                    <a href="{{ url('customer_ledger_report') }}">Customer Ledger Report</a>
                 </li>
             </ul>
         </li>

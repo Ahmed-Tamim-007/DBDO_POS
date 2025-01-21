@@ -453,3 +453,20 @@ table.dataTable th.dt-type-numeric, table.dataTable th.dt-type-date, table.dataT
     background-color: #007bff;
     transform: translateY(-3px);
 }
+
+/* Add keyframes for fadeInUp animation */
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Style for .block */
+.block {
+    animation: fadeInUp 1s;
+}
