@@ -34,14 +34,14 @@
                 <div class="container-fluid">
                     <div class="row" id="wrapper">
                         <div class="col-md-8">
-                            <div class="block">
+                            <div class="block" style="background-color: #019bee">
                                 <form id="product_form">
                                     <div class="row mb-3" id="sales_search">
                                         <div class="col-md-12 position-relative">
                                             <div class="input-group">
-                                                <input type="text" id="product_search" name="product" class="form-control" autocomplete="off" placeholder="Search Product...">
+                                                <input type="text" id="product_search" name="product" class="form-control" style="background-color: #ffffff" autocomplete="off" placeholder="Search Product...">
                                                 <div class="input-group-append">
-                                                    <button type="submit" class="btn btn-info""><i class="icon-magnifying-glass-browser"></i></button>
+                                                    <button type="submit" class="btn btn-success"><i class="icon-magnifying-glass-browser"></i></button>
                                                 </div>
                                             </div>
 
@@ -53,15 +53,15 @@
                                 <div class="row">
                                     <div class="col-lg-5 col-md-7 position-relative pr-md-0">
                                         <div class="input-group">
-                                            <input type="text" id="customer_search" name="customer" class="form-control" autocomplete="off" placeholder="Search Customer...">
+                                            <input type="text" id="customer_search" name="customer" class="form-control" style="background-color: #ffffff" autocomplete="off" placeholder="Search Customer...">
                                             <div class="input-group-append">
-                                                <button type="button" data-toggle="modal" data-target="#addCustomer" class="btn btn-info ms-auto"><i class="fa fa-plus"></i></button>
+                                                <button type="button" data-toggle="modal" data-target="#addCustomer" class="btn btn-success ms-auto"><i class="fa fa-plus"></i></button>
                                             </div>
                                         </div>
                                         <input type="hidden" name="customerID" id="customerID">
                                         <div id="customer_search_list" class="list-group"></div>
                                     </div>
-                                    <div class="col-md-5" style="font-size: 14px;">
+                                    <div class="col-md-5" style="font-size: 14px; color: #ffffff;">
                                         <div>PH: <span id="cus_phone"></span></div>
                                         <div>Due: <span id="cus_due"></span> &#2547;</div>
                                     </div>
@@ -71,7 +71,7 @@
                                 <div class="table-responsive">
                                     <table id="sales_table" class="table table-hover">
                                         <thead>
-                                            <tr class="text-primary">
+                                            <tr style="background-color: #019bee; color: #ffffff;">
                                                 <th scope="col" style="display: none">ID</th>
                                                 <th scope="col">Product</th>
                                                 <th scope="col">Batch</th>
@@ -87,7 +87,7 @@
                                         </tbody>
 
                                         <tfoot>
-                                            <tr class="text-primary">
+                                            <tr style="background-color: #019bee; color: #ffffff;">
                                                 <th scope="col" colspan="3" class="text-right">Totals:</th>
                                                 <th id="t_qty" scope="col">0</th>
                                                 <th></th>
@@ -99,14 +99,14 @@
                                 </div>
                                 <div class="my-3">
                                     <label for="sale_note">Sale Note:</label>
-                                    <textarea class="form-control" id="sale_note" rows="2"></textarea>
+                                    <textarea class="form-control" id="sale_note" rows="2" style="background-color: #d9edff;"></textarea>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <div class="block px-0 py-2">
+                            <div class="block px-0 py-0">
+                                <h6 class="text-center mb-0 py-2" style="color: #ffffff; background-color: #019bee;">CART TOTAL : <span id="cart_total">0</span> &#2547;</h6>
                                 <table class="table table-hover" id="count_table" style="font-size: 13px;">
-                                    <h6 class="text-center text-primary">CART TOTAL : <span id="cart_total">0</span> &#2547;</h6>
                                     <tbody>
                                         <tr class="d-none font-weight-bold" id="discount_tr">
                                             <td class="td_1">Discount <span id="dis_amt"></span></td>
@@ -143,7 +143,7 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <div class="block">
+                            <div class="block" style="background-color: #d9edff;">
                                 <h4 class="text-primary pb-2" style="border-bottom: 2px solid #019bee;">Payment Option:</h4>
                                 <div class="row payment-options">
                                     <div class="col-lg-3 col-md-6">
@@ -235,7 +235,7 @@
                                 <div class="row multi_option d-none"></div>
                                 <button class="btn btn-primary w-100 btn-sm my-2" id="add_sale_btn">Sale Now</button>
                             </div>
-                            <div class="block d-flex flex-wrap">
+                            <div class="block d-flex flex-wrap" style="background-color: #d9edff;">
                                 <button class="btn btn-warning btn-sm px-4 mb-1 mx-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Discount" data-toggle="modal" data-target="#dis_modal"><i class="fa fa-percent"></i></button>
                                 <button class="btn btn-danger btn-sm px-4 mb-1 mx-auto" id="hold_sale_btn" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Hold Sale"><i class="fa fa-pause"></i></button>
                                 <button class="btn btn-secondary btn-sm px-4 mb-1 mx-auto" data-toggle="modal" data-target="#sales_restore_modal" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Restore"><i class="fa fa-rotate-left"></i></button>
@@ -1604,8 +1604,8 @@
                 const m_mobTrans = $('#m_trans_no').val();
                 const m_mobBank = $('#m_mobile_bank').val();
 
-                let invoice_no = Date.now() + '01';
-                let return_invoice_no = Date.now() + '02';
+                let invoice_no = Date.now() + 1;
+                let return_invoice_no = Date.now() + 2;
 
                 // Validate required fields
                 if (cashTotal == 0) {

@@ -492,34 +492,6 @@
             });
         });
     </script>
-    <!-- Script For Different Divs based on URL -->
-    {{-- <script>
-        $(document).ready(function() {
-            const currentUrl = window.location.pathname;
-
-            if (currentUrl === '/customer/transaction') {
-                $('#add_customer_trans').show();
-                $('#add_supplier_trans').hide();
-                $('#add_office_trans').hide();
-                $('#add_employee_trans').hide();
-            } else if (currentUrl === '/supplier/transaction') {
-                $('#add_supplier_trans').show();
-                $('#add_customer_trans').hide();
-                $('#add_office_trans').hide();
-                $('#add_employee_trans').hide();
-            } else if (currentUrl === '/office/transaction') {
-                $('#add_office_trans').show();
-                $('#add_customer_trans').hide();
-                $('#add_supplier_trans').hide();
-                $('#add_employee_trans').hide();
-            } else if (currentUrl === '/employee/transaction') {
-                $('#add_employee_trans').show();
-                $('#add_customer_trans').hide();
-                $('#add_supplier_trans').hide();
-                $('#add_office_trans').hide();
-            }
-        });
-    </script> --}}
     <!-- JS For customer search and customer Due and Submission -->
     <script>
         $(document).ready(function () {
@@ -681,11 +653,11 @@
                 $('#due_table tbody tr').each(function () {
                     rows.push({
                         invoiceNo: $(this).find('td:eq(0)').text(),
+                        dueAmt: parseFloat($(this).find('td:eq(2)').text()),
                         paid: parseFloat($(this).find('.due_pay').val()) || 0,
                         isSettled: $(this).find('td:eq(4) input[type="checkbox"]').prop('checked') ? 'yes' : 'no',
                     });
                 });
-                // console.log(transactionNO, customerID, amt_paid, pay_date, account, description, doc_name, doc_description, image, rows);
 
                 // Prepare the form data including stock_hidden data
                 const formData = new FormData();

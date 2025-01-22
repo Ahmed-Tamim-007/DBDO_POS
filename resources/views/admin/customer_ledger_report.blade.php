@@ -54,43 +54,69 @@
                                 </div>
                             </form>
                         </div>
-                        {{-- @if ($transfers->isNotEmpty())
+                        @if ($transactions->isNotEmpty())
                             <div class="block table-responsive">
-                                <h5 class="text-center">Fund Transfers From: {{ \Carbon\Carbon::parse($fromDate)->format('d M, Y') }} &nbsp;- To: {{ \Carbon\Carbon::parse($toDate)->format('d M, Y') }}</h5>
-                                <table class="table table-hover" id="fund_transfer_table">
+                                <h5 class="text-center">Transactions From: {{ \Carbon\Carbon::parse($fromDate)->format('d M, Y') }} &nbsp;- To: {{ \Carbon\Carbon::parse($toDate)->format('d M, Y') }}</h5>
+                                <table class="table table-hover" id="customer_ledger_table">
                                     <thead>
                                         <tr class="text-primary">
-                                            <th scope="col">SL.</th>
                                             <th scope="col">Date</th>
-                                            <th scope="col">Account From</th>
-                                            <th scope="col">Account To</th>
-                                            <th scope="col">Discription</th>
-                                            <th scope="col">User</th>
-                                            <th scope="col">Amount</th>
+                                            <th scope="col">Invoice No</th>
+                                            <th scope="col">Account</th>
+                                            <th scope="col">Due Amount</th>
+                                            <th scope="col">Paid Amount</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($transfers as $transfer)
+                                        @php
+                                            $lastSaleId = null;
+                                        @endphp
+                                        @foreach($transactions as $transaction)
                                             <tr>
-                                                <td>{{$loop->iteration}}</td>
-                                                <td>{{ \Carbon\Carbon::parse($transfer->created_at)->format('d M, Y') }}</td>
-                                                <td>{{$transfer->account_from_name}} {{$transfer->account_from_no}}</td>
-                                                <td>{{$transfer->account_to_name}} {{$transfer->account_to_no}}</td>
-                                                <td>{{$transfer->description}}</td>
-                                                <td>{{$transfer->user}}</td>
-                                                <td>{{$transfer->amount}}</td>
+                                                <td>{{ \Carbon\Carbon::parse($transaction->sale_date)->format('d M, Y') }}</td>
+                                                <td>
+                                                    @if($lastSaleId !== $transaction->sale_id)
+                                                        {{ $transaction->invoiceNo }}
+                                                    @endif
+                                                </td>
+                                                <td>{{ $transaction->account_name }}</td>
+                                                <td>
+                                                    @if($lastSaleId !== $transaction->sale_id)
+                                                        {{ $transaction->cashDue }}
+                                                    @endif
+                                                </td>
+                                                <td>{{ $transaction->amt_paid }}</td>
                                             </tr>
+                                            @php
+                                                $lastSaleId = $transaction->sale_id;
+                                            @endphp
                                         @endforeach
                                     </tbody>
-                                    <tfoot>
-                                        <tr class="text-primary">
-                                            <th scope="col" colspan="6" class="text-right">Totals:</th>
+                                    <tfoot class="text-primary">
+                                        <tr>
+                                            <th scope="col" colspan="3" class="text-right">Totals:</th>
                                             <th scope="col">0.00</th>
+                                            <th scope="col">0.00</th>
+                                        </tr>
+                                        <tr>
+                                            <th scope="col" colspan="3"></th>
+                                            <th scope="col">Due Amount:</th>
+                                            <th scope="col" id="table_due">0.00</th>
+                                        </tr>
+                                        <tr>
+                                            <th scope="col" colspan="3"></th>
+                                            <th scope="col">Settle Amount:</th>
+                                            <th scope="col">{{ number_format($settled, 2) }}</th>
+                                        </tr>
+                                        <tr>
+                                            <th scope="col" colspan="3"></th>
+                                            <th scope="col">Actual Due Amount:</th>
+                                            <th scope="col">{{ number_format($actualDue, 2) }}</th>
                                         </tr>
                                     </tfoot>
                                 </table>
                             </div>
-                        @endif --}}
+                        @endif
                     </div>
                 </div>
             </div>
@@ -110,17 +136,21 @@
         $(document).ready(function () {
             // Attach a submit event to the form
             $('#customer_ledger_form').on('submit', function (e) {
-                // Get the values of the "From Date" and "To Date" fields
+                // Get the values of the fields
                 const fromDateField = $('input[name="from_date"]');
                 const toDateField = $('input[name="to_date"]');
+                const customerField = $('input[name="customer"]');
+
                 const fromDate = fromDateField.val();
                 const toDate = toDateField.val();
+                const customer = customerField.val();
 
                 let isValid = true;
 
                 // Reset previous styles and error messages
                 fromDateField.removeClass('is-invalid');
                 toDateField.removeClass('is-invalid');
+                customerField.removeClass('is-invalid');
                 $('.error-message').remove();
 
                 // Check if "From Date" is empty
@@ -135,6 +165,13 @@
                     isValid = false;
                     toDateField.addClass('is-invalid');
                     toDateField.after('<span class="error-message" style="color: red; font-size: 12px;">Please fill this field!</span>');
+                }
+
+                // Check if "Customer" is empty
+                if (customer === "") {
+                    isValid = false;
+                    customerField.addClass('is-invalid');
+                    customerField.after('<span class="error-message" style="color: red; font-size: 12px;">Please fill this field!</span>');
                 }
 
                 // Prevent form submission if any field is invalid
@@ -208,16 +245,23 @@
     <script>
         $(document).ready(function () {
             function updateFooterTotals() {
-                let totalAmt = 0;
+                let totalDue = 0;
+                let totalPaid = 0;
+                let allDue = 0;
 
                 // Iterate through each row in the tbody
-                $("#fund_transfer_table tbody tr").each(function () {
-                    totalAmt += parseFloat($(this).find("td").eq(6).text()) || 0;
+                $("#customer_ledger_table tbody tr").each(function () {
+                    totalDue += parseFloat($(this).find("td").eq(3).text()) || 0;
+                    totalPaid += parseFloat($(this).find("td").eq(4).text()) || 0;
                 });
 
                 // Update the footer with the calculated totals
-                let $tfoot = $("#fund_transfer_table tfoot tr");
-                $tfoot.find("th").eq(1).text(totalAmt.toFixed(2));
+                let $tfoot = $("#customer_ledger_table tfoot tr");
+                $tfoot.find("th").eq(1).text(totalDue.toFixed(2));
+                $tfoot.find("th").eq(2).text(totalPaid.toFixed(2));
+
+                allDue = (totalDue - totalPaid);
+                $("#customer_ledger_table tfoot #table_due").text(allDue.toFixed(2));
             }
 
             // Call the function on page load

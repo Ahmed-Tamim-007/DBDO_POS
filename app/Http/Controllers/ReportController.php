@@ -836,42 +836,63 @@ class ReportController extends Controller
     public function customer_ledger_report()
     {
         $transactions = collect();
-        $customers = Customer::all();
 
-        return view('admin.customer_ledger_report', compact('transactions', 'customers'));
+        return view('admin.customer_ledger_report', compact('transactions'));
     }
     public function customerLedgerReport(Request $request)
     {
         $fromDate = $request->from_date;
         $toDate = $request->to_date ? Carbon::parse($request->to_date)->endOfDay() : null;
 
-        $transactions = DB::table('fund_transfers')
+        $transactions = DB::table('sale_details')
+            ->leftJoin('customer_transactions', 'sale_details.customerID', '=', 'customer_transactions.customerID')
+            ->leftJoin('customers', 'sale_details.customerID', '=', 'customers.id')
+            ->leftJoin('accounts', 'customer_transactions.account', '=', 'accounts.id')
             ->select(
-                'fund_transfers.*',
-                'account_from.acc_name as account_from_name',
-                'account_from.acc_no as account_from_no',
-                'account_to.acc_name as account_to_name',
-                'account_to.acc_no as account_to_no'
+                'sale_details.id as sale_id',
+                'sale_details.invoiceNo',
+                'sale_details.cashDue',
+                'sale_details.created_at as sale_date',
+                'customer_transactions.id as transaction_id',
+                'customer_transactions.account',
+                'customer_transactions.amt_paid',
+                'customer_transactions.created_at as transaction_date',
+                'customers.due',
+                'accounts.acc_name as account_name'
             )
-            ->join('accounts as account_from', 'fund_transfers.accountFrom', '=', 'account_from.id')
-            ->join('accounts as account_to', 'fund_transfers.accountTo', '=', 'account_to.id')
             ->when($fromDate && $toDate, function ($query) use ($fromDate, $toDate) {
-                $query->whereBetween('fund_transfers.created_at', [$fromDate, $toDate]);
+                $query->whereBetween('sale_details.created_at', [$fromDate, $toDate]);
             })
-            ->when($request->accountFrom, function ($query) use ($request) {
-                $query->where('fund_transfers.accountFrom', $request->accountFrom);
+            ->when($request->customerID, function ($query) use ($request) {
+                $query->where('sale_details.customerID', $request->customerID);
             })
-            ->when($request->accountTo, function ($query) use ($request) {
-                $query->where('fund_transfers.accountTo', $request->accountTo);
-            })
-            ->when($request->user, function ($query) use ($request) {
-                $query->where('fund_transfers.user', $request->user);
-            })
+            ->where('sale_details.cashDue', '>', 0) // Filter entries with dues
+            ->orderBy('sale_details.created_at')
             ->get();
 
-        $customers = Customer::all();
+        // Calculate total dues
+        $totalDues = DB::table('sale_details')
+            ->where('customerID', $request->customerID)
+            ->sum('cashDue');
 
-        // Return the view
-        return view('admin.customer_ledger_report', compact('transactions', 'customers', 'fromDate', 'toDate'));
+        // Calculate total paid amounts
+        $totalPaid = DB::table('customer_transactions')
+            ->where('customerID', $request->customerID)
+            ->sum('amt_paid');
+
+        // Fetch the customer's due amount
+        $customerDue = DB::table('customers')
+            ->where('id', $request->customerID)
+            ->value('due');
+
+        $fakeDue = $totalDues - $totalPaid;
+
+        // Calculate the settled amount
+        $settled = $fakeDue - $customerDue;
+
+        $actualDue = $totalDues - $settled - $totalPaid;
+
+        // Pass data to the view
+        return view('admin.customer_ledger_report', compact('transactions', 'fromDate', 'toDate', 'settled', 'actualDue'));
     }
 }

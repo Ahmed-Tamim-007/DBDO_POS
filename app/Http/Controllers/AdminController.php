@@ -1595,10 +1595,6 @@ class AdminController extends Controller
                 // Update table
                 DB::table('sale_details')
                     ->where('invoiceNo', $row['invoiceNo'])
-                    ->decrement('cashDue', $row['paid']);
-
-                DB::table('sale_details')
-                    ->where('invoiceNo', $row['invoiceNo'])
                     ->update(['dueSettled' => $row['isSettled']]);
 
                 DB::table('accounts')
@@ -1612,7 +1608,7 @@ class AdminController extends Controller
                 } elseif ($row['isSettled'] == 'yes') {
                     DB::table('customers')
                         ->where('id', $customerID)
-                        ->decrement('due', $row['paid']);
+                        ->decrement('due', $row['dueAmt']);
                 }
             }
 
