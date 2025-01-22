@@ -72,13 +72,21 @@ class ReportController extends Controller
             ->groupBy(DB::raw('DATE(sales.created_at)'))
             ->get();
 
-        // Sale returns data grouped by day
+        // Sale returns data grouped by day including buying price
         $saleReturns = DB::table('sale_returns')
-            ->selectRaw('DATE(created_at) as date, SUM(total) as total_returns_amount')
-            ->when($fromDate && $toDate, function ($query) use ($fromDate, $toDate) {
-                $query->whereBetween('created_at', [$fromDate, $toDate]);
+            ->leftJoin('stock_ins', function ($join) {
+                $join->on('sale_returns.product_id', '=', 'stock_ins.product_id')
+                    ->on('sale_returns.batch_no', '=', 'stock_ins.batch_no');
             })
-            ->groupBy(DB::raw('DATE(created_at)'))
+            ->selectRaw(
+                'DATE(sale_returns.created_at) as date,
+                SUM(sale_returns.total) as total_returns_amount,
+                SUM(stock_ins.purchase_price * sale_returns.return_qty) as total_returns_cost'
+            )
+            ->when($fromDate && $toDate, function ($query) use ($fromDate, $toDate) {
+                $query->whereBetween('sale_returns.created_at', [$fromDate, $toDate]);
+            })
+            ->groupBy(DB::raw('DATE(sale_returns.created_at)'))
             ->get();
 
         // Merge and normalize data into a single dataset by date
@@ -97,6 +105,7 @@ class ReportController extends Controller
             $totalSalesAmount = $salesData->total_sales_amount ?? 0;
             $totalPurchaseCost = $purchaseData->total_purchase_cost ?? 0;
             $totalReturnsAmount = $returnsData->total_returns_amount ?? 0;
+            $totalReturnsCost = $returnsData->total_returns_cost ?? 0;
             $totalRoundAmount = $salesData->total_round_amount ?? 0;
 
             $profitLossData->push([
@@ -105,7 +114,8 @@ class ReportController extends Controller
                 'total_purchase_cost' => $totalPurchaseCost,
                 'total_returns_amount' => $totalReturnsAmount,
                 'total_round_amount' => $totalRoundAmount,
-                'profit_or_loss' => $totalSalesAmount - $totalPurchaseCost - $totalReturnsAmount - $totalRoundAmount,
+                'total_returns_cost' => $totalReturnsCost,
+                'profit_or_loss' => $totalSalesAmount - $totalPurchaseCost - $totalReturnsAmount + $totalRoundAmount + $totalReturnsCost,
             ]);
         }
 

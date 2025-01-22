@@ -1558,7 +1558,11 @@
 
                 const cashTotal = parseFloat($('#grand_total').text() || "0.00").toFixed(2);
                 const cashDiscount = $('#dis_amt').text() || "0.00";
-                const cashRound = parseFloat($('#grand_round').text() || "0.00").toFixed(2);
+                let cashRound = parseFloat($('#grand_round').text() || "0.00");
+                // Changing the round value
+                cashRound = cashRound * -1;
+                cashRound = cashRound.toFixed(2);
+
                 const cashDue = parseFloat($('#grand_due').text() || "0.00").toFixed(2);
                 const replaceAmount = parseFloat($('#grand_replace').text() || "0.00").toFixed(2);
                 const customer_id = $('#customerID').val();

@@ -15,9 +15,9 @@
       <!-- Sidebar Navigation end-->
       <div class="page-content">
         <div class="page-header">
-          <div class="container-fluid">
-            <h2 class="h5 no-margin-bottom">Reports / Profit-Loss Report</h2>
-          </div>
+            <div class="container-fluid">
+                <h2 class="h5 no-margin-bottom">Reports / Profit-Loss Report</h2>
+            </div>
         </div>
 
         <section class="no-padding-top">
@@ -52,6 +52,7 @@
                                             <th scope="col">Sales Price</th>
                                             <th scope="col">Buying Price</th>
                                             <th scope="col">Return Sale</th>
+                                            <th scope="col">Return Buy</th>
                                             <th scope="col">Round</th>
                                             <th scope="col">Profit/Loss</th>
                                         </tr>
@@ -63,6 +64,7 @@
                                                 <td data-value="{{ $data['total_sales_amount'] }}">{{ number_format($data['total_sales_amount'], 2) }}</td>
                                                 <td data-value="{{ $data['total_purchase_cost'] }}">{{ number_format($data['total_purchase_cost'], 2) }}</td>
                                                 <td data-value="{{ $data['total_returns_amount'] }}">{{ number_format($data['total_returns_amount'], 2) }}</td>
+                                                <td data-value="{{ $data['total_returns_cost'] }}">{{ number_format($data['total_returns_cost'], 2) }}</td>
                                                 <td data-value="{{ $data['total_round_amount'] }}">{{ number_format($data['total_round_amount'], 2) }}</td>
                                                 <td data-value="{{ $data['profit_or_loss'] }}">{{ number_format($data['profit_or_loss'], 2) }}</td>
                                             </tr>
@@ -71,6 +73,7 @@
                                     <tfoot>
                                         <tr class="text-primary">
                                             <th scope="col" class="text-right">Net Total:</th>
+                                            <th scope="col">0.00</th>
                                             <th scope="col">0.00</th>
                                             <th scope="col">0.00</th>
                                             <th scope="col">0.00</th>
@@ -141,6 +144,7 @@
                 let totalSales = 0;
                 let totalPurchase = 0;
                 let totalReturn = 0;
+                let totalReturnBuy = 0;
                 let totalRound = 0;
                 let totalProfit = 0;
 
@@ -149,8 +153,9 @@
                     totalSales += parseFloat($(this).find("td").eq(1).data('value')) || 0;
                     totalPurchase += parseFloat($(this).find("td").eq(2).data('value')) || 0;
                     totalReturn += parseFloat($(this).find("td").eq(3).data('value')) || 0;
-                    totalRound += parseFloat($(this).find("td").eq(4).data('value')) || 0;
-                    totalProfit += parseFloat($(this).find("td").eq(5).data('value')) || 0;
+                    totalReturnBuy += parseFloat($(this).find("td").eq(4).data('value')) || 0;
+                    totalRound += parseFloat($(this).find("td").eq(5).data('value')) || 0;
+                    totalProfit += parseFloat($(this).find("td").eq(6).data('value')) || 0;
                 });
 
                 // Update the footer with the calculated totals
@@ -158,8 +163,9 @@
                 $tfoot.find("th").eq(1).text(totalSales.toFixed(2));
                 $tfoot.find("th").eq(2).text(totalPurchase.toFixed(2));
                 $tfoot.find("th").eq(3).text(totalReturn.toFixed(2));
-                $tfoot.find("th").eq(4).text(totalRound.toFixed(2));
-                $tfoot.find("th").eq(5).text(totalProfit.toFixed(2));
+                $tfoot.find("th").eq(4).text(totalReturnBuy.toFixed(2));
+                $tfoot.find("th").eq(5).text(totalRound.toFixed(2));
+                $tfoot.find("th").eq(6).text(totalProfit.toFixed(2));
             }
 
             // Call the function on page load
