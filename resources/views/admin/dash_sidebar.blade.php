@@ -1,8 +1,8 @@
 <nav id="sidebar">
     <!-- Sidebar Navidation Menus-->
     <ul class="list-unstyled">
-        <li class="{{ Request::is('admin/dashboard') ? 'active' : '' }}">
-            <a href="{{url('admin/dashboard')}}"> <i class="fas fa-tachometer-alt"></i><span>Dashboard</span></a>
+        <li class="{{ Request::is('/') ? 'active' : '' }}">
+            <a href="{{url('/')}}"> <i class="fas fa-tachometer-alt"></i><span>Dashboard</span></a>
         </li>
 
         <li class="{{ Request::is('user_info') ? 'active' : '' }}">

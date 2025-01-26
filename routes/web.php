@@ -14,42 +14,8 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__.'/auth.php';
 
-// Frontend website routes
-Route::get('/', [HomeController::class, 'home']);
-Route::get('/dashboard', [HomeController::class, 'login_home'])->middleware(['auth', 'verified'])->name('dashboard');
-route::get('shop', [HomeController::class, 'shop']);
-route::get('about', [HomeController::class, 'about']);
-route::get('contact', [HomeController::class, 'contact']);
-
-route::get('product_details/{id}', [HomeController::class, 'product_details']);
-route::get('category_details/{id}', [HomeController::class, 'category_details']);
-
-route::get('add_cart/{id}', [HomeController::class, 'add_cart'])->middleware(['auth', 'verified']);
-route::get('mycart', [HomeController::class, 'mycart'])->middleware(['auth', 'verified']);
-route::get('remove_cart/{id}', [HomeController::class, 'remove_cart'])->middleware(['auth', 'verified']);
-route::post('confirm_order', [HomeController::class, 'confirm_order'])->middleware(['auth', 'verified']);
-Route::get('/myorders', [HomeController::class, 'myorders'])->middleware(['auth', 'verified']);
-Route::get('/myreview', [HomeController::class, 'myreview'])->middleware(['auth', 'verified']);
-
-// Product search
-Route::get('/search', [HomeController::class, 'search'])->name('products.search');
-
-// CartItem Increment OR Decrement routes
-Route::patch('/increment_quantity/{id}', [HomeController::class, 'incrementQuantity'])->name('cart.increment');
-Route::patch('/decrement_quantity/{id}', [HomeController::class, 'decrementQuantity'])->name('cart.decrement');
-
-// Stripe routes
-Route::controller(HomeController::class)->group(function(){
-    Route::get('stripe/{value}', 'stripe');
-    Route::post('stripe/{value}', 'stripePost')->name('stripe.post');
-});
-
-
-// ---------------------------------------------------------------------------------------------------------
-
-
 // Admin Panel Routes
-route::get('admin/dashboard', [HomeController::class, 'index'])-> middleware('auth', 'admin');
+route::get('/', [AdminController::class, 'index'])-> middleware('auth', 'admin');
 
 
 // User Routes

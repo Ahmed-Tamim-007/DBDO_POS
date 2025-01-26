@@ -18,7 +18,7 @@
 <!-- Custom stylesheet - for your changes-->
 <link rel="stylesheet" href="{{asset('admin_css/css/custom.css')}}">
 <!-- Favicon-->
-<link rel="shortcut icon" href="{{asset('admin_css/img/favicon.png')}}">
+<link rel="shortcut icon" href="{{asset('admin_css/img/logo.png')}}">
 <!-- Toastr message-->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 <!-- Datatables -->

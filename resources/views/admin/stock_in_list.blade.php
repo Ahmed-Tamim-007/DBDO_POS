@@ -29,7 +29,7 @@
                                     <button type="button" class="btn btn-primary">Add Stock</button>
                                 </a>
                             </div>
-                            <table class="datatable table table-hover">
+                            <table class="table table-hover">
                                 <thead>
                                     <tr class="text-primary">
                                         <th scope="col">Invoive No</th>
@@ -51,6 +51,66 @@
                                     @endforeach
                                 </tbody>
                             </table>
+
+                            {{-- Pagination --}}
+                            <div class="pagination-container">
+                                <div class="pagination-info">
+                                    @if ($stock_details->total() > 0)
+                                        Showing
+                                        {{ $stock_details->firstItem() }}
+                                        to
+                                        {{ $stock_details->lastItem() }}
+                                        of
+                                        {{ $stock_details->total() }}
+                                        results
+                                    @else
+                                        No stock-ins available.
+                                    @endif
+                                </div>
+
+                                <div class="pagination-wrapper">
+
+                                    <ul class="pagination">
+                                        <!-- First Page Button -->
+                                        <li class="{{ $stock_details->onFirstPage() ? 'disabled' : '' }}">
+                                            <a href="{{ $stock_details->url(1) }}"><i class="fas fa-backward"></i></a>
+                                        </li>
+
+                                        <!-- Previous Page Button -->
+                                        <li class="{{ $stock_details->previousPageUrl() ? '' : 'disabled' }}">
+                                            <a href="{{ $stock_details->previousPageUrl() }}"><i class="fas fa-backward-step"></i></a>
+                                        </li>
+
+                                        <!-- Page Number Links -->
+                                        @php
+                                            $currentPage = $stock_details->currentPage();
+                                            $lastPage = $stock_details->lastPage();
+                                        @endphp
+
+                                        @for ($page = 1; $page <= $lastPage; $page++)
+                                            @if ($page == 1 || $page == $lastPage || ($page >= $currentPage - 2 && $page <= $currentPage + 2))
+                                                <li class="{{ $page == $currentPage ? 'active' : '' }}">
+                                                    <a href="{{ $stock_details->url($page) }}">{{ $page }}</a>
+                                                </li>
+                                            @elseif ($page == 2 && $currentPage > 4)
+                                                <li class="disabled"><span>...</span></li>
+                                            @elseif ($page == $lastPage - 1 && $currentPage < $lastPage - 3)
+                                                <li class="disabled"><span>...</span></li>
+                                            @endif
+                                        @endfor
+
+                                        <!-- Next Page Button -->
+                                        <li class="{{ $stock_details->nextPageUrl() ? '' : 'disabled' }}">
+                                            <a href="{{ $stock_details->nextPageUrl() }}"><i class="fas fa-forward-step"></i></a>
+                                        </li>
+
+                                        <!-- Last Page Button -->
+                                        <li class="{{ $stock_details->hasMorePages() ? '' : 'disabled' }}">
+                                            <a href="{{ $stock_details->url($lastPage) }}"><i class="fas fa-forward"></i></a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

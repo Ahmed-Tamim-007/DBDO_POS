@@ -36,6 +36,28 @@ use App\Models\FundTransfer;
 
 class AdminController extends Controller
 {
+    // Dashboard functions
+    public function index() {
+        // Calculate the total stock value
+        $totalStockValue = DB::table('stocks')
+            ->sum(DB::raw('purchase_price * quantity'));
+
+        // Calculate the total quantity of products available in stock
+        $totalProductsInStock = DB::table('stocks')
+            ->sum('quantity');
+
+        // Calculate the total sales for the last week
+        $fromDate = now()->subWeek()->startOfDay();
+        $toDate = now()->endOfDay();
+        $lastWeekSales = DB::table('sale_details')
+            ->whereBetween('created_at', [$fromDate, $toDate])
+            ->sum('cashPaid');
+
+        $accounts = Account::all();
+
+        return view('admin.index', compact('totalStockValue', 'totalProductsInStock', 'lastWeekSales', 'fromDate', 'toDate', 'accounts'));
+    }
+
     // Users functions ------------------------------------------>
     public function user_info() {
         $pos_users = PosUser::all();
@@ -464,7 +486,7 @@ class AdminController extends Controller
                 DB::raw('SUM(stocks.quantity) as total_quantity') // Sum quantities for each product
             )
             ->groupBy('products.id') // Group by product ID
-            ->paginate(5); // Add pagination here
+            ->paginate(50); // Add pagination here
 
         // Fetch all product batches without pagination
         $product_batches = Stock::join('products', 'stocks.product_id', '=', 'products.id')
@@ -512,7 +534,7 @@ class AdminController extends Controller
             ->when($request->brand, function ($query) use ($request) {
                 $query->where('products.brand', $request->brand);
             })
-            ->paginate(5);
+            ->paginate(50);
 
             // Fetch all product batches with details, including data from StockDetail table
         $product_batches = Stock::join('products', 'stocks.product_id', '=', 'products.id')
@@ -610,14 +632,14 @@ class AdminController extends Controller
 
     // Stock In functions --------------------------------->
     public function stock_in_list() {
-        $stock_details = StockDetail::all();
+        $stock_details = StockDetail::orderBy('created_at', 'desc')->paginate(10);
         return view('admin.stock_in_list', compact('stock_details'));
     }
     public function invoice_details($id) {
         $invoice = StockDetail::find($id);
         $products = StockIn::where('batch_no', $id)
-        ->join('products', 'stock_ins.product_id', '=', 'products.id')  // Assuming 'product_id' in Stock and 'id' in Product
-        ->select('products.*', 'stock_ins.*')  // Select all columns from both Stock and Product tables
+        ->join('products', 'stock_ins.product_id', '=', 'products.id')
+        ->select('products.*', 'stock_ins.*')
         ->get();
         return view('admin.invoice_detail', compact('invoice', 'products'));
     }
@@ -718,7 +740,7 @@ class AdminController extends Controller
 
     // All Stock_out functions --------------------------------->
     public function stock_out_list() {
-        $stock_out_details = StockOutDetail::all();
+        $stock_out_details = StockOutDetail::orderBy('created_at', 'desc')->paginate(10);
         return view('admin.stock_out_list', compact('stock_out_details'));
     }
     public function invoice_so_details($id) {
@@ -1074,7 +1096,7 @@ class AdminController extends Controller
 
                 // Decrease amount from Primary Station
                 DB::table('accounts')
-                ->where('id', 4)
+                ->where('id', 11)
                 ->decrement('crnt_balance', $row['r_total_price']);
             }
 
@@ -1193,7 +1215,7 @@ class AdminController extends Controller
 
                 // Decrease amount from Primary Station
                 DB::table('accounts')
-                ->where('id', 4)
+                ->where('id', 11)
                 ->decrement('crnt_balance', $row['total_price']);
             }
 
