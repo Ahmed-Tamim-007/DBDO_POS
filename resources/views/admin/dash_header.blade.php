@@ -34,8 +34,8 @@
                 <!-- User Avatar and Dropdown -->
                 <div class="header_user dropdown d-flex align-items-center">
                     <div class="avatar">
-                        @if(Auth::user()->image) <!-- Check if the user has an image -->
-                            <img src="{{ asset('admin_css/img/' . Auth::user()->image) }}" class="img-fluid rounded-circle">
+                        @if(Auth::user()->image)
+                            <img src="{{ asset('users/' . Auth::user()->image) }}" class="img-fluid rounded-circle">
                         @else
                             <p style="font-size: 24px; color: #28a745; text-align: center;">
                                 {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
@@ -44,8 +44,8 @@
                     </div>
                     <div class="title dropdown-toggle d-flex align-items-center" id="userDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <div>
-                            <h1 class="h5 mb-0">J A Tamim</h1>
-                            <p class="mb-0">Admin</p>
+                            <h1 class="h5 mb-0">{{Auth::user()->name}}</h1>
+                            <p class="mb-0">{{Auth::user()->usertype}}</p>
                         </div>
                     </div>
                     <!-- Dropdown Menu -->

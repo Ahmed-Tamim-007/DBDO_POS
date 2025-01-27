@@ -15,9 +15,16 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
-            $table->string('usertype')->default('user');
+            $table->string('usertype');
             $table->string('phone')->nullable();
+            $table->string('job_title')->nullable();
+            $table->string('dob')->nullable();
+            $table->string('jod')->nullable();
+            $table->string('salary')->nullable();
+            $table->string('nid')->nullable();
+            $table->string('blood_group')->nullable();
             $table->string('address')->nullable();
+            $table->string('image')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();

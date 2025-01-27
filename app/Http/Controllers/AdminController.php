@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use App\Models\PosUser;
+use App\Models\User;
 use App\Models\Customer;
 use App\Models\CustomerType;
 use App\Models\Category;
@@ -60,19 +60,22 @@ class AdminController extends Controller
 
     // Users functions ------------------------------------------>
     public function user_info() {
-        $pos_users = PosUser::all();
+        $pos_users = User::all();
         return view('admin.pos_user', compact('pos_users'));
     }
     public function add_user(Request $request) {
         $request->validate([
             'name' => 'required|string|max:30',
             'email' => 'required|string|max:30',
-            'phone' => 'required|string|max:30',
+            'usertype' => 'required',
+            'password' => 'required|string|max:15',
         ]);
 
-        $data = new PosUser;
+        $data = new User;
         $data->name = $request->name;
         $data->email = $request->email;
+        $data->password = $request->password;
+        $data->usertype = $request->usertype;
         $data->phone = $request->phone;
         $data->job_title = $request->job_title;
         $data->dob = $request->dob;
@@ -81,7 +84,6 @@ class AdminController extends Controller
         $data->nid = $request->nid;
         $data->blood_group = $request->blood_group;
         $data->address = $request->address;
-        // $data->type = $request->type;
 
         $image = $request->image;
         if ($image) {
@@ -98,12 +100,13 @@ class AdminController extends Controller
         $request->validate([
             'name' => 'required|string|max:30',
             'email' => 'required|string|max:30',
-            'phone' => 'required|string|max:30',
+            'usertype' => 'required',
         ]);
 
-        $data = PosUser::find($id);
+        $data = User::find($id);
         $data->name = $request->name;
         $data->email = $request->email;
+        $data->usertype = $request->usertype;
         $data->phone = $request->phone;
         $data->job_title = $request->job_title;
         $data->dob = $request->dob;
@@ -112,7 +115,6 @@ class AdminController extends Controller
         $data->nid = $request->nid;
         $data->blood_group = $request->blood_group;
         $data->address = $request->address;
-        // $data->type = $request->type;
 
         $image = $request->image;
         if ($image) {
@@ -130,7 +132,7 @@ class AdminController extends Controller
         return redirect('/user_info');
     }
     public function delete_user($id) {
-        $data = PosUser::find($id);
+        $data = User::find($id);
 
         // Check if there is an image before trying to delete it
         if ($data->image) {
