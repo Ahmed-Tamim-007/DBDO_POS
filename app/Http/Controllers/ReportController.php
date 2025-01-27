@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use App\Models\PosUser;
+use App\Models\User;
 use App\Models\Customer;
 use App\Models\CustomerType;
 use App\Models\Category;
@@ -129,7 +129,7 @@ class ReportController extends Controller
         $sale_details = collect(); // Empty collection by default
         $customers = Customer::all();
         $customer_types = CustomerType::all();
-        $users = PosUser::all();
+        $users = User::all();
 
         return view('admin.sales_list', compact('sale_details', 'customers', 'customer_types', 'users'));
     }
@@ -165,7 +165,7 @@ class ReportController extends Controller
         // Additional data
         $customers = Customer::all();
         $customer_types = CustomerType::all();
-        $users = PosUser::all();
+        $users = User::all();
         $sales = Sale::all();
 
         // Return the view
@@ -390,7 +390,7 @@ class ReportController extends Controller
         $categories = Category::all();
         $subcategories = Subcategory::all();
         $brands = Brand::all();
-        $users = PosUser::all();
+        $users = User::all();
 
         return view('admin.product_sale_summary', compact('sales', 'products', 'customers', 'categories', 'subcategories', 'brands', 'users'));
     }
@@ -448,7 +448,7 @@ class ReportController extends Controller
         $categories = Category::all();
         $subcategories = Subcategory::all();
         $brands = Brand::all();
-        $users = PosUser::all();
+        $users = User::all();
 
         // Return the view
         return view('admin.product_sale_summary', compact('sales', 'products', 'customers', 'categories', 'subcategories', 'brands', 'users', 'fromDate', 'toDate'));
@@ -511,7 +511,7 @@ class ReportController extends Controller
     public function employee_trans_report()
     {
         $transactions = collect();
-        $users = PosUser::all();
+        $users = User::all();
 
         return view('admin.employee_trans_report', compact('transactions', 'users'));
     }
@@ -538,7 +538,7 @@ class ReportController extends Controller
             ->get();
 
         // Additional data
-        $users = PosUser::all();
+        $users = User::all();
 
         // Return the view
         return view('admin.employee_trans_report', compact('transactions', 'users', 'fromDate', 'toDate'));
@@ -801,7 +801,7 @@ class ReportController extends Controller
     public function fund_transfer_report()
     {
         $transfers = collect();
-        $users = PosUser::all();
+        $users = User::all();
         $accounts = Account::all();
 
         return view('admin.fund_transfer_report', compact('transfers', 'users', 'accounts'));
@@ -835,7 +835,7 @@ class ReportController extends Controller
             })
             ->get();
 
-        $users = PosUser::all();
+        $users = User::all();
         $accounts = Account::all();
 
         // Return the view

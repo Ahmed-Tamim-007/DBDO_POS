@@ -470,3 +470,14 @@ table.dataTable th.dt-type-numeric, table.dataTable th.dt-type-date, table.dataT
 .block {
     animation: fadeInUp 1s;
 }
+
+/* Transition for smooth rotation */
+.rotate {
+    transform: rotate(180deg);
+    transition: transform 0.3s ease;
+}
+
+/* Reset for default state */
+.fa-bars {
+    transition: transform 0.3s ease;
+}

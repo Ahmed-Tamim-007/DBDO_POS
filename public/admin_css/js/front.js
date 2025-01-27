@@ -2,15 +2,15 @@ $(function () {
 
     // ------------------------------------------------------- //
     // Tooltips init
-    // ------------------------------------------------------ //    
+    // ------------------------------------------------------ //
 
-    $('[data-toggle="tooltip"]').tooltip()        
+    $('[data-toggle="tooltip"]').tooltip()
 
     // ------------------------------------------------------- //
     // Universal Form Validation
     // ------------------------------------------------------ //
 
-    $('.form-validate').each(function() {  
+    $('.form-validate').each(function() {
         $(this).validate({
             errorElement: "div",
             errorClass: 'is-invalid',
@@ -22,7 +22,7 @@ $(function () {
                 //console.log(element);
                 if (element.prop("type") === "checkbox") {
                     error.insertAfter(element.siblings("label"));
-                } 
+                }
                 else {
                     error.insertAfter(element);
                 }
@@ -56,8 +56,8 @@ $(function () {
     });
 
     // ------------------------------------------------------- //
-    // Footer 
-    // ------------------------------------------------------ //   
+    // Footer
+    // ------------------------------------------------------ //
 
     var pageContent = $('.page-content');
 
@@ -102,7 +102,6 @@ $(function () {
     // ------------------------------------------------------ //
     $('.sidebar-toggle').on('click', function () {
         $(this).toggleClass('active');
-
         $('#sidebar').toggleClass('shrinked');
         $('.page-content').toggleClass('active');
         $(document).trigger('sidebarChanged');
@@ -110,11 +109,11 @@ $(function () {
         if ($('.sidebar-toggle').hasClass('active')) {
             $('.navbar-brand .brand-sm').addClass('visible');
             $('.navbar-brand .brand-big').removeClass('visible');
-            $(this).find('i').attr('class', 'fa fa-long-arrow-right');
+            $(this).find('i').attr('class', 'fa fa-bars rotate'); // Add rotation class
         } else {
             $('.navbar-brand .brand-sm').removeClass('visible');
             $('.navbar-brand .brand-big').addClass('visible');
-            $(this).find('i').attr('class', 'fa fa-long-arrow-left');
+            $(this).find('i').attr('class', 'fa fa-bars'); // Remove rotation class
         }
     });
 
