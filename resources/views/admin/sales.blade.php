@@ -589,88 +589,165 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/print-js/1.6.0/print.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/print-js/1.6.0/print.min.css">
 
+
     <!-- JS For product search -->
     <script>
-        $(document).ready(function () {
-            let exactMatch = false; // Track if a perfect match exists
-            let formSubmitted = false; // Track if the form has already been submitted
+        $(document).ready(function() {
+            let exactMatch = false;
+            let formSubmitted = false;
 
-            $('#product_search').on('keyup', function () {
+            $('#product_search').on('keyup', function(event) {
+                let query = $(this).val().trim();
+                var inputValue = event.which;
+                if (!(inputValue >= 65 && inputValue <= 120) && (inputValue != 32 && inputValue != 0)) {
+                    event.preventDefault();
+                }else{
+                    console.log(inputValue);
+
+                    if (query.length > 0 && !formSubmitted) {
+                $.ajax({
+                    url: "{{ route('search.sales.products') }}",
+                    type: "GET",
+                    data: { query: query },
+                    success: function(data) {
+                    if (formSubmitted) return; // Stop processing if the form was already submitted
+                    $('#product_search_list').empty();
+                    exactMatch = false;
+
+                    if (data.length > 0) {
+                        let oldestBatch; // Store the oldest batch for later use
+
+                        $.each(data, function(index, product) {
+                            if (index === 0) {
+                                oldestBatch = product; // Assign the first item as the oldest batch
+                            }
+
+                            if (product.title.toLowerCase() === query.toLowerCase() || product.barcode === query) {
+                                exactMatch = true;
+                            }
+
+                            $('#product_search_list').append(
+                                `<a href="#" class="list-group-item list-group-item-action" data-batch-no="${product.batch_no}">
+                                ${product.title} (${product.batch_no})
+                                </a>`
+                            );
+                        });
+
+                        if (exactMatch && !formSubmitted) {
+                        formSubmitted = true;
+                        $('#product_search').val(oldestBatch.title);
+                        $('input[name="batch_no"]').val(oldestBatch.batch_no);
+                        $('#product_search_list').empty();
+                        $('#product_form').submit();
+
+                        // Reset formSubmitted flag after a short delay
+                        setTimeout(function() {
+                            formSubmitted = false;
+                        }, 500);
+                        }
+                    } else {
+                        $('#product_search_list').append(`<div class="list-group-item">No products found</div>`);
+                    }
+                    },
+                    error: function() {
+                    $('#product_search_list').append(`<div class="list-group-item">Error fetching products</div>`);
+                    }
+                });
+                } else {
+                $('#product_search_list').empty();
+                }
+                }
+
+
+            });
+
+            $('#product_form').on('submit', function() {
+                $('#product_search_list').empty();
+            });
+
+            $(document).on('click', '.list-group-item-action', function(e) {
+                e.preventDefault();
+                const selectedText = $(this).text().split(' (')[0].trim();
+                const batchNo = $(this).data('batch-no');
+
+                $('#product_search').val(selectedText);
+                $('input[name="batch_no"]').val(batchNo);
+                $('#product_search_list').empty();
+                $("#product_search").focus();
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            let exactMatch = false;
+            let formSubmitted = false;
+
+            $('#product_search').scannerDetection(function(){
                 let query = $(this).val().trim();
 
                 if (query.length > 0 && !formSubmitted) {
-                    $.ajax({
-                        url: "{{ route('search.sales.products') }}",
-                        type: "GET",
-                        data: { query: query },
-                        success: function (data) {
-                            if (formSubmitted) return; // Stop processing if the form was already submitted
-                            $('#product_search_list').empty(); // Clear existing suggestions
-                            exactMatch = false; // Reset exact match status
-
-                            if (data.length > 0) {
-                                let oldestBatch = data[0]; // Always start with the first item as the oldest batch
-
-                                // Check for an exact match
-                                data.forEach(product => {
-                                    if (product.title.toLowerCase() === query.toLowerCase() || product.barcode === query) {
-                                        exactMatch = true;
-                                    }
-
-                                    // Populate suggestions
-                                    $('#product_search_list').append(
-                                        `<a href="#" class="list-group-item list-group-item-action" data-batch-no="${product.batch_no}">
-                                            ${product.title} (${product.batch_no})
-                                        </a>`
-                                    );
-                                });
-
-                                // Auto-submit if an exact match is found
-                                if (exactMatch && !formSubmitted) {
-                                    formSubmitted = true; // Set flag to prevent further submissions
-                                    $('#product_search').val(oldestBatch.title); // Set product title
-                                    $('input[name="batch_no"]').val(oldestBatch.batch_no); // Set batch_no
-                                    $('#product_search_list').empty(); // Clear suggestions
-                                    $('#product_form').submit();
-                                    // setTimeout(() => {
-                                    // }, 500);
-
-                                    // Reset the formSubmitted flag after submission
-                                    setTimeout(() => {
-                                        formSubmitted = false; // Allow future submissions
-                                    }, 500); // Adjust delay if needed
-                                }
-                            } else {
-                                $('#product_search_list').append(`<div class="list-group-item">No products found</div>`);
-                            }
-                        },
-                        error: function () {
-                            $('#product_search_list').append(`<div class="list-group-item">Error fetching products</div>`);
-                        },
-                    });
-                } else {
+                $.ajax({
+                    url: "{{ route('search.sales.products') }}",
+                    type: "GET",
+                    data: { query: query },
+                    success: function(data) {
+                    if (formSubmitted) return; // Stop processing if the form was already submitted
                     $('#product_search_list').empty();
+                    exactMatch = false;
+
+                    if (data.length > 0) {
+                        let oldestBatch; // Store the oldest batch for later use
+
+                        $.each(data, function(index, product) {
+                            if (index === 0) {
+                                oldestBatch = product; // Assign the first item as the oldest batch
+                            }
+
+                            if (product.title.toLowerCase() === query.toLowerCase() || product.barcode === query) {
+                                exactMatch = true;
+                            }
+
+                            $('#product_search_list').append(
+                                `<a href="#" class="list-group-item list-group-item-action" data-batch-no="${product.batch_no}">
+                                ${product.title} (${product.batch_no})
+                                </a>`
+                            );
+                        });
+
+                        if (exactMatch && !formSubmitted) {
+                        formSubmitted = true;
+                        $('#product_search').val(oldestBatch.title);
+                        $('input[name="batch_no"]').val(oldestBatch.batch_no);
+                        $('#product_search_list').empty();
+                        $('#product_form').submit();
+                        formSubmitted = false;
+                        }
+                    } else {
+                        $('#product_search_list').append(`<div class="list-group-item">No products found</div>`);
+                    }
+                    },
+                    error: function() {
+                    $('#product_search_list').append(`<div class="list-group-item">Error fetching products</div>`);
+                    }
+                });
+                } else {
+                $('#product_search_list').empty();
                 }
-
             });
 
-            // Ensure the suggestion list clears after form submission
-            $('#product_form').on('submit', function () {
-                $('#product_search_list').empty(); // Clear suggestions on form submission
+            $('#product_form').on('submit', function() {
+                $('#product_search_list').empty();
             });
 
-            // Fill inputs when a suggestion is clicked
-            $(document).on('click', '.list-group-item-action', function (e) {
+            $(document).on('click', '.list-group-item-action', function(e) {
                 e.preventDefault();
-                const selectedText = $(this).text().split(' (')[0].trim(); // Extract title
-                const batchNo = $(this).data('batch-no'); // Extract batch_no from data attribute
+                const selectedText = $(this).text().split(' (')[0].trim();
+                const batchNo = $(this).data('batch-no');
 
-                $('#product_search').val(selectedText); // Set the title in the visible input
-                $('input[name="batch_no"]').val(batchNo); // Set the batch_no in the hidden input
-                $('#product_search_list').empty(); // Clear the suggestions
-
+                $('#product_search').val(selectedText);
+                $('input[name="batch_no"]').val(batchNo);
+                $('#product_search_list').empty();
                 $("#product_search").focus();
-
             });
         });
     </script>
@@ -1555,7 +1632,7 @@
 
             // Sending Data to the BackEnd ------------------------------->
             $('#add_sale_btn').on('click', function () {
-
+                $('#add_sale_btn').prop('disabled', true);
                 const cashTotal = parseFloat($('#grand_total').text() || "0.00").toFixed(2);
                 const cashDiscount = $('#dis_amt').text() || "0.00";
                 let cashRound = parseFloat($('#grand_round').text() || "0.00");

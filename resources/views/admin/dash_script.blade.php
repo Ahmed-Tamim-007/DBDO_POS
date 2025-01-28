@@ -7,6 +7,7 @@
 <script src="{{asset('admin_css/js/charts-home.js')}}"></script>
 <script src="{{asset('admin_css/js/charts-custom.js')}}"></script>
 <script src="{{asset('admin_css/js/front.js')}}"></script>
+<script src="{{asset('admin_css/js/jquery.scannerdetection.js')}}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
 <!-- Datatables -->
