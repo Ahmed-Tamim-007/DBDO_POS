@@ -3592,6 +3592,11 @@ pre code {
     color: #fff;
 }
 
+#saleSummaryContent td {
+    border: none;
+    padding: 0px !important;
+}
+
 /* action td is where action buttons are */
 .action_td {
     width: 110px;

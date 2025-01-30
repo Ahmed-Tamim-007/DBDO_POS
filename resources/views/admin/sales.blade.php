@@ -1659,7 +1659,7 @@
                 if (cashAmount > cashTotal) {
                     if (!$('#round_check').is(':checked')) {
                         alert('Over Payment is not allowed!');
-                        console.log(cashAmount, cashTotal);
+                        $('#add_sale_btn').prop('disabled', false);
                         return;
                     }
                 }
@@ -1691,11 +1691,13 @@
                 // Validate required fields
                 if (cashTotal == 0) {
                     alert('Please Select a Product to proceed!');
+                    $('#add_sale_btn').prop('disabled', false);
                     return;
                 }
 
                 if (cashDue > 0 && !customer_id) {
                     alert('Please enter a Customer to have Due!');
+                    $('#add_sale_btn').prop('disabled', false);
                     return;
                 }
 
@@ -1704,18 +1706,21 @@
                     // Check if card number is null or empty
                     if (!s_cardNumber) {
                         alert("Enter Card number to proceed!");
+                        $('#add_sale_btn').prop('disabled', false);
                         return;
                     }
 
                     // Check if card type is not selected
                     if (!s_cardType) {
                         alert("Select a Card type to proceed!");
+                        $('#add_sale_btn').prop('disabled', false);
                         return;
                     }
 
                     // Check if bank type is not selected
                     if (!s_bankType) {
                         alert("Select a Bank to proceed!");
+                        $('#add_sale_btn').prop('disabled', false);
                         return;
                     }
                 }
@@ -1725,18 +1730,21 @@
                     // Check if card number is null or empty
                     if (!s_mobBank) {
                         alert("Select a mobile bank to proceed!");
+                        $('#add_sale_btn').prop('disabled', false);
                         return;
                     }
 
                     // Check if card type is not selected
                     if (!s_mobTrans) {
                         alert("Enter transaction no. to proceed!");
+                        $('#add_sale_btn').prop('disabled', false);
                         return;
                     }
 
                     // Check if bank type is not selected
                     if (!s_mobRcv) {
                         alert("Enter Reciever no. to proceed!");
+                        $('#add_sale_btn').prop('disabled', false);
                         return;
                     }
                 }

@@ -525,7 +525,7 @@ class AdminController extends Controller
             )
             ->groupBy('products.id')
             ->when($request->product, function ($query) use ($request) {
-                $query->where('products.title', 'LIKE', '%' . $request->product . '%');
+                $query->where('products.title', 'LIKE', '%' . $request->product . '%')->orWhere('products.barcode', 'LIKE', '%' . $request->product . '%');
             })
             ->when($request->category, function ($query) use ($request) {
                 $query->where('products.category', $request->category);
@@ -1098,7 +1098,7 @@ class AdminController extends Controller
 
                 // Decrease amount from Primary Station
                 DB::table('accounts')
-                ->where('id', 11)
+                ->where('id', 4)
                 ->decrement('crnt_balance', $row['r_total_price']);
             }
 
@@ -1217,7 +1217,7 @@ class AdminController extends Controller
 
                 // Decrease amount from Primary Station
                 DB::table('accounts')
-                ->where('id', 11)
+                ->where('id', 4)
                 ->decrement('crnt_balance', $row['total_price']);
             }
 
