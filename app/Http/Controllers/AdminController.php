@@ -1625,6 +1625,14 @@ class AdminController extends Controller
                     ->where('invoiceNo', $row['invoiceNo'])
                     ->update(['dueSettled' => $row['isSettled']]);
 
+                DB::table('sale_details')
+                    ->where('invoiceNo', $row['invoiceNo'])
+                    ->decrement('cashDue', $row['paid']);
+
+                DB::table('sale_details')
+                    ->where('invoiceNo', $row['invoiceNo'])
+                    ->increment('cashAmount', $row['paid']);
+
                 DB::table('accounts')
                     ->where('id', $account)
                     ->increment('crnt_balance', $row['paid']);
@@ -1754,6 +1762,7 @@ class AdminController extends Controller
     }
 
     public function employee_trans() {
+        $users = User::all();
         $accounts = Account::all();
         $categories = ExpenseCategory::all();
         $sale_details = SaleDetail::all();
@@ -1766,7 +1775,7 @@ class AdminController extends Controller
 
         // Find the maximum of all values and increment by 1
         $nextTransactionNumber = max($maxCustomerTransaction, $maxSupplierTransaction, $maxOfficeTransaction, $maxEmployeeTransaction) + 1;
-        return view('admin.add_transaction', compact('accounts', 'categories', 'sale_details', 'nextTransactionNumber'));
+        return view('admin.add_transaction', compact('users', 'accounts', 'categories', 'sale_details', 'nextTransactionNumber'));
     }
     public function add_employee_trans(Request $request) {
         $data = new EmployeeTransaction;

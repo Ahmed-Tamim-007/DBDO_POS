@@ -314,16 +314,14 @@
                                                     <div class="col-md-6 mb-4">
                                                         <label class="required-label">Employee</label>
                                                         <select class="form-control form-select" name="employee" aria-label="Default select example" required>
-                                                            <option value="" selected>Select One</option>
-                                                            <option value="Employee A">Employee A</option>
-                                                            <option value="Employee B">Employee B</option>
-                                                            <option value="Employee C">Employee C</option>
-
-                                                            {{-- @foreach ($accounts as $account)
-                                                                <option value="{{ $account->id }}">
-                                                                    {{ $account->acc_name }} &nbsp; {{ $account->acc_no }}
+                                                            <option value="">Select One</option>
+                                                            @foreach ($users as $user)
+                                                                @if ( $user->usertype == 'Employee' )
+                                                                <option value="{{ $user->id }}">
+                                                                    {{ $user->name }}
                                                                 </option>
-                                                            @endforeach --}}
+                                                                @endif
+                                                            @endforeach
                                                         </select>
                                                     </div>
                                                     <div class="col-md-6 mb-4">
@@ -631,6 +629,7 @@
 
             // Sending Data to Backend
             $('#customer_trans_submit').on('click', function () {
+                $('#customer_trans_submit').prop('disabled', true);
                 const transactionNO = $('input[name="transactionNO"]').val();
                 const customerID = $('input[name="customerID"]').val();
                 const amt_paid = $('input[name="amt_paid"]').val();
@@ -644,6 +643,7 @@
                 // Validate required fields
                 if (!customerID || !amt_paid || !account) {
                     alert('Please fill out the required fields before saving.');
+                    $('#customer_trans_submit').prop('disabled', false);
                     return;
                 }
 
