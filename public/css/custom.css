@@ -67,6 +67,7 @@
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     position: relative;
     margin: 5px;
+    min-height: 380px;
 }
 .shop_section .product-card:hover {
     transform: translateY(-10px);
@@ -194,4 +195,149 @@
 
 .filter-nav #apply-price-filter:hover {
     background-color: #0056b3;
+}
+
+
+/* Team section */
+.team_section .profile-card {
+    border: none;
+    background-color: #f8f9fa;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.team_section .profile-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+.team_section .profile-image {
+    border-radius: 50%;
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+}
+.team_section .profile-info h5 {
+    font-size: 1.25rem;
+    margin-top: 15px;
+}
+.team_section .profile-info p {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+.team_section .social-icons a {
+    color: #007bff;
+    margin: 0 10px;
+    transition: color 0.2s ease-in-out;
+}
+.team_section .social-icons a:hover {
+    color: #0056b3;
+}
+
+/* Pagination Styles */
+.pagination-container {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.pagination li.disabled span {
+    color: #aaa;
+    background: none;
+    cursor: default;
+    font-weight: bold;
+}
+
+.pagination-info {
+    font-size: 15px;
+    font-weight: 600;
+    color: #555;
+}
+
+.pagination-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.pagination li {
+    margin: 0 3px;
+}
+
+.pagination li a,
+.pagination li span {
+    display: inline-block;
+    padding: 11px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #ffffff;
+    background-color: #019bee;
+    border-color: #019bee;
+    border-radius: 50%;
+    text-decoration: none;
+    transition: all 0.3s ease-in-out;
+}
+
+.pagination li a:hover,
+.pagination li span:hover {
+    background-color: #007bff;
+    border-color: #007bff;
+    transform: translateY(-3px); /* Slight hover lift effect */
+}
+
+.pagination .disabled a,
+.pagination .disabled span {
+    background-color: #e0e0e0;
+    color: #aaa;
+    cursor: not-allowed;
+}
+
+.pagination .active a,
+.pagination .active span {
+    background-color: #007bff !important;
+    color: white;
+    border-color: #007bff !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow effect for active state */
+}
+
+.pagination .previous a,
+.pagination .next a {
+    font-weight: bold;
+    padding: 11px 16px;
+    border-radius: 50px; /* Round buttons */
+}
+
+.pagination .previous a:hover,
+.pagination .next a:hover {
+    background-color: #007bff;
+    transform: translateY(-3px); /* Hover lift effect */
+}
+
+.pagination .first a,
+.pagination .last a {
+    font-weight: bold;
+    padding: 11px 15px;
+    border-radius: 50px;
+    background-color: #019bee;
+    border-color: #019bee;
+    transition: all 0.3s ease-in-out;
+}
+
+.pagination .first a:hover,
+.pagination .last a:hover {
+    background-color: #007bff;
+    transform: translateY(-3px);
+}
+
+.pagination .previous a,
+.pagination .next a {
+    font-weight: bold;
+    padding: 11px 16px;
+    border-radius: 50px;
+    background-color: #019bee;
+    border-color: #019bee;
+    transition: all 0.3s ease-in-out;
+}
+
+.pagination .previous a:hover,
+.pagination .next a:hover {
+    background-color: #007bff;
+    transform: translateY(-3px);
 }

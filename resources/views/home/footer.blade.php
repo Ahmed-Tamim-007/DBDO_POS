@@ -5,7 +5,7 @@
                 <div class="col-md-6 col-lg-3">
                     <div class="info_form">
                         <div>
-                            <img src="{{asset('images/shop-logo3.png')}}" width="170px" height="auto">
+                            <img src="{{asset('admin_css/img/logo.png')}}" width="auto" height="100px">
                         </div>
                         <div class="social_container">
                             <div class="social_box">

@@ -146,6 +146,10 @@ class AdminController extends Controller
         toastr()->timeOut(5000)->closeButton()->addSuccess('User deleted successfully!');
         return redirect()->back();
     }
+    public function access_control() {
+        $pos_users = User::all();
+        return view('admin.access_control', compact('pos_users'));
+    }
 
 
     // Customers functions ------------------------------------------>

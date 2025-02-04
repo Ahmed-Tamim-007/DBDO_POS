@@ -7,7 +7,7 @@
 <meta name="keywords" content="" />
 <meta name="description" content="" />
 <meta name="author" content="" />
-<link rel="shortcut icon" href="{{asset('images/favicon.png')}}" type="image/x-icon">
+<link rel="shortcut icon" href="{{asset('admin_css/img/logo.png')}}" type="image/x-icon">
 
 <!-- slider stylesheet -->
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" />
@@ -16,7 +16,6 @@
 <!-- Custom styles for this template -->
 <link href="{{asset('css/style.css')}}" rel="stylesheet" />
 <link href="{{asset('css/custom.css')}}" rel="stylesheet" />
-<link href="{{asset('css/custom_2.css')}}" rel="stylesheet" />
 <!-- responsive style -->
 <link href="{{asset('css/responsive.css')}}" rel="stylesheet" />
 <!-- Sweet Alert -->

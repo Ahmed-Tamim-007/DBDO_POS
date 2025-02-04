@@ -5,14 +5,19 @@
             <a href="{{url('/')}}"> <i class="fas fa-tachometer-alt"></i><span>Dashboard</span></a>
         </li>
 
-        <li class="{{ Request::is('user_info') ? 'active' : '' }}">
+        <li class="{{ Request::is('user_info') || Request::is('access_control') ? 'active' : '' }}">
             <a href="#user_manage" aria-expanded="false" data-toggle="collapse">
                 <i class="fas fa-user"></i><span>User Management</span>
             </a>
-            <ul id="user_manage" class="collapse list-unstyled {{ Request::is('user_info') ? 'show' : '' }}">
+            <ul id="user_manage" class="collapse list-unstyled {{ Request::is('user_info') || Request::is('access_control') ? 'show' : '' }}">
                 <li class="{{ Request::is('user_info') ? 'active' : '' }}">
                     <a href="{{ url('user_info') }}">Users</a>
                 </li>
+                @if (Auth::user()->usertype == 'Admin')
+                    <li class="{{ Request::is('access_control') ? 'active' : '' }}">
+                        <a href="{{ url('access_control') }}">Access Control</a>
+                    </li>
+                @endif
             </ul>
         </li>
 

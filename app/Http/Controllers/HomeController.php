@@ -17,8 +17,8 @@ class HomeController extends Controller
 {
     // Home page functions
     public function home() {
-        $product = Product::all();
-        $category = Category::all();
+        $products = Product::all();
+        $categories = Category::all();
         if (Auth::id()) {
             $user = Auth::user();
             $userid = $user->id;
@@ -26,13 +26,13 @@ class HomeController extends Controller
         } else {
             $count = '';
         }
-        return view('home.index', compact('product', 'count', 'category'));
+        return view('home.index', compact('products', 'count', 'categories'));
     }
 
     // Logging in
     public function login_home() {
-        $product = Product::all();
-        $category = Category::all();
+        $products = Product::all();
+        $categories = Category::all();
         if (Auth::id()) {
             $user = Auth::user();
             $userid = $user->id;
@@ -40,24 +40,24 @@ class HomeController extends Controller
         } else {
             $count = '';
         }
-        return view('home.index', compact('product', 'count', 'category'));
+        return view('home.index', compact('products', 'count', 'categories'));
     }
 
     // Showing product details
     public function product_details($id) {
-        $product = Product::with(['inventories' => function ($query) {
+        $product = Product::with(['stocks' => function ($query) {
             $query->orderBy('batch_no')->where('quantity', '>', 0);
         }])->findOrFail($id);
 
         // Calculate total quantity for the product
-        $product->total_quantity = $product->inventories->sum('quantity');
+        $product->total_quantity = $product->stocks->sum('quantity');
 
         // Get the oldest batch with quantity > 0 for selling price
-        $oldestBatch = $product->inventories->where('quantity', '>', 0)->first();
+        $oldestBatch = $product->stocks->where('quantity', '>', 0)->first();
         $product->batch_no = $oldestBatch ? $oldestBatch->batch_no : null;
-        $product->selling_price = $oldestBatch ? $oldestBatch->selling_price : null;
+        $product->sale_price = $oldestBatch ? $oldestBatch->sale_price : null;
 
-        $category = Category::all();
+        $categories = Category::all();
         if (Auth::id()) {
             $user = Auth::user();
             $userid = $user->id;
@@ -65,39 +65,39 @@ class HomeController extends Controller
         } else {
             $count = '';
         }
-        return view('home.product_details', compact('product', 'count', 'category'));
+        return view('home.product_details', compact('product', 'count', 'categories'));
     }
 
     // Showing Category details
     public function category_details(Request $request, $id) {
-        $category = Category::find($id);
+        $categories = Category::find($id);
         $category_all = Category::all();
 
         $minPrice = $request->input('min_price');
         $maxPrice = $request->input('max_price');
 
-        $products = Product::with(['inventories' => function ($query) {
+        $products = Product::with(['stocks' => function ($query) {
             $query->orderBy('batch_no')->where('quantity', '>', 0);
         }])
         ->when($minPrice, function ($query) use ($minPrice) {
-            return $query->whereHas('inventories', function ($query) use ($minPrice) {
-                $query->where('selling_price', '>=', $minPrice);
+            return $query->whereHas('stocks', function ($query) use ($minPrice) {
+                $query->where('sale_price', '>=', $minPrice);
             });
         })
         ->when($maxPrice, function ($query) use ($maxPrice) {
-            return $query->whereHas('inventories', function ($query) use ($maxPrice) {
-                $query->where('selling_price', '<=', $maxPrice);
+            return $query->whereHas('stocks', function ($query) use ($maxPrice) {
+                $query->where('sale_price', '<=', $maxPrice);
             });
         })
-        ->get();
+        ->paginate(50);
 
         foreach ($products as $product) {
             // Calculate total quantity for the product
-            $product->total_quantity = $product->inventories->sum('quantity');
+            $product->total_quantity = $product->stocks->sum('quantity');
 
             // Get the oldest batch with quantity > 0 for selling price
-            $oldestBatch = $product->inventories->where('quantity', '>', 0)->first();
-            $product->selling_price = $oldestBatch ? $oldestBatch->selling_price : null;
+            $oldestBatch = $product->stocks->where('quantity', '>', 0)->first();
+            $product->sale_price = $oldestBatch ? $oldestBatch->sale_price : null;
         }
 
         if (Auth::id()) {
@@ -107,7 +107,7 @@ class HomeController extends Controller
         } else {
             $count = '';
         }
-        return view('home.category_details', compact('products', 'count', 'category', 'category_all'));
+        return view('home.category_details', compact('products', 'count', 'categories', 'category_all'));
     }
 
     // Product Search
@@ -335,31 +335,31 @@ class HomeController extends Controller
         $minPrice = $request->input('min_price');
         $maxPrice = $request->input('max_price');
 
-        $products = Product::with(['inventories' => function ($query) {
+        $products = Product::with(['stocks' => function ($query) {
             $query->orderBy('batch_no')->where('quantity', '>', 0);
         }])
         ->when($minPrice, function ($query) use ($minPrice) {
-            return $query->whereHas('inventories', function ($query) use ($minPrice) {
-                $query->where('selling_price', '>=', $minPrice);
+            return $query->whereHas('stocks', function ($query) use ($minPrice) {
+                $query->where('sale_price', '>=', $minPrice);
             });
         })
         ->when($maxPrice, function ($query) use ($maxPrice) {
-            return $query->whereHas('inventories', function ($query) use ($maxPrice) {
-                $query->where('selling_price', '<=', $maxPrice);
+            return $query->whereHas('stocks', function ($query) use ($maxPrice) {
+                $query->where('sale_price', '<=', $maxPrice);
             });
         })
-        ->get();
+        ->paginate(50);
 
         foreach ($products as $product) {
             // Calculate total quantity for the product
-            $product->total_quantity = $product->inventories->sum('quantity');
+            $product->total_quantity = $product->stocks->sum('quantity');
 
             // Get the oldest batch with quantity > 0 for selling price
-            $oldestBatch = $product->inventories->where('quantity', '>', 0)->first();
-            $product->selling_price = $oldestBatch ? $oldestBatch->selling_price : null;
+            $oldestBatch = $product->stocks->where('quantity', '>', 0)->first();
+            $product->sale_price = $oldestBatch ? $oldestBatch->sale_price : null;
         }
 
-        $category = Category::all();
+        $categories = Category::all();
         $brands = Brand::all();
 
         if (Auth::id()) {
@@ -370,7 +370,7 @@ class HomeController extends Controller
             $count = '';
         }
 
-        return view('home.shop', compact('products', 'count', 'category', 'brands'));
+        return view('home.shop', compact('products', 'count', 'categories', 'brands'));
     }
 
     // AboutUs page function

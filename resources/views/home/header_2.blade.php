@@ -1,7 +1,7 @@
 <header class="header_section">
     <nav class="navbar navbar-expand-lg custom_nav-container">
         <a class="navbar-brand" href="index.html">
-            <img src="{{asset('images/shop-logo2.png')}}" width="150px" height="auto">
+            <img src="{{asset('admin_css/img/logo.png')}}" width="auto" height="100px">
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class=""></span>
@@ -9,8 +9,8 @@
 
         <div class="collapse navbar-collapse innerpage_navbar shadow" id="navbarSupportedContent">
             <ul class="navbar-nav">
-                <li class="nav-item {{ Request::is('/') || Request::is('dashboard') ? 'active' : '' }}">
-                    <a class="nav-link text-dark" href="{{ url('/') }}">Home</a>
+                <li class="nav-item {{ Request::is('home') || Request::is('dashboard') ? 'active' : '' }}">
+                    <a class="nav-link text-dark" href="{{ url('/home') }}">Home</a>
                 </li>
                 <li class="nav-item {{ Request::is('shop') ? 'active' : '' }}">
                     <a class="nav-link text-dark" href="{{ url('shop') }}">Shop</a>
@@ -54,7 +54,7 @@
                             </form>
                         </div>
                     </div>
-                    @if (Auth::check() && Auth::user()->usertype === 'user')
+                    @if (Auth::check() && Auth::user()->usertype === 'Customer')
                         <a class="nav-link cart-link {{ Request::is('mycart') ? 'active' : '' }} text-dark" href="{{url('mycart')}}">
                             <i class="fa fa-shopping-bag" style="color: #019bee;" aria-hidden="true"></i>
                             <span style="font-size: 13px">[{{$count}}]</span>

@@ -25,20 +25,19 @@
                 <h2>Top Categories</h2>
             </div>
             <div class="row">
-                @foreach ($category as $category)
-                    @if ($category->highlight == "yes")
-                        <div class="col-md-4 m-0 p-0">
-                            <a href="{{ url('category_details', $category->id) }}" class="text-decoration-none">
-                                <div class="category-card" style="background-image: url('{{ asset('uploads/'.$category->image) }}');">
-                                    <div class="category-content">
-                                        <div class="category-title">{{ $category->category_name }}</div>
-                                        <div class="category-tags">{{ $category->category_tags }}</div>
-                                        <div class="btn category-btn">Shop Now</div>
-                                    </div>
+                @foreach ($categories as $category)
+                    <div class="col-md-4 m-0 p-0">
+                        <a href="{{ url('category_details', $category->id) }}" class="text-decoration-none">
+                            <div class="category-card"
+                            style="background-image: url('{{ $category->image ? asset('uploads/'.$category->image) : asset('products/no-image-4.png') }}'); background-color: #ccc;">
+                                <div class="category-content">
+                                    <div class="category-title">{{ $category->category_name }}</div>
+                                    <div class="category-tags">{{ $category->category_tags }}</div>
+                                    <div class="btn category-btn">Shop Now</div>
                                 </div>
-                            </a>
-                        </div>
-                    @endif
+                            </div>
+                        </a>
+                    </div>
                 @endforeach
             </div>
         </div>

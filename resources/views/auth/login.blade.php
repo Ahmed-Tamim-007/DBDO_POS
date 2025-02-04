@@ -54,6 +54,10 @@
                                         @endif
                                     </div>
                                 </form>
+                                <div class="text-center">
+                                    <small>Do not have an account? </small>
+                                    <a href="{{url('/register')}}" class="signup text-info">Register</a>
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -24,7 +24,6 @@
                             <h3 class="my-4">Registration form</h3>
                         </div>
                         <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque, ipsam velit. Unde esse maiores pariatur soluta velit dolores qui sunt!</p>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque, ipsam velit. Unde esse maiores pariatur soluta velit dolores qui sunt!</p>
                     </div>
                 </div>
             </div>

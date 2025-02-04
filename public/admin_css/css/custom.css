@@ -481,3 +481,54 @@ table.dataTable th.dt-type-numeric, table.dataTable th.dt-type-date, table.dataT
 .fa-bars {
     transition: transform 0.3s ease;
 }
+
+
+/* Style for custom toggle switch */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+
+/* Hide default checkbox */
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* The switch slider */
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ddd;
+    border-radius: 12px;
+    transition: background-color 0.3s ease-in-out;
+}
+
+/* The slider circle (handle) */
+.slider::before {
+    content: "";
+    position: absolute;
+    height: 20px;
+    width: 20px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    border-radius: 50%;
+    transition: transform 0.3s ease-in-out;
+}
+
+/* When checkbox is checked, change background and move handle */
+.switch input:checked + .slider {
+    background-color: #007bff; /* Bootstrap primary color */
+}
+
+.switch input:checked + .slider::before {
+    transform: translateX(26px);
+}

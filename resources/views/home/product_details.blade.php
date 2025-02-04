@@ -22,7 +22,7 @@
                     <h4 style="color: #007bff">Categories</h4>
                 </div>
                 <ul class="category-nav list-group sticky-nav">
-                    @foreach ($category as $category)
+                    @foreach ($categories as $category)
                     <a href="{{ url('category_details', $category->id) }}">
                         <li class="list-group-item">
                             {{$category->category_name}}
@@ -39,16 +39,15 @@
                 <div class="card shadow" style="border: none;">
                     <div class="row g-0">
                         <div class="col-md-4">
-                            <img src="/products/{{$product->image}}" class="p-5 w-100 h-auto" alt="Product Image">
+                            <img src="/products/{{$product->image  ?? 'no-image.png'}}" class="p-5 w-100 h-auto" alt="Product Image">
                         </div>
                         <div class="col-md-8">
                             <div class="card-body p-5">
                                 <h4 class="card-title">{{$product->title}}</h4>
-                                <p class="card-text"><strong>Price:</strong> &#2547; {{ $product->selling_price ?? 'N/A' }}</p>
+                                <p class="card-text"><strong>Price:</strong> &#2547; {{ $product->sale_price ?? 'N/A' }}</p>
                                 <p class="card-text">{{$product->description}}</p>
                                 <p class="card-text"><strong>Category:</strong> {{$product->category}}</p>
                                 <p class="card-text"><strong>Brand:</strong> {{$product->brand}}</p>
-                                {{-- <p class="card-text"><strong>Batch No:</strong> {{$product->batch_no}}</p> --}}
                                 <p class="card-text"><strong>In stock:</strong> {{$product->total_quantity}} available</p>
 
                                 @if ($product->total_quantity == 0)

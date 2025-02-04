@@ -55,6 +55,8 @@ route::post('add_user', [AdminController::class, 'add_user'])-> middleware('auth
 route::post('edit_user/{id}', [AdminController::class, 'edit_user'])-> middleware('auth', 'Admin');
 route::get('delete_user/{id}', [AdminController::class, 'delete_user'])-> middleware('auth', 'Admin');
 
+route::get('access_control', [AdminController::class, 'access_control'])-> middleware('auth', 'Admin');
+
 
 // Customer Routes
 route::get('customer_info', [AdminController::class, 'customer_info'])-> middleware('auth', 'Admin');

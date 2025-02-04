@@ -4,16 +4,13 @@
 <head>
     @include('home.head')
     <title>Shop - Shop</title>
-    <style>
-
-    </style>
 </head>
 
 <body>
-  <div class="hero_area">
-    <!-- header section strats -->
-    @include('home.header_2')
-  </div>
+    <div class="hero_area">
+        <!-- header section strats -->
+        @include('home.header_2')
+    </div>
 
     <!-- Product section start -->
     <section class="shop_section layout_padding">
@@ -28,12 +25,12 @@
                             <h4 style="color: #007bff">Categories</h4>
                         </div>
                         <ul class="category-nav list-group">
-                            @foreach ($category as $category)
-                            <a href="{{ url('category_details', $category->id) }}">
-                                <li class="list-group-item">
-                                    {{$category->category_name}}
-                                </li>
-                            </a>
+                            @foreach ($categories as $category)
+                                <a href="{{ url('category_details', $category->id) }}">
+                                    <li class="list-group-item">
+                                        {{$category->category_name}}
+                                    </li>
+                                </a>
                             @endforeach
                         </ul>
 
@@ -51,7 +48,7 @@
                         </div>
                     </div>
                     <script>
-                        document.getElementById('apply-price-filter').addEventListener('click', function() {
+                        document.getElementById('apply-price-filter').addEventListener('click', function () {
                             const minPrice = document.getElementById('min-price').value;
                             const maxPrice = document.getElementById('max-price').value;
 
@@ -74,80 +71,100 @@
                     </div>
                     <div class="row mb-5">
                         @foreach ($products as $product)
-                            @if($product->isPopular)
-                                <div class="col-lg-3 col-md-4 m-0 p-0">
-                                    <div class="card product-card text-center p-4">
-                                        <a href="{{ url('product_details', $product->id) }}" class="text-decoration-none text-dark">
-                                            <div class="img-box mx-auto mb-3">
-                                                <img src="products/{{ $product->image }}" alt="{{ $product->title }}" class="product-image">
-                                            </div>
-                                            <div class="detail-box">
-                                                <h6>{{ $product->title }}</h6>
-                                                <h6>
-                                                    <span>&#2547; {{ $product->selling_price ?? 'N/A' }}</span> <!-- Selling price from inventory -->
-                                                </h6>
-                                            </div>
-                                        </a>
-                                        @if($product->isNew)
-                                            <div class="badge new-badge">
-                                                <span>New</span>
-                                            </div>
-                                        @endif
-                                        <div class="mt-3">
-                                            @if ($product->total_quantity == 0)
-                                                <p class="text-danger my-2">Out Of Stock</p>
-                                            @else
-                                                <a href="{{ url('add_cart', $product->id) }}"
-                                                class="btn btn-outline-primary btn-sm my-1 {{ Auth::check() && Auth::user()->usertype === 'admin' ? 'd-none' : '' }}">
+                            <div class="col-lg-3 col-md-4 m-0 p-0">
+                                <div class="card product-card text-center p-4">
+                                    <a href="{{ url('product_details', $product->id) }}"
+                                        class="text-decoration-none text-dark">
+                                        <div class="img-box mx-auto mb-3">
+                                            <img src="products/{{ $product->image ?? 'no-image.png' }}"
+                                                class="product-image">
+                                        </div>
+                                        <div class="detail-box">
+                                            <h6>{{ $product->title }}</h6>
+                                            <h6>
+                                                <span>&#2547; {{ $product->sale_price ?? 'N/A' }}</span>
+                                                <!-- Selling price from inventory -->
+                                            </h6>
+                                        </div>
+                                    </a>
+                                    @if($product->isNew)
+                                        <div class="badge new-badge">
+                                            <span>New</span>
+                                        </div>
+                                    @endif
+                                    <div class="mt-3">
+                                        @if ($product->total_quantity == 0)
+                                            <p class="text-danger my-2">Out Of Stock</p>
+                                        @elseif ($product->total_quantity > 0)
+                                            <p class="text-primary my-2">{{ $product->total_quantity }} In Stock</p>
+                                            @if (!(Auth::check() && in_array(Auth::user()->usertype, ['Admin', 'Employee'])))
+                                                <a href="{{ url('add_cart', $product->id) }}" class="btn btn-outline-primary btn-sm my-1">
                                                     Add to cart
                                                 </a>
                                             @endif
-                                        </div>
+                                        @endif
                                     </div>
                                 </div>
-                            @endif
+                            </div>
                         @endforeach
                     </div>
+                    {{-- Pagination --}}
+                    <div class="pagination-container">
+                        <div class="pagination-info">
+                            @if ($products->total() > 0)
+                                Showing
+                                {{ $products->firstItem() }}
+                                to
+                                {{ $products->lastItem() }}
+                                of
+                                {{ $products->total() }}
+                                products
+                            @else
+                                No products available.
+                            @endif
+                        </div>
 
-                    <!-- Latest Products -->
-                    <div class="heading_container heading_center">
-                        <h2>Our Latest Products</h2>
-                    </div>
-                    <div class="row">
-                        @foreach ($products as $product)
-                            @if($product->isNew)
-                                <div class="col-lg-3 col-md-4 m-0 p-0">
-                                    <div class="card product-card text-center p-4">
-                                        <a href="{{ url('product_details', $product->id) }}" class="text-decoration-none text-dark">
-                                            <div class="img-box mx-auto mb-3">
-                                                <img src="products/{{ $product->image }}" alt="{{ $product->title }}" class="product-image">
-                                            </div>
-                                            <div class="detail-box">
-                                                <h6>{{ $product->title }}</h6>
-                                                <h6>
-                                                    <span>&#2547; {{ $product->selling_price ?? 'N/A' }}</span> <!-- Selling price from inventory -->
-                                                </h6>
-                                            </div>
-                                        </a>
-                                        @if($product->isNew)
-                                            <div class="badge new-badge">
-                                                <span>New</span>
-                                            </div>
-                                        @endif
-                                        <div class="mt-3">
-                                            @if ($product->total_quantity == 0)
-                                                <p class="text-danger my-2">Out Of Stock</p>
-                                            @else
-                                                <a href="{{ url('add_cart', $product->id) }}"
-                                                class="btn btn-outline-primary btn-sm my-1 {{ Auth::check() && Auth::user()->usertype === 'admin' ? 'd-none' : '' }}">
-                                                    Add to cart
-                                                </a>
-                                            @endif
-                                        </div>
-                                    </div>
-                                </div>
-                            @endif
-                        @endforeach
+                        <div class="pagination-wrapper">
+                            <ul class="pagination">
+                                <!-- First Page Button -->
+                                <li class="{{ $products->onFirstPage() ? 'disabled' : '' }}">
+                                    <a href="{{ $products->url(1) }}"><<</a>
+                                </li>
+
+                                <!-- Previous Page Button -->
+                                <li class="{{ $products->previousPageUrl() ? '' : 'disabled' }}">
+                                    <a href="{{ $products->previousPageUrl() }}"><</a>
+                                </li>
+
+                                <!-- Page Number Links -->
+                                @php
+                                    $currentPage = $products->currentPage();
+                                    $lastPage = $products->lastPage();
+                                @endphp
+
+                                @for ($page = 1; $page <= $lastPage; $page++)
+                                    @if ($page == 1 || $page == $lastPage || ($page >= $currentPage - 2 && $page <= $currentPage + 2))
+                                        <li class="{{ $page == $currentPage ? 'active' : '' }}">
+                                            <a href="{{ $products->url($page) }}">{{ $page }}</a>
+                                        </li>
+                                    @elseif ($page == 2 && $currentPage > 4)
+                                        <li class="disabled"><span>...</span></li>
+                                    @elseif ($page == $lastPage - 1 && $currentPage < $lastPage - 3)
+                                        <li class="disabled"><span>...</span></li>
+                                    @endif
+                                @endfor
+
+                                <!-- Next Page Button -->
+                                <li class="{{ $products->nextPageUrl() ? '' : 'disabled' }}">
+                                    <a href="{{ $products->nextPageUrl() }}">></a>
+                                </li>
+
+                                <!-- Last Page Button -->
+                                <li class="{{ $products->hasMorePages() ? '' : 'disabled' }}">
+                                    <a href="{{ $products->url($lastPage) }}">>></a>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -156,11 +173,11 @@
     <!-- Product section end -->
 
 
-  <!-- footer section -->
-  @include('home.footer')
+    <!-- footer section -->
+    @include('home.footer')
 
-  <!-- Code JS Files -->
-  @include('home.script')
+    <!-- Code JS Files -->
+    @include('home.script')
 
 </body>
 
