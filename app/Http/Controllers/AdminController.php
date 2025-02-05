@@ -634,6 +634,40 @@ class AdminController extends Controller
         toastr()->timeOut(5000)->closeButton()->addSuccess('Product deleted successfully!');
         return redirect()->back();
     }
+    public function product_pricing(){
+        $categories = Category::all();
+        $subcategories = Subcategory::all();
+        $brands = Brand::all();
+        $units = Unit::all();
+        $products = Product::all();
+        $stocks = Stock::all();
+
+        return view('admin.product_pricing', compact(
+            'categories', 'subcategories', 'brands', 'units', 'products', 'stocks'
+        ));
+    }
+    public function updateStock(Request $request)
+    {
+        try {
+            $rows = json_decode($request->rows, true); // Decode the rows from JSON to array
+
+            foreach ($rows as $row) {
+                DB::table('stocks')
+                    ->where('product_id', $row['productId'])
+                    ->where('batch_no', $row['batchNo'])
+                    ->update(['sale_price' => $row['salePrice']]);
+            }
+
+            // Show success toastr message
+            toastr()->timeOut(5000)->closeButton()->addSuccess('Stock updated successfully!');
+            return redirect()->back();
+
+        } catch (\Exception $e) {
+            // Show error toastr message
+            toastr()->timeOut(5000)->closeButton()->addError('An error occurred: ' . $e->getMessage());
+            return redirect()->back();
+        }
+    }
 
 
     // Stock In functions --------------------------------->

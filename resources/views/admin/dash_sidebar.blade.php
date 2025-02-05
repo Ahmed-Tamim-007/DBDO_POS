@@ -35,16 +35,19 @@
             </ul>
         </li>
 
-        <li class="{{ Request::is('view_product') || Request::is('classifications') ? 'active' : '' }}">
+        <li class="{{ Request::is('view_product') || Request::is('classifications') || Request::is('product/pricing') ? 'active' : '' }}">
             <a href="#product_manage" aria-expanded="false" data-toggle="collapse">
                 <i class="fas fa-shopping-bag"></i><span>Product Management</span>
             </a>
-            <ul id="product_manage" class="collapse list-unstyled {{ Request::is('classifications') || Request::is('view_product') ? 'show' : '' }}">
+            <ul id="product_manage" class="collapse list-unstyled {{ Request::is('classifications') || Request::is('view_product') || Request::is('product/pricing') ? 'show' : '' }}">
                 <li class="{{ Request::is('classifications') ? 'active' : '' }}">
                     <a href="{{ url('classifications') }}">Classifications</a>
                 </li>
                 <li class="{{ Request::is('view_product') ? 'active' : '' }}">
                     <a href="{{ url('view_product') }}">Products</a>
+                </li>
+                <li class="{{ Request::is('product/pricing') ? 'active' : '' }}">
+                    <a href="{{ url('product/pricing') }}">Product Pricing</a>
                 </li>
             </ul>
         </li>

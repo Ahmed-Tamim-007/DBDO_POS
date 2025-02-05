@@ -103,6 +103,8 @@ Route::get('/search-product', [AdminController::class, 'searchProduct'])->name('
 route::post('upload_product', [AdminController::class, 'upload_product'])-> middleware('auth', 'Admin');
 route::post('edit_products/{id}', [AdminController::class, 'edit_products'])-> middleware('auth', 'Admin');
 route::get('delete_product/{id}', [AdminController::class, 'delete_product'])-> middleware('auth', 'Admin');
+route::get('product/pricing', [AdminController::class, 'product_pricing'])-> middleware('auth', 'Admin');
+route::post('/update-stock', [AdminController::class, 'updateStock'])->name('update.stock');
 
 
 // Stock In/Inventory routes
