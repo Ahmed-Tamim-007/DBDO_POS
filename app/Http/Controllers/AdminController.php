@@ -33,6 +33,7 @@ use App\Models\SupplierTransaction;
 use App\Models\OfficeTransaction;
 use App\Models\EmployeeTransaction;
 use App\Models\FundTransfer;
+use Milon\Barcode\DNS1D;
 
 class AdminController extends Controller
 {
@@ -667,6 +668,35 @@ class AdminController extends Controller
             toastr()->timeOut(5000)->closeButton()->addError('An error occurred: ' . $e->getMessage());
             return redirect()->back();
         }
+    }
+    public function bulk_barcode()
+    {
+        $categories = Category::all();
+        $subcategories = Subcategory::all();
+        $brands = Brand::all();
+        $units = Unit::all();
+        $products = Product::all();
+
+        // Instantiate DNS1D
+        $barcodeGenerator = new DNS1D();
+
+        // Generate barcode HTML for each product
+        $productsWithBarcodes = $products->map(function ($product) use ($barcodeGenerator) {
+            if (isset($product->barcode) && strlen($product->barcode) >= 8) {
+                $product->barcode_html = $barcodeGenerator->getBarcodeHTML(substr($product->barcode, 0, 8), 'C128');
+            } else {
+                $product->barcode_html = '<span style="color: red;">Invalid Barcode</span>';
+            }
+            return $product;
+        });
+
+        return view('admin.bulk-barcode', compact(
+            'categories',
+            'subcategories',
+            'brands',
+            'units',
+            'productsWithBarcodes'
+        ));
     }
 
 

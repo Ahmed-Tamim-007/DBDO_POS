@@ -35,16 +35,19 @@
             </ul>
         </li>
 
-        <li class="{{ Request::is('view_product') || Request::is('classifications') || Request::is('product/pricing') ? 'active' : '' }}">
+        <li class="{{ Request::is('view_product') || Request::is('classifications') || Request::is('product/pricing') || Request::is('product/bulk-barcode') ? 'active' : '' }}">
             <a href="#product_manage" aria-expanded="false" data-toggle="collapse">
                 <i class="fas fa-shopping-bag"></i><span>Product Management</span>
             </a>
-            <ul id="product_manage" class="collapse list-unstyled {{ Request::is('classifications') || Request::is('view_product') || Request::is('product/pricing') ? 'show' : '' }}">
+            <ul id="product_manage" class="collapse list-unstyled {{ Request::is('classifications') || Request::is('view_product') || Request::is('product/pricing') || Request::is('product/bulk-barcode') ? 'show' : '' }}">
                 <li class="{{ Request::is('classifications') ? 'active' : '' }}">
                     <a href="{{ url('classifications') }}">Classifications</a>
                 </li>
                 <li class="{{ Request::is('view_product') ? 'active' : '' }}">
                     <a href="{{ url('view_product') }}">Products</a>
+                </li>
+                <li class="{{ Request::is('product/bulk-barcode') ? 'active' : '' }}">
+                    <a href="{{ url('product/bulk-barcode') }}">Bulk Barcode</a>
                 </li>
                 <li class="{{ Request::is('product/pricing') ? 'active' : '' }}">
                     <a href="{{ url('product/pricing') }}">Product Pricing</a>

@@ -10,6 +10,7 @@
         "cviebrock/eloquent-sluggable": "^11.0",
         "laravel/framework": "^11.9",
         "laravel/tinker": "^2.9",
+        "milon/barcode": "^11.0",
         "php-flasher/flasher-toastr-laravel": "^2.0",
         "php-flasher/flasher-toastr-symfony": "^2.0",
         "stripe/stripe-php": "^16.1",

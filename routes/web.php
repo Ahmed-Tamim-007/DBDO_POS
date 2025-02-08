@@ -105,6 +105,7 @@ route::post('edit_products/{id}', [AdminController::class, 'edit_products'])-> m
 route::get('delete_product/{id}', [AdminController::class, 'delete_product'])-> middleware('auth', 'Admin');
 route::get('product/pricing', [AdminController::class, 'product_pricing'])-> middleware('auth', 'Admin');
 route::post('/update-stock', [AdminController::class, 'updateStock'])->name('update.stock');
+route::get('product/bulk-barcode', [AdminController::class, 'bulk_barcode'])-> middleware('auth', 'Admin');
 
 
 // Stock In/Inventory routes
