@@ -471,6 +471,7 @@
                             </thead>
                             <tbody>
                                 @foreach ($product_batches->where('product_id', $product->id) as $product_batch)
+                                    @if ($product_batch->quantity > 0)
                                     <tr>
                                         <td>{{$product_batch->stock_date}}</td>
                                         <td>{{$product_batch->batch_no}}</td>
@@ -479,6 +480,7 @@
                                         <td>{{$product_batch->quantity}}</td>
                                         <td>{{$product_batch->expiration_date}}</td>
                                     </tr>
+                                    @endif
                                 @endforeach
                             </tbody>
                         </table>

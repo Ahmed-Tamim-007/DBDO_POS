@@ -629,9 +629,6 @@ class ReportController extends Controller
     }
     public function searchStockReport(Request $request)
     {
-        $fromDate = $request->from_date;
-        $toDate = $request->to_date ? Carbon::parse($request->to_date)->endOfDay() : null;
-
         $stocks = DB::table('stocks')
             ->leftJoin('products', 'stocks.product_id', '=', 'products.id')
             ->select(
@@ -642,9 +639,6 @@ class ReportController extends Controller
                 'products.sub_category as product_sub_cat',
                 'products.brand as product_brand'
             )
-            ->when($fromDate && $toDate, function ($query) use ($fromDate, $toDate) {
-                $query->whereBetween('stocks.created_at', [$fromDate, $toDate]);
-            })
             ->when($request->productID, function ($query) use ($request) {
                 $query->where('products.id', $request->productID);
             })
@@ -663,6 +657,13 @@ class ReportController extends Controller
             ->when($request->supplier, function ($query) use ($request) {
                 $query->where('stocks.supplier', $request->supplier);
             })
+            ->when($request->stock_avail, function ($query) use ($request) {
+                if ($request->stock_avail === 'only_stock') {
+                    $query->where('stocks.quantity', '>', 0);
+                } elseif ($request->stock_avail === 'only_zero') {
+                    $query->where('stocks.quantity', '=', 0);
+                }
+            })
             ->get();
 
         // Additional data
@@ -672,7 +673,7 @@ class ReportController extends Controller
         $brands = Brand::all();
 
         // Return the view
-        return view('admin.stock_report', compact('stocks', 'products', 'categories', 'subcategories', 'brands', 'fromDate', 'toDate'));
+        return view('admin.stock_report', compact('stocks', 'products', 'categories', 'subcategories', 'brands'));
     }
 
     // Stock In Summary Functions

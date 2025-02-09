@@ -591,7 +591,7 @@
 
 
     <!-- JS For product search -->
-    <script>
+    {{-- <script>
         $(document).ready(function() {
             let exactMatch = false;
             let formSubmitted = false;
@@ -657,8 +657,6 @@
                 $('#product_search_list').empty();
                 }
                 }
-
-
             });
 
             $('#product_form').on('submit', function() {
@@ -676,7 +674,113 @@
                 $("#product_search").focus();
             });
         });
+    </script> --}}
+    <script>
+        $(document).ready(function () {
+            let exactMatch = false;
+            let formSubmitted = false;
+
+            $('#product_search').on('keyup', function (event) {
+                let query = $(this).val().trim();
+                var inputValue = event.which;
+
+                // Clear the suggestion list if the input is empty
+                if (query.length === 0) {
+                    $('#product_search_list').empty();
+                    return; // Stop further processing
+                }
+
+                // Allow only letters, numbers, and space
+                if (!(inputValue >= 65 && inputValue <= 120) && (inputValue != 32 && inputValue != 0)) {
+                    event.preventDefault();
+                } else {
+                    if (query.length > 0 && !formSubmitted) {
+                        $.ajax({
+                            url: "{{ route('search.sales.products') }}",
+                            type: "GET",
+                            data: { query: query },
+                            success: function (data) {
+                                if (formSubmitted) return; // Stop processing if the form was already submitted
+                                $('#product_search_list').empty();
+                                exactMatch = false;
+
+                                if (data.length > 0) {
+                                    let oldestBatch; // Store the oldest batch for later use
+
+                                    $.each(data, function (index, product) {
+                                        // Skip products with no quantity (should already be filtered in the backend)
+                                        if (!product.quantity || product.quantity <= 0) {
+                                            return true; // Skip to the next product
+                                        }
+
+                                        if (index === 0) {
+                                            oldestBatch = product; // Assign the first valid item as the oldest batch
+                                        }
+
+                                        if (
+                                            product.title.toLowerCase() === query.toLowerCase() ||
+                                            product.barcode === query
+                                        ) {
+                                            exactMatch = true;
+                                        }
+
+                                        $('#product_search_list').append(
+                                            `<a href="#" class="list-group-item list-group-item-action" data-batch-no="${product.batch_no}">
+                                                ${product.title} (${product.batch_no})
+                                            </a>`
+                                        );
+                                    });
+
+                                    // Submit the form if an exact match is found
+                                    if (exactMatch && !formSubmitted) {
+                                        formSubmitted = true;
+                                        $('#product_search').val(oldestBatch.title);
+                                        $('input[name="batch_no"]').val(oldestBatch.batch_no);
+                                        $('#product_search_list').empty();
+                                        $('#product_form').submit();
+
+                                        // Reset formSubmitted flag after a short delay
+                                        setTimeout(function () {
+                                            formSubmitted = false;
+                                        }, 500);
+                                    }
+                                } else {
+                                    $('#product_search_list').append(
+                                        `<div class="list-group-item">No products found</div>`
+                                    );
+                                }
+                            },
+                            error: function () {
+                                $('#product_search_list').append(
+                                    `<div class="list-group-item">Error fetching products</div>`
+                                );
+                            },
+                        });
+                    } else {
+                        $('#product_search_list').empty();
+                    }
+                }
+            });
+
+            // Clear the product search list when the form is submitted
+            $('#product_form').on('submit', function () {
+                $('#product_search_list').empty();
+            });
+
+            // Handle click on suggested product
+            $(document).on('click', '.list-group-item-action', function (e) {
+                e.preventDefault();
+                const selectedText = $(this).text().split(' (')[0].trim();
+                const batchNo = $(this).data('batch-no');
+
+                $('#product_search').val(selectedText);
+                $('input[name="batch_no"]').val(batchNo);
+                $('#product_search_list').empty();
+                $('#product_search').focus();
+            });
+        });
     </script>
+
     <script>
         $(document).ready(function() {
             let exactMatch = false;

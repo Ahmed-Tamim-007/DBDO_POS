@@ -34,7 +34,7 @@
                                         <input type="hidden" id="productID" name="productID">
                                         <div id="product-list_stock" class="list-group"></div>
                                     </div>
-                                    <div class="col-lg-3 col-md-4 mb-3">
+                                    <div class="col-lg-2 col-md-4 mb-3">
                                         <label class="form-label">Batch Number</label>
                                         <input type="number" class="form-control form-control-sm" name="batchNo">
                                     </div>
@@ -48,7 +48,7 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="col-lg-3 col-md-4 mb-3">
+                                    <div class="col-lg-2 col-md-4 mb-3">
                                         <label class="form-label">Sub Category</label>
                                         <select class="form-control form-control-sm form-select" name="subcategory" aria-label="Default select example">
                                             <option value="" selected>Select One</option>
@@ -58,7 +58,7 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="col-lg-3 col-md-4 mb-3">
+                                    <div class="col-lg-2 col-md-4 mb-3">
                                         <label class="form-label">Brand</label>
                                         <select class="form-control form-control-sm form-select" name="brand" aria-label="Default select example">
                                             <option value="" selected>Select One</option>
@@ -74,16 +74,27 @@
                                         <input type="hidden" name="supplierID" id="supplierID">
                                         <div id="supplier_search_list" class="list-group" style="width: 90%;"></div>
                                     </div>
+                                    <div class="col-lg-2 col-md-4 mt-lg-4 i-checks">
+                                        <input id="only_stock" type="radio" value="only_stock" name="stock_avail" class="radio-template" checked>
+                                        <label for="only_stock">Only Stock Avail.</label>
+                                    </div>
+                                    <div class="col-lg-2 col-md-4 mt-lg-4 i-checks">
+                                        <input id="all_stock" type="radio" value="all_stock" name="stock_avail" class="radio-template">
+                                        <label for="all_stock">With Zero Stock</label>
+                                    </div>
+                                    <div class="col-lg-2 col-md-4 mt-lg-4 i-checks">
+                                        <input id="only_zero" type="radio" value="only_zero" name="stock_avail" class="radio-template">
+                                        <label for="only_zero">Only Zero Stock</label>
+                                    </div>
 
-                                    <div class="col-lg-2 col-md-4 my-2">
-                                        <button type="submit" class="btn btn-primary mt-lg-3 px-5"><i class="icon-magnifying-glass-browser"></i> Search</button>
+                                    <div class="col-lg-3 col-md-4 my-2">
+                                        <button type="submit" class="btn btn-primary mt-lg-3 w-100"><i class="icon-magnifying-glass-browser"></i> Search</button>
                                     </div>
                                 </div>
                             </form>
                         </div>
                         @if ($stocks->isNotEmpty())
                             <div class="block table-responsive">
-                                <h5 class="text-center">Stocks From: {{ \Carbon\Carbon::parse($fromDate)->format('d M, Y') }} &nbsp;- To: {{ \Carbon\Carbon::parse($toDate)->format('d M, Y') }}</h5>
                                 <table class="table table-hover" id="stock_report_table" style="border-bottom: 1px solid #019bee;">
                                     <thead>
                                         <tr class="text-primary">

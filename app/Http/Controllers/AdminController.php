@@ -958,12 +958,15 @@ class AdminController extends Controller
     {
         $search = $request->input('query');
 
-        // Sort by batch_no in ascending order to get the oldest batch first
+        // Filter products where stock quantity is greater than 0
         $products = Product::join('stocks', 'products.id', '=', 'stocks.product_id')
-            ->where('products.title', 'LIKE', "%{$search}%")
-            ->orWhere('products.barcode', 'LIKE', "%{$search}%")
-            ->select('products.title', 'products.barcode', 'stocks.batch_no')
-            ->orderBy('stocks.batch_no', 'asc')  // Sort by batch_no ascending to get the oldest batch
+            ->where(function ($query) use ($search) {
+                $query->where('products.title', 'LIKE', "%{$search}%")
+                    ->orWhere('products.barcode', 'LIKE', "%{$search}%");
+            })
+            ->where('stocks.quantity', '>', 0) // Exclude batches with zero quantity
+            ->select('products.title', 'products.barcode', 'stocks.batch_no', 'stocks.quantity') // Include quantity in the response
+            ->orderBy('stocks.batch_no', 'asc') // Sort by batch_no ascending to get the oldest batch
             ->get();
 
         return response()->json($products);
@@ -1124,12 +1127,12 @@ class AdminController extends Controller
                 ->where('batch_no', $row['batch_no'])
                 ->first();
 
-                if ($stock && $stock->quantity == 0) {
-                DB::table('stocks')
-                    ->where('product_id', $row['product_id'])
-                    ->where('batch_no', $row['batch_no'])
-                    ->delete();
-                }
+                // if ($stock && $stock->quantity == 0) {
+                // DB::table('stocks')
+                //     ->where('product_id', $row['product_id'])
+                //     ->where('batch_no', $row['batch_no'])
+                //     ->delete();
+                // }
             }
 
             $r_rows = json_decode($request->r_rows, true);
