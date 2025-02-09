@@ -61,7 +61,7 @@ class AdminController extends Controller
 
     // Users functions ------------------------------------------>
     public function user_info() {
-        $pos_users = User::all();
+        $pos_users = User::orderBy('updated_at', 'desc')->get();
         return view('admin.pos_user', compact('pos_users'));
     }
     public function add_user(Request $request) {
@@ -155,7 +155,7 @@ class AdminController extends Controller
 
     // Customers functions ------------------------------------------>
     public function customer_info() {
-        $customers = Customer::all();
+        $customers = Customer::orderBy('updated_at', 'desc')->get();
         $customer_types = CustomerType::all();
         return view('admin.customer', compact('customers', 'customer_types'));
     }
@@ -231,7 +231,7 @@ class AdminController extends Controller
     }
 
     public function customer_type() {
-        $customer_types = CustomerType::all();
+        $customer_types = CustomerType::orderBy('updated_at', 'desc')->get();
         return view('admin.customer_type', compact('customer_types'));
     }
     public function add_customer_type(Request $request) {
@@ -264,7 +264,7 @@ class AdminController extends Controller
 
     // Customers functions ------------------------------------------>
     public function supplier_info() {
-        $suppliers = Supplier::all();
+        $suppliers = Supplier::orderBy('updated_at', 'desc')->get();
         return view('admin.suppliers', compact('suppliers'));
     }
     public function add_supplier(Request $request) {
@@ -334,13 +334,12 @@ class AdminController extends Controller
 
     // Categories/Sub Categories/Brands functions ------------------------------------------>
     public function classifications() {
-        $datas = Category::all();
-        $subcategories = Subcategory::all();
-        $brands = Brand::all();
-        $units = Unit::all();
+        $datas = Category::orderBy('updated_at', 'desc')->get();
+        $subcategories = Subcategory::orderBy('updated_at', 'desc')->get();
+        $brands = Brand::orderBy('updated_at', 'desc')->get();
+        $units = Unit::orderBy('updated_at', 'desc')->get();
         return view('admin.classification', compact('datas', 'subcategories', 'brands', 'units'));
     }
-
     public function add_category(Request $request) {
         $request->validate([
             'category' => 'required|string|max:25',
@@ -493,6 +492,7 @@ class AdminController extends Controller
                 DB::raw('SUM(stocks.quantity) as total_quantity') // Sum quantities for each product
             )
             ->groupBy('products.id') // Group by product ID
+            ->orderBy('updated_at', 'desc')
             ->paginate(50); // Add pagination here
 
         // Fetch all product batches without pagination
@@ -702,7 +702,7 @@ class AdminController extends Controller
 
     // Stock In functions --------------------------------->
     public function stock_in_list() {
-        $stock_details = StockDetail::orderBy('created_at', 'desc')->paginate(10);
+        $stock_details = StockDetail::orderBy('updated_at', 'desc')->paginate(20);
         return view('admin.stock_in_list', compact('stock_details'));
     }
     public function invoice_details($id) {
@@ -810,7 +810,7 @@ class AdminController extends Controller
 
     // All Stock_out functions --------------------------------->
     public function stock_out_list() {
-        $stock_out_details = StockOutDetail::orderBy('created_at', 'desc')->paginate(10);
+        $stock_out_details = StockOutDetail::orderBy('updated_at', 'desc')->paginate(10);
         return view('admin.stock_out_list', compact('stock_out_details'));
     }
     public function invoice_so_details($id) {
@@ -1601,6 +1601,7 @@ class AdminController extends Controller
                 'accounts.acc_name as account_name',
                 'accounts.acc_no as account_no'
             )
+            ->orderBy('updated_at', 'desc')
             ->get();
         $supplier_transactions = SupplierTransaction::join('suppliers', 'supplier_transactions.supplierID', '=', 'suppliers.id')
             ->join('accounts', 'supplier_transactions.account', '=', 'accounts.id')
@@ -1610,6 +1611,7 @@ class AdminController extends Controller
                 'accounts.acc_name as account_name',
                 'accounts.acc_no as account_no'
             )
+            ->orderBy('updated_at', 'desc')
             ->get();
         $office_transactions = OfficeTransaction::join('accounts', 'office_transactions.account', '=', 'accounts.id')
             ->select(
@@ -1617,6 +1619,7 @@ class AdminController extends Controller
                 'accounts.acc_name as account_name',
                 'accounts.acc_no as account_no'
             )
+            ->orderBy('updated_at', 'desc')
             ->get();
         $employee_transactions = EmployeeTransaction::join('accounts', 'employee_transactions.account', '=', 'accounts.id')
             ->select(
@@ -1624,6 +1627,7 @@ class AdminController extends Controller
                 'accounts.acc_name as account_name',
                 'accounts.acc_no as account_no'
             )
+            ->orderBy('updated_at', 'desc')
             ->get();
 
         return view('admin.transactions', compact('customer_transactions', 'supplier_transactions', 'office_transactions', 'employee_transactions'));
@@ -1889,22 +1893,10 @@ class AdminController extends Controller
         )
         ->join('accounts as account_from', 'fund_transfers.accountFrom', '=', 'account_from.id')
         ->join('accounts as account_to', 'fund_transfers.accountTo', '=', 'account_to.id')
+        ->orderBy('updated_at', 'desc')
         ->get();
 
         return view('admin.fund_transfer', compact('accounts', 'fund_transfers'));
-    }
-    public function getBalance(Request $request)
-    {
-        $accountId = $request->accountId;
-
-        // Fetch the account balance
-        $account = DB::table('accounts')->where('id', $accountId)->first();
-
-        if ($account) {
-            return response()->json(['crnt_balance' => $account->crnt_balance]);
-        }
-
-        return response()->json(['error' => 'Account not found'], 404);
     }
     public function add_fund_trans(Request $request) {
         $data = new FundTransfer();

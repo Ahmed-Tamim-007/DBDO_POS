@@ -160,6 +160,7 @@ class ReportController extends Controller
             ->when($request->user, function ($query) use ($request) {
                 $query->where('sale_details.user', $request->user);
             })
+            ->orderBy('updated_at', 'desc')
             ->get();
 
         // Additional data
@@ -497,6 +498,7 @@ class ReportController extends Controller
             ->when($request->customerID, function ($query) use ($request) {
                 $query->where('sale_details.customerID', $request->customerID);
             })
+            ->orderBy('updated_at', 'desc')
             ->get();
 
         // Additional data
@@ -833,6 +835,7 @@ class ReportController extends Controller
             ->when($request->user, function ($query) use ($request) {
                 $query->where('fund_transfers.user', $request->user);
             })
+            ->orderBy('updated_at', 'desc')
             ->get();
 
         $users = User::all();

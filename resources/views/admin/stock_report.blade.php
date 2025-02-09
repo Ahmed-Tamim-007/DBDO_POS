@@ -141,27 +141,6 @@
     <!-- JavaScript files-->
     @include('admin.dash_script')
 
-    <!-- Form Validation -->
-    <script>
-        $(document).ready(function () {
-            $('#stock_report_form').on('submit', function (e) {
-                let isValid = false;
-
-                // Check all input and select fields
-                $(this).find('input[type="text"], input[type="number"], select').each(function () {
-                    if ($(this).val().trim() !== '') {
-                        isValid = true;
-                        return false; // Exit the loop early if a value is found
-                    }
-                });
-
-                if (!isValid) {
-                    e.preventDefault(); // Prevent form submission
-                    alert('Please fill in at least one field before submitting.');
-                }
-            });
-        });
-    </script>
     <!-- JS For product search -->
     <script>
         $(document).ready(function() {

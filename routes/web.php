@@ -184,7 +184,6 @@ route::post('add_employee_trans', [AdminController::class, 'add_employee_trans']
 
 // Fund Transfer Routes
 route::get('fund_transfer', [AdminController::class, 'fund_transfer'])-> middleware('auth', 'Admin');
-Route::get('/get-account-balance', [AdminController::class, 'getBalance']);
 route::post('add_fund_trans', [AdminController::class, 'add_fund_trans'])-> middleware('auth', 'Admin');
 
 // All Report Routes ------------------------------------------------------------>

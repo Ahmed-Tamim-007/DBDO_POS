@@ -126,45 +126,42 @@
 
     @include('admin.dash_script')
 
-    <!-- JS for Others -->
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
+            const accountsData = @json($accounts);
+
             let accountFromBalance = 0; // Variable to store the accountFrom balance
 
-            // Not number
-            $('.trans_amt').on('input', function() {
+            // Parse the accountsData JSON to use in JavaScript
+            const accounts = accountsData.reduce((acc, account) => {
+                acc[account.id] = account; // Create a mapping of account ID to account data
+                return acc;
+            }, {});
+
+            // Prevent non-numeric inputs for the amount
+            $('.trans_amt').on('input', function () {
                 this.value = this.value.replace(/[^0-9.]/g, ''); // Allow numbers and decimals
                 if ((this.value.match(/\./g) || []).length > 1) {
                     this.value = this.value.replace(/\.+$/, ''); // Remove extra decimals
                 }
             });
 
-            // Function to fetch balance when an account is selected
+            // Handle account selection change
             $('.account-select').on('change', function () {
                 const accountId = $(this).val(); // Get the selected account ID
                 const balanceTarget = $(this).data('balance-target'); // Get the target element to display balance
 
-                if (accountId) {
-                    // Make an AJAX request to fetch the balance
-                    $.ajax({
-                        url: '/get-account-balance', // Update with your backend route
-                        type: 'GET',
-                        data: { accountId: accountId },
-                        success: function (response) {
-                            // Update the balance in the target element
-                            $(balanceTarget).text('Balance: ' + response.crnt_balance);
+                if (accountId && accounts[accountId]) {
+                    // Fetch the balance from the accounts object
+                    const balance = accounts[accountId].crnt_balance;
 
-                            // Update the accountFromBalance variable if this is the From account
-                            if (balanceTarget === '#accountFromBalance') {
-                                accountFromBalance = parseFloat(response.crnt_balance);
-                            }
-                        },
-                        error: function (xhr) {
-                            // Handle errors
-                            $(balanceTarget).text('Balance: --');
-                            console.error('Error fetching balance:', xhr.responseText);
-                        },
-                    });
+                    // Display the balance in the target element
+                    $(balanceTarget).text('Balance: ' + balance);
+
+                    // Update accountFromBalance if this is the From account
+                    if (balanceTarget === '#accountFromBalance') {
+                        accountFromBalance = parseFloat(balance);
+                    }
                 } else {
                     // Clear the balance display if no account is selected
                     $(balanceTarget).text('Balance: --');
@@ -174,10 +171,20 @@
                         accountFromBalance = 0;
                     }
                 }
+
+                // Disable the selected account in the other dropdown
+                const otherSelect = $(this).hasClass('account-select') ? $('.account-select').not(this) : null;
+
+                if (otherSelect) {
+                    otherSelect.find('option').prop('disabled', false); // Enable all options first
+                    if (accountId) {
+                        otherSelect.find(`option[value="${accountId}"]`).prop('disabled', true); // Disable the selected account
+                    }
+                }
             });
 
             // Prevent form submission if amount exceeds accountFrom balance
-            $('.validate_form').on('submit', function(e) {
+            $('.validate_form').on('submit', function (e) {
                 const amount = parseFloat($('.trans_amt').val()); // Get the entered amount
 
                 // Check if the amount exceeds the accountFrom balance
@@ -195,6 +202,9 @@
 
                 // Reset the accountFromBalance variable
                 accountFromBalance = 0;
+
+                // Enable all options in both dropdowns
+                $('.account-select option').prop('disabled', false);
             });
         });
     </script>
