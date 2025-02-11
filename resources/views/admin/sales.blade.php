@@ -1226,7 +1226,8 @@
                 const cusDiscount = parseFloat($('#cus_dis').text());
                 const targetSale = parseFloat($('#cus_dis_ter').text());
                 if (targetSale < cartTotal) {
-                    $('#dis_per').val(cusDiscount.toFixed(2));
+                    parseFloat($('#dis_per').val(cusDiscount.toFixed(2)));
+                    console.log($('#dis_per').val());
                     updateTotals();
                 }
             });
@@ -1711,11 +1712,12 @@
                 // Changing the round value
                 cashRound = cashRound * -1;
                 cashRound = cashRound.toFixed(2);
+                console.log(cashDiscount);
 
                 const cashDue = parseFloat($('#grand_due').text() || "0.00").toFixed(2);
                 const replaceAmount = parseFloat($('#grand_replace').text() || "0.00").toFixed(2);
                 const customer_id = $('#customerID').val();
-                const remit_amt = $('#remit_amt').val();
+                const remit_amt = parseFloat($('#remit_amt').val() || "0.00");
 
                 const cashAmount = parseFloat($('#cash_amt').val() || "0.00").toFixed(2);
                 const s_cashPaid = parseFloat($('#grand_paid').text() || "0.00").toFixed(2);
