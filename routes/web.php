@@ -70,11 +70,16 @@ route::post('edit_customer_type/{id}', [AdminController::class, 'edit_customer_t
 route::get('delete_customer_type/{id}', [AdminController::class, 'delete_customer_type'])-> middleware('auth', 'Admin');
 
 
-// Customer Routes
+// Customer Type Routes
 route::get('supplier_info', [AdminController::class, 'supplier_info'])-> middleware('auth', 'Admin');
 route::post('add_supplier', [AdminController::class, 'add_supplier'])-> middleware('auth', 'Admin');
 route::post('edit_supplier/{id}', [AdminController::class, 'edit_supplier'])-> middleware('auth', 'Admin');
 route::get('delete_supplier/{id}', [AdminController::class, 'delete_supplier'])-> middleware('auth', 'Admin');
+
+// Customer Points Routes
+route::get('customer_points', [AdminController::class, 'customer_points'])-> middleware('auth', 'Admin');
+route::post('update_earn_rate/{id}', [AdminController::class, 'update_earn_rate'])-> middleware('auth', 'Admin');
+route::post('update_redeem_rate/{id}', [AdminController::class, 'update_redeem_rate'])-> middleware('auth', 'Admin');
 
 
 // Category/Subcategory/Brand Routes
@@ -190,15 +195,11 @@ route::post('add_fund_trans', [AdminController::class, 'add_fund_trans'])-> midd
 
 // Profit/Loss Report Routes
 route::get('profit_loss_report', [ReportController::class, 'profit_loss_report'])-> middleware('auth', 'Admin');
-Route::post('/search-profit-loss-reports', [ReportController::class, 'searchProfitLossReport'])->name('search.profit.loss.reports');
-
-// Sell Invoice Report Routes
-route::get('sale_list', [ReportController::class, 'sale_list'])-> middleware('auth', 'Admin');
-Route::post('/search-sales-reports', [ReportController::class, 'searchSalesReports'])->name('search.sales.reports');
+Route::post('/profit_loss_report', [ReportController::class, 'searchProfitLossReport'])->name('search.profit.loss.reports');
 
 // Daily Summary Report Routes
 route::get('daily_summary', [ReportController::class, 'daily_summary'])-> middleware('auth', 'Admin');
-Route::post('/daily-summary-reports', [ReportController::class, 'dailySummaryReports'])->name('daily.summary.reports');
+Route::post('/daily_summary', [ReportController::class, 'dailySummaryReports'])->name('daily.summary.reports');
 Route::get('/sales/entry/summary', [ReportController::class, 'sales_entry_summary'])->name('sales.entry.summary');
 Route::get('/sales/return/summary', [ReportController::class, 'sales_return_summary'])->name('sales.return.summary');
 Route::get('/supplier/trans/summary', [ReportController::class, 'supplier_trans_summary'])->name('supplier.trans.summary');
@@ -207,42 +208,46 @@ Route::get('/office/income/summary', [ReportController::class, 'office_income_su
 Route::get('/employee/payment/summary', [ReportController::class, 'employee_payment_summary'])->name('employee.payment.summary');
 Route::get('/employee/return/summary', [ReportController::class, 'employee_return_summary'])->name('employee.return.summary');
 
+// Sell Invoice Report Routes
+route::get('sale_list', [ReportController::class, 'sale_list'])-> middleware('auth', 'Admin');
+Route::post('/sale_list', [ReportController::class, 'searchSalesReports'])->name('search.sales.reports');
+
 // Product Sale Report Routes
 route::get('product_sale_report', [ReportController::class, 'product_sale_report'])-> middleware('auth', 'Admin');
-Route::post('/search-product-report', [ReportController::class, 'searchProductReport'])->name('search.product.report');
+Route::post('/product_sale_report', [ReportController::class, 'searchProductReport'])->name('search.product.report');
 
 // Sale Return Report Routes
 route::get('sale_return_report', [ReportController::class, 'sale_return_report'])-> middleware('auth', 'Admin');
-Route::post('/search-saleReturn-report', [ReportController::class, 'searchSaleReturnReport'])->name('search.saleReturn.report');
+Route::post('/sale_return_report', [ReportController::class, 'searchSaleReturnReport'])->name('search.saleReturn.report');
 
 // Employee Transaction Report Routes
 route::get('employee_trans_report', [ReportController::class, 'employee_trans_report'])-> middleware('auth', 'Admin');
-Route::post('/employee-trans-report', [ReportController::class, 'employeeTransReport'])->name('employee.trans.report');
+Route::post('/employee_trans_report', [ReportController::class, 'employeeTransReport'])->name('employee.trans.report');
 
 // Office Transaction Report Routes
 route::get('office_trans_report', [ReportController::class, 'office_trans_report'])-> middleware('auth', 'Admin');
-Route::post('/office-trans-report', [ReportController::class, 'officeTransReport'])->name('office.trans.report');
+Route::post('/office_trans_report', [ReportController::class, 'officeTransReport'])->name('office.trans.report');
 
 // Supplier Transaction Report Routes
 route::get('supplier_trans_report', [ReportController::class, 'supplier_trans_report'])-> middleware('auth', 'Admin');
-Route::post('/supplier-trans-report', [ReportController::class, 'supplierTransReport'])->name('supplier.trans.report');
+Route::post('/supplier_trans_report', [ReportController::class, 'supplierTransReport'])->name('supplier.trans.report');
 
 // Stock Report Routes
 route::get('stock_report', [ReportController::class, 'stock_report'])-> middleware('auth', 'Admin');
-Route::post('/search-stock-report', [ReportController::class, 'searchStockReport'])->name('search.stock.report');
+Route::post('/stock_report', [ReportController::class, 'searchStockReport'])->name('search.stock.report');
 
 // Stock In Summary Routes
 route::get('stockIn_summary', [ReportController::class, 'stockIn_summary'])-> middleware('auth', 'Admin');
-Route::post('/search-stockIn-summary', [ReportController::class, 'searchStockInSum'])->name('search.stockIn.summary');
+Route::post('/stockIn_summary', [ReportController::class, 'searchStockInSum'])->name('search.stockIn.summary');
 
 // Stock Out Report Routes
 route::get('stockOut_report', [ReportController::class, 'stockOut_report'])-> middleware('auth', 'Admin');
-Route::post('/search-stockOut-report', [ReportController::class, 'searchStockOutReport'])->name('search.stockOut.report');
+Route::post('/stockOut_report', [ReportController::class, 'searchStockOutReport'])->name('search.stockOut.report');
 
 
 // Fund Transfer Report Routes
 route::get('fund_transfer_report', [ReportController::class, 'fund_transfer_report'])-> middleware('auth', 'Admin');
-Route::post('/fund-transfer-report', [ReportController::class, 'fundTransferReport'])->name('fund.transfer.report');
+Route::post('/fund_transfer_report', [ReportController::class, 'fundTransferReport'])->name('fund.transfer.report');
 
 // Customer Ledger Report Routes
 route::get('customer_ledger_report', [ReportController::class, 'customer_ledger_report'])-> middleware('auth', 'Admin');

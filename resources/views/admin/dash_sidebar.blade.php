@@ -21,16 +21,19 @@
             </ul>
         </li>
 
-        <li class="{{ Request::is('customer_info') || Request::is('customer_type') ? 'active' : '' }}">
+        <li class="{{ Request::is('customer_info') || Request::is('customer_type') || Request::is('customer_points') ? 'active' : '' }}">
             <a href="#customer_manage" aria-expanded="false" data-toggle="collapse">
                 <i class="fas fa-users"></i><span>Customer Settings</span>
             </a>
-            <ul id="customer_manage" class="collapse list-unstyled {{ Request::is('customer_info') || Request::is('customer_type') ? 'show' : '' }}">
+            <ul id="customer_manage" class="collapse list-unstyled {{ Request::is('customer_info') || Request::is('customer_type') || Request::is('customer_points') ? 'show' : '' }}">
                 <li class="{{ Request::is('customer_info') ? 'active' : '' }}">
                     <a href="{{ url('customer_info') }}">Customer</a>
                 </li>
                 <li class="{{ Request::is('customer_type') ? 'active' : '' }}">
                     <a href="{{ url('customer_type') }}">Customer Type</a>
+                </li>
+                <li class="{{ Request::is('customer_points') ? 'active' : '' }}">
+                    <a href="{{ url('customer_points') }}">Customer Points</a>
                 </li>
             </ul>
         </li>

@@ -51,7 +51,7 @@
                                     </div>
                                 </form>
                                 <div class="row">
-                                    <div class="col-lg-5 col-md-7 position-relative pr-md-0">
+                                    <div class="col-lg-4 col-md-7 position-relative pr-md-0">
                                         <div class="input-group">
                                             <input type="text" id="customer_search" name="customer" class="form-control" style="background-color: #ffffff" autocomplete="off" placeholder="Search Customer...">
                                             <div class="input-group-append">
@@ -61,9 +61,16 @@
                                         <input type="hidden" name="customerID" id="customerID">
                                         <div id="customer_search_list" class="list-group"></div>
                                     </div>
-                                    <div class="col-md-5" style="font-size: 14px; color: #ffffff;">
+                                    <div class="col-lg-3 col-md-5" style="font-size: 14px; color: #ffffff;">
                                         <div>PH: <span id="cus_phone"></span></div>
-                                        <div>Due: <span id="cus_due"></span> &#2547;</div>
+                                        <div>Due: <span id="cus_due"></span> &#2547; &nbsp; PT: <span id="cus_points"></span></div>
+                                    </div>
+                                    <div class="col-lg-3 col-md-8" style="font-size: 14px; color: #ffffff;">
+                                        <div>Type: <span id="cus_type"></span></div>
+                                        <div>Dis: <span id="cus_dis"></span> % &nbsp; Tgt: <span id="cus_dis_ter"></span> &#2547;</div>
+                                    </div>
+                                    <div class="col-lg-2 col-md-4">
+                                        <button type="button" data-toggle="modal" id="remitModal" data-target="#addRemitModal" class="btn btn-success w-100 d-none">Remit</button>
                                     </div>
                                 </div>
                             </div>
@@ -115,6 +122,10 @@
                                         <tr>
                                             <td class="td_1">Total</td>
                                             <td class="td_2" id="grand_total">0</td>
+                                        </tr>
+                                        <tr class="d-none" id="remit_tr">
+                                            <td class="td_1">Remit</td>
+                                            <td class="td_2" id="grand_remit">0</td>
                                         </tr>
                                         <tr class="d-none" id="replace_tr">
                                             <td class="td_1">Replace Total</td>
@@ -341,6 +352,35 @@
                 <div class="modal-footer">
                     <button type="button" data-dismiss="modal" class="btn btn-secondary">Close</button>
                     <input type="submit" id="addCustomerSubmit" class="btn btn-primary" value="Submit">
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Remit Modal -->
+    <div class="modal fade" id="addRemitModal" tabindex="-1" role="dialog" aria-labelledby="dis_modalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" id="discount_modal">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Remit</h5>
+                    <button type="button" class="close" id="remit_modal_close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body text-left">
+                    <h5 class="mb-3 text-primary">
+                        1 point = <span id="PointRateSpan"></span> &#2547;
+                    </h5>
+                    <div class="mb-3">
+                        Current Points: <span id="CusPointSpan"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Redeem Points</label>
+                        <input type="text" class="form-control only_num" name="remit_amt" id="remit_amt">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" id="remit_submit_btn" class="btn btn-primary">Add</button>
                 </div>
             </div>
         </div>
@@ -591,90 +631,6 @@
 
 
     <!-- JS For product search -->
-    {{-- <script>
-        $(document).ready(function() {
-            let exactMatch = false;
-            let formSubmitted = false;
-
-            $('#product_search').on('keyup', function(event) {
-                let query = $(this).val().trim();
-                var inputValue = event.which;
-                if (!(inputValue >= 65 && inputValue <= 120) && (inputValue != 32 && inputValue != 0)) {
-                    event.preventDefault();
-                }else{
-                    console.log(inputValue);
-
-                    if (query.length > 0 && !formSubmitted) {
-                $.ajax({
-                    url: "{{ route('search.sales.products') }}",
-                    type: "GET",
-                    data: { query: query },
-                    success: function(data) {
-                    if (formSubmitted) return; // Stop processing if the form was already submitted
-                    $('#product_search_list').empty();
-                    exactMatch = false;
-
-                    if (data.length > 0) {
-                        let oldestBatch; // Store the oldest batch for later use
-
-                        $.each(data, function(index, product) {
-                            if (index === 0) {
-                                oldestBatch = product; // Assign the first item as the oldest batch
-                            }
-
-                            if (product.title.toLowerCase() === query.toLowerCase() || product.barcode === query) {
-                                exactMatch = true;
-                            }
-
-                            $('#product_search_list').append(
-                                `<a href="#" class="list-group-item list-group-item-action" data-batch-no="${product.batch_no}">
-                                ${product.title} (${product.batch_no})
-                                </a>`
-                            );
-                        });
-
-                        if (exactMatch && !formSubmitted) {
-                        formSubmitted = true;
-                        $('#product_search').val(oldestBatch.title);
-                        $('input[name="batch_no"]').val(oldestBatch.batch_no);
-                        $('#product_search_list').empty();
-                        $('#product_form').submit();
-
-                        // Reset formSubmitted flag after a short delay
-                        setTimeout(function() {
-                            formSubmitted = false;
-                        }, 500);
-                        }
-                    } else {
-                        $('#product_search_list').append(`<div class="list-group-item">No products found</div>`);
-                    }
-                    },
-                    error: function() {
-                    $('#product_search_list').append(`<div class="list-group-item">Error fetching products</div>`);
-                    }
-                });
-                } else {
-                $('#product_search_list').empty();
-                }
-                }
-            });
-
-            $('#product_form').on('submit', function() {
-                $('#product_search_list').empty();
-            });
-
-            $(document).on('click', '.list-group-item-action', function(e) {
-                e.preventDefault();
-                const selectedText = $(this).text().split(' (')[0].trim();
-                const batchNo = $(this).data('batch-no');
-
-                $('#product_search').val(selectedText);
-                $('input[name="batch_no"]').val(batchNo);
-                $('#product_search_list').empty();
-                $("#product_search").focus();
-            });
-        });
-    </script> --}}
     <script>
         $(document).ready(function () {
             let exactMatch = false;
@@ -780,93 +736,27 @@
             });
         });
     </script>
-
-    <script>
-        $(document).ready(function() {
-            let exactMatch = false;
-            let formSubmitted = false;
-
-            $('#product_search').scannerDetection(function(){
-                let query = $(this).val().trim();
-
-                if (query.length > 0 && !formSubmitted) {
-                $.ajax({
-                    url: "{{ route('search.sales.products') }}",
-                    type: "GET",
-                    data: { query: query },
-                    success: function(data) {
-                    if (formSubmitted) return; // Stop processing if the form was already submitted
-                    $('#product_search_list').empty();
-                    exactMatch = false;
-
-                    if (data.length > 0) {
-                        let oldestBatch; // Store the oldest batch for later use
-
-                        $.each(data, function(index, product) {
-                            if (index === 0) {
-                                oldestBatch = product; // Assign the first item as the oldest batch
-                            }
-
-                            if (product.title.toLowerCase() === query.toLowerCase() || product.barcode === query) {
-                                exactMatch = true;
-                            }
-
-                            $('#product_search_list').append(
-                                `<a href="#" class="list-group-item list-group-item-action" data-batch-no="${product.batch_no}">
-                                ${product.title} (${product.batch_no})
-                                </a>`
-                            );
-                        });
-
-                        if (exactMatch && !formSubmitted) {
-                        formSubmitted = true;
-                        $('#product_search').val(oldestBatch.title);
-                        $('input[name="batch_no"]').val(oldestBatch.batch_no);
-                        $('#product_search_list').empty();
-                        $('#product_form').submit();
-                        formSubmitted = false;
-                        }
-                    } else {
-                        $('#product_search_list').append(`<div class="list-group-item">No products found</div>`);
-                    }
-                    },
-                    error: function() {
-                    $('#product_search_list').append(`<div class="list-group-item">Error fetching products</div>`);
-                    }
-                });
-                } else {
-                $('#product_search_list').empty();
-                }
-            });
-
-            $('#product_form').on('submit', function() {
-                $('#product_search_list').empty();
-            });
-
-            $(document).on('click', '.list-group-item-action', function(e) {
-                e.preventDefault();
-                const selectedText = $(this).text().split(' (')[0].trim();
-                const batchNo = $(this).data('batch-no');
-
-                $('#product_search').val(selectedText);
-                $('input[name="batch_no"]').val(batchNo);
-                $('#product_search_list').empty();
-                $("#product_search").focus();
-            });
-        });
-    </script>
     <!-- JS For customer search -->
     <script>
         $(document).ready(function () {
+            const customer_points = @json($customer_points);
+            const customer_types = @json($customer_types);
+
             $('#customer_search').on('keyup', function () {
                 let query = $(this).val();
 
-                // Clear the phone and due if the input is empty
+                // Clear the phone, due, points, and type if the input is empty
                 if (!query) {
                     $('#customer_search_list').html('');
-                    $('#cus_phone').text(''); // Clear phone
-                    $('#cus_due').text(''); // Clear due
-                    $('#customerID').val(''); // Clear hidden customer ID
+                    $('#cus_phone').text('');
+                    $('#cus_due').text('');
+                    $('#cus_points').text('');
+                    $('#customerID').val('');
+                    $('#CusPointSpan').text('');
+                    $('#cus_type').text('');
+                    $('#cus_dis').text(''); // Clear discount
+                    $('#cus_dis_ter').text(''); // Clear target_sale
+                    $('#remitModal').addClass('d-none');
                     return;
                 }
 
@@ -881,7 +771,7 @@
                             data.forEach(customer => {
                                 html += `<a href="#" class="list-group-customer list-group-customer-action"
                                              data-id="${customer.id}" data-phone="${customer.phone.trim()}"
-                                             data-due="${customer.due}">
+                                             data-due="${customer.due}" data-point="${customer.points}" data-type="${customer.type}">
                                              ${customer.name.trim()} (${customer.phone.trim()})
                                          </a>`;
                             });
@@ -901,25 +791,66 @@
             $(document).on('click', '#customer_search_list .list-group-customer', function (e) {
                 e.preventDefault();
 
+                // Prevent appending customer if sales table is empty
+                if ($('#sales_table tbody tr').length == 0) {
+                    alert('Please select a product to add customer!');
+                    $('#customer_search').val('');
+                    $('#cus_phone').text('');
+                    $('#cus_due').text('');
+                    $('#cus_points').text('');
+                    $('#CusPointSpan').text('');
+                    $('#cus_type').text('');
+                    $('#cus_dis').text('');
+                    $('#cus_dis_ter').text('');
+                    $('#remitModal').addClass('d-none');
+                    $('#customerID').val('');
+                    $('#customer_search_list').html('');
+                    return;
+                }
+
                 let selectedName = $(this).text().trim();
                 let customerId = $(this).data('id');
                 let customerPhone = $(this).data('phone').trim();
                 let customerDue = $(this).data('due');
+                let customerPoint = $(this).data('point');
+                let customerType = $(this).data('type');
 
                 $('#customer_search').val(selectedName);
                 $('#customerID').val(customerId);
                 $('#cus_phone').text(customerPhone);
                 $('#cus_due').text(customerDue);
-                $('#customer_search_list').html(''); // Clear the suggestions list
+                $('#cus_points').text(customerPoint);
+                $('#PointRateSpan').text(customer_points.redeem_rate);
+                $('#CusPointSpan').text(customerPoint);
+                $('#cus_type').text(customerType);
+                $('#remitModal').removeClass('d-none');
+                $('#customer_search_list').html('');
+
+                // Match the selected customer type with customer_types JSON
+                let typeData = customer_types.find(type => type.type_name === customerType);
+
+                if (typeData) {
+                    $('#cus_dis').text(typeData.discount);
+                    $('#cus_dis_ter').text(typeData.target_sale);
+                } else {
+                    $('#cus_dis').text('');
+                    $('#cus_dis_ter').text('');
+                }
             });
 
             // Listen for changes to the #customer_search field
             $('#customer_search').on('input', function () {
                 if (!$(this).val().trim()) {
-                    $('#cus_phone').text(''); // Clear phone
-                    $('#cus_due').text(''); // Clear due
-                    $('#customerID').val(''); // Clear hidden customer ID
-                    $('#customer_search_list').html(''); // Clear suggestions
+                    $('#cus_phone').text('');
+                    $('#cus_due').text('');
+                    $('#cus_points').text('');
+                    $('#CusPointSpan').text('');
+                    $('#cus_type').text('');
+                    $('#cus_dis').text('');
+                    $('#cus_dis_ter').text('');
+                    $('#remitModal').addClass('d-none');
+                    $('#customerID').val('');
+                    $('#customer_search_list').html('');
                 }
             });
         });
@@ -1074,7 +1005,7 @@
 
             // When "Multiple" radio is clicked, disable other radios
             $('#radio_modal').on('click', function () {
-                $('input[name="radio_amount"]').not(this).prop('disabled', true); // Disable all other radios
+                $('input[name="radio_amount"]').not(this).prop('disabled', true);
             });
 
             // When the Cancel button is clicked, re-enable the other radios
@@ -1205,6 +1136,10 @@
 
                 const replaceTotal = $('#count_table #grand_replace').text();
 
+                const remitAmt = $('#remit_amt').val();
+                const redeemPoint = $('#PointRateSpan').text();
+                const totalRemitAmt = (remitAmt * redeemPoint)
+
                 // Fetch user inputs for discount
                 const disPer = parseFloat($('#dis_per').val()) || 0; // Percentage discount
                 const disTk = parseFloat($('#dis_tk').val()) || 0;   // Direct value discount
@@ -1223,7 +1158,7 @@
                 }
 
                 // Update discounted total
-                const discountedTotal = totalOfAll - discount;
+                const discountedTotal = totalOfAll - discount - totalRemitAmt;
                 const discountedReplaceTotal = discountedTotal - replaceTotal;
 
                 // Remove `d-none` class if there is a discount, else add it
@@ -1258,8 +1193,9 @@
 
                 // Update fields in count_table
                 $('#count_table .td_2').eq(1).text(discountedTotal.toFixed(2));
-                $('#count_table .td_2').eq(3).text(paid.toFixed(2));  // Paid amount
-                $('#count_table .td_2').eq(5).text(totalDue.toFixed(2)); // Total due
+                $('#count_table .td_2').eq(2).text(totalRemitAmt.toFixed(2));  // Paid amount
+                $('#count_table .td_2').eq(4).text(paid.toFixed(2));  // Paid amount
+                $('#count_table .td_2').eq(6).text(totalDue.toFixed(2)); // Total due
 
                 // Set default cash_paid to null (if not modified)
                 if (!$('#cash_paid').data('user-modified')) {
@@ -1282,6 +1218,38 @@
                 $('#discount_modal').modal('hide');
                 updateTotals();
                 $('#dis_modal_close').click();
+            });
+
+            // Customer Discounts scripts
+            $(document).on('click', '#customer_search_list .list-group-customer', function () {
+                const cartTotal = parseFloat($('#cart_total').text());
+                const cusDiscount = parseFloat($('#cus_dis').text());
+                const targetSale = parseFloat($('#cus_dis_ter').text());
+                if (targetSale < cartTotal) {
+                    $('#dis_per').val(cusDiscount.toFixed(2));
+                    updateTotals();
+                }
+            });
+
+            // Remit scripts
+            $('#remit_submit_btn').on('click', function () {
+                let remitAmount = $('#remit_amt').val();
+                let cusRemitAmt = $('#CusPointSpan').text();
+                if (remitAmount > 0) {
+                    $('#count_table #remit_tr').removeClass('d-none');
+                } else {
+                    $('#count_table #remit_tr').addClass('d-none');
+                }
+                if (remitAmount > cusRemitAmt) {
+                    alert('Remit amount exist customer point!');
+                    $('#remit_amt').val(0);
+                    $('#count_table #remit_tr').addClass('d-none');
+                    updateTotals();
+                    $('#remit_modal_close').click();
+                    return;
+                }
+                updateTotals();
+                $('#remit_modal_close').click();
             });
 
             // Detect changes to the #cash_amt field
@@ -1747,6 +1715,7 @@
                 const cashDue = parseFloat($('#grand_due').text() || "0.00").toFixed(2);
                 const replaceAmount = parseFloat($('#grand_replace').text() || "0.00").toFixed(2);
                 const customer_id = $('#customerID').val();
+                const remit_amt = $('#remit_amt').val();
 
                 const cashAmount = parseFloat($('#cash_amt').val() || "0.00").toFixed(2);
                 const s_cashPaid = parseFloat($('#grand_paid').text() || "0.00").toFixed(2);
@@ -1891,6 +1860,7 @@
                 formData.append('cash_due', cashDue);
                 formData.append('replace_amt', replaceAmount);
                 formData.append('customerID', customer_id);
+                formData.append('remitAmt', remit_amt);
 
                 formData.append('s_cash_amt', cashPay);
                 formData.append('m_cash_amt', m_cashAmt);

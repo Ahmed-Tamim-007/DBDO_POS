@@ -33,6 +33,7 @@ use App\Models\SupplierTransaction;
 use App\Models\OfficeTransaction;
 use App\Models\EmployeeTransaction;
 use App\Models\FundTransfer;
+use App\Models\CustomerPoint;
 use Milon\Barcode\DNS1D;
 
 class AdminController extends Controller
@@ -230,6 +231,7 @@ class AdminController extends Controller
         return redirect()->back();
     }
 
+    // Customer Type functions
     public function customer_type() {
         $customer_types = CustomerType::orderBy('updated_at', 'desc')->get();
         return view('admin.customer_type', compact('customer_types'));
@@ -262,7 +264,30 @@ class AdminController extends Controller
         return redirect()->back();
     }
 
-    // Customers functions ------------------------------------------>
+    // Customer Points functions
+    public function customer_points() {
+        $data = CustomerPoint::where('id', 1)->first();
+        return view('admin.customer_points', compact('data'));
+    }
+    public function update_earn_rate(Request $request, $id) {
+        $data = CustomerPoint::find($id);
+        $data->earn_rate = $request->earn_rate;
+
+        $data->save();
+        toastr()->timeOut(5000)->closeButton()->addSuccess('Customer earn rate updated successfully!');
+        return redirect('/customer_points');
+    }
+    public function update_redeem_rate(Request $request, $id) {
+        $data = CustomerPoint::find($id);
+        $data->redeem_rate = $request->redeem_rate;
+
+        $data->save();
+        toastr()->timeOut(5000)->closeButton()->addSuccess('Customer redeem rate updated successfully!');
+        return redirect('/customer_points');
+    }
+
+
+    // Suppliers functions ------------------------------------------>
     public function supplier_info() {
         $suppliers = Supplier::orderBy('updated_at', 'desc')->get();
         return view('admin.suppliers', compact('suppliers'));
@@ -952,7 +977,8 @@ class AdminController extends Controller
         $sales = Sale::all();
         $sale_details = SaleDetail::all();
         $sale_returns = SaleReturn::all();
-        return view('admin.sales', compact('customer_types', 'stocks', 'heldSales', 'restoreSale', 'accounts', 'cardnames', 'sales', 'sale_details', 'sale_returns'));
+        $customer_points = CustomerPoint::where('id', 1)->first();
+        return view('admin.sales', compact('customer_types', 'stocks', 'heldSales', 'restoreSale', 'accounts', 'cardnames', 'sales', 'sale_details', 'sale_returns', 'customer_points'));
     }
     public function sales_search(Request $request)
     {
@@ -1026,6 +1052,7 @@ class AdminController extends Controller
             $cashDue = $request->cash_due;
             $replaceAmount = $request->replace_amt;
             $customer_id = $request->customerID ?? null;
+            $remit_amt = $request->remitAmt;
 
             $cashAmount = $request->s_cash_amt > 0 ? $request->s_cash_amt : ($request->m_cash_amt > 0 ? $request->m_cash_amt : 0.00);
             $cashPaid = $request->s_cash_paid;
@@ -1047,7 +1074,20 @@ class AdminController extends Controller
             if ($customer) {
                 // Access customer details
                 $customer_name = $customer->name;
-                // $customer_phone = $customer->phone;
+
+                // Calculate and save points
+                $earnRate = DB::table('customer_points')->value('earn_rate');
+                $earnedPoints = $totalPaidAmount / $earnRate;
+
+                // Check if points are NULL and set to 0 if needed
+                if (is_null($customer->points)) {
+                    $customer->points = 0;
+                    $customer->save();
+                }
+
+                // Increment points
+                $customer->increment('points', $earnedPoints);
+                $customer->decrement('points', $remit_amt);
             } else {
                 $customer_name = 'N/A';
             }

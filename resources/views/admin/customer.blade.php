@@ -36,7 +36,6 @@
                                         <th scope="col">Address</th>
                                         <th scope="col">Mobile Number</th>
                                         <th scope="col">Points</th>
-                                        <th scope="col">Balance(&#2547;)</th>
                                         <th scope="col">Due(&#2547;)</th>
                                         <th scope="col">Action</th>
                                     </tr>
@@ -49,8 +48,7 @@
                                             <td>{{$customer->type}}</td>
                                             <td>{{$customer->address}}</td>
                                             <td>{{$customer->phone}}</td>
-                                            <td>N/A</td>
-                                            <td>N/A</td>
+                                            <td>{{$customer->points}}</td>
                                             <td>{{$customer->due}}</td>
                                             <td>
                                                 <button class="btn btn-outline-success btn-xs" data-toggle="modal" data-target="#editCustomer{{$customer->id}}">
