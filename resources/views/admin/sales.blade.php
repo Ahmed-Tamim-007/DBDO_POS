@@ -632,99 +632,58 @@
 
     <!-- JS For product search -->
     <script>
-        $(document).ready(function () {
-            let exactMatch = false;
+        $(document).ready(function() {
             let formSubmitted = false;
 
-            $('#product_search').on('keyup', function (event) {
+            $('#product_search').on('keyup', function(event) {
                 let query = $(this).val().trim();
                 var inputValue = event.which;
-
-                // Clear the suggestion list if the input is empty
-                if (query.length === 0) {
-                    $('#product_search_list').empty();
-                    return; // Stop further processing
-                }
-
-                // Allow only letters, numbers, and space
                 if (!(inputValue >= 65 && inputValue <= 120) && (inputValue != 32 && inputValue != 0)) {
                     event.preventDefault();
-                } else {
+                }else{
                     if (query.length > 0 && !formSubmitted) {
                         $.ajax({
                             url: "{{ route('search.sales.products') }}",
                             type: "GET",
                             data: { query: query },
-                            success: function (data) {
-                                if (formSubmitted) return; // Stop processing if the form was already submitted
-                                $('#product_search_list').empty();
-                                exactMatch = false;
+                            success: function(data) {
+                            if (formSubmitted) return; // Stop processing if the form was already submitted
+                            $('#product_search_list').empty();
 
-                                if (data.length > 0) {
-                                    let oldestBatch; // Store the oldest batch for later use
+                            if (data.length > 0) {
+                                let oldestBatch; // Store the oldest batch for later use
 
-                                    $.each(data, function (index, product) {
-                                        // Skip products with no quantity (should already be filtered in the backend)
-                                        if (!product.quantity || product.quantity <= 0) {
-                                            return true; // Skip to the next product
-                                        }
-
-                                        if (index === 0) {
-                                            oldestBatch = product; // Assign the first valid item as the oldest batch
-                                        }
-
-                                        if (
-                                            product.title.toLowerCase() === query.toLowerCase() ||
-                                            product.barcode === query
-                                        ) {
-                                            exactMatch = true;
-                                        }
-
-                                        $('#product_search_list').append(
-                                            `<a href="#" class="list-group-item list-group-item-action" data-batch-no="${product.batch_no}">
-                                                ${product.title} (${product.batch_no})
-                                            </a>`
-                                        );
-                                    });
-
-                                    // Submit the form if an exact match is found
-                                    if (exactMatch && !formSubmitted) {
-                                        formSubmitted = true;
-                                        $('#product_search').val(oldestBatch.title);
-                                        $('input[name="batch_no"]').val(oldestBatch.batch_no);
-                                        $('#product_search_list').empty();
-                                        $('#product_form').submit();
-
-                                        // Reset formSubmitted flag after a short delay
-                                        setTimeout(function () {
-                                            formSubmitted = false;
-                                        }, 500);
+                                $.each(data, function(index, product) {
+                                    if (index === 0) {
+                                        oldestBatch = product; // Assign the first item as the oldest batch
                                     }
-                                } else {
+
                                     $('#product_search_list').append(
-                                        `<div class="list-group-item">No products found</div>`
+                                        `<a href="#" class="list-group-item list-group-item-action" data-batch-no="${product.batch_no}">
+                                        ${product.title} (${product.batch_no})
+                                        </a>`
                                     );
-                                }
+                                });
+                            } else {
+                                $('#product_search_list').append(`<div class="list-group-item">No products found</div>`);
+                            }
                             },
-                            error: function () {
-                                $('#product_search_list').append(
-                                    `<div class="list-group-item">Error fetching products</div>`
-                                );
-                            },
+                            error: function() {
+                                $('#product_search_list').append(`<div class="list-group-item">Error fetching products</div>`);
+                            }
                         });
-                    } else {
-                        $('#product_search_list').empty();
                     }
+                }
+                if (!$(this).val().trim()) {
+                    $('#product_search_list').empty();
                 }
             });
 
-            // Clear the product search list when the form is submitted
-            $('#product_form').on('submit', function () {
+            $('#product_form').on('submit', function() {
                 $('#product_search_list').empty();
             });
 
-            // Handle click on suggested product
-            $(document).on('click', '.list-group-item-action', function (e) {
+            $(document).on('click', '.list-group-item-action', function(e) {
                 e.preventDefault();
                 const selectedText = $(this).text().split(' (')[0].trim();
                 const batchNo = $(this).data('batch-no');
@@ -732,7 +691,55 @@
                 $('#product_search').val(selectedText);
                 $('input[name="batch_no"]').val(batchNo);
                 $('#product_search_list').empty();
-                $('#product_search').focus();
+                $("#product_search").focus();
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            let exactMatch = false;
+            let formSubmitted = false;
+
+            $('#product_search').scannerDetection(function(){
+                let query = $(this).val().trim();
+
+                if (query.length > 0 && !formSubmitted) {
+                    $.ajax({
+                        url: "{{ route('search.sales.products') }}",
+                        type: "GET",
+                        data: { query: query },
+                        success: function(data) {
+                        if (formSubmitted) return; // Stop processing if the form was already submitted
+                        $('#product_search_list').empty();
+                        exactMatch = false;
+
+                        if (data.length > 0) {
+                            let oldestBatch; // Store the oldest batch for later use
+
+                            $.each(data, function(index, product) {
+                                if (index === 0) {
+                                    oldestBatch = product; // Assign the first item as the oldest batch
+                                }
+
+                                if (product.title.toLowerCase() === query.toLowerCase() || product.barcode === query) {
+                                    exactMatch = true;
+                                }
+                            });
+
+                            if (exactMatch && !formSubmitted) {
+                                formSubmitted = true;
+                                $('#product_search').val(oldestBatch.title);
+                                $('input[name="batch_no"]').val(oldestBatch.batch_no);
+                                $('#product_search_list').empty();
+                                $('#product_form').submit();
+                                formSubmitted = false;
+                            }
+                        }
+                        },
+                    });
+                } else {
+                    $('#product_search_list').empty();
+                }
             });
         });
     </script>
@@ -1113,6 +1120,7 @@
         $(document).ready(function () {
             const stocks = @json($stocks);
             const restoreSale = @json($restoreSale);
+            const products = @json($products);
 
             function updateTotals() {
                 let totalQuantity = 0;
@@ -1292,7 +1300,6 @@
                 const productStocks = stocks.filter(p => p.product_name === productName);
 
                 if (!productStocks.length) {
-                    // alert("Product not found.");
                     return;
                 }
 
@@ -1306,7 +1313,7 @@
 
                 // Check if the product with the same batch already exists in the table
                 const existingRow = $('#sales_table tbody tr').toArray().find(row => {
-                    const productName = $(row).find('td:nth-child(2)').text().trim();
+                    const productName = $(row).find('.st_product').text().trim();
                     const batchNo = $(row).find('td:nth-child(3) select').val();
                     return String(productName) === String(stock.product_name) && String(batchNo) === String(stock.batch_no);
                 });
@@ -1328,11 +1335,13 @@
                     const totalInput = $(existingRow).find('.total-input');
                     totalInput.val(price * Number(qtyInput.val()));
                 } else {
+                    const product = products.find(p => p.id === stock.product_id);
+                    const barcode = product ? product.barcode : '';
                     // Append a new row if the product with the batch doesn't exist
                     $('#sales_table tbody').append(
                         `<tr>
                             <td style="display: none">${stock.product_id}</td>
-                            <td>${stock.product_name}</td>
+                            <td class="text-center"><span class="st_product">${stock.product_name}</span> (${barcode})</td>
                             <td>
                                 <select class="form-control form-control-sm batch-input">
                                     ${productStocks
@@ -1357,11 +1366,11 @@
             // Restrict duplicate batch selection in the dropdown
             $(document).on('change', '.batch-input', function () {
                 const selectedBatch = $(this).val();
-                const productName = $(this).closest('tr').find('td:nth-child(2)').text().trim();
+                const productName = $(this).closest('tr').find('.st_product').text().trim();
 
                 // Check if the selected batch with the same product already exists in the table
                 const isDuplicate = $('#sales_table tbody tr').toArray().some(row => {
-                    const rowProductName = $(row).find('td:nth-child(2)').text().trim();
+                    const rowProductName = $(row).find('.st_product').text().trim();
                     const rowBatchNo = $(row).find('.batch-input').val();
                     return rowProductName === productName && rowBatchNo === selectedBatch && row !== $(this).closest('tr')[0];
                 });
@@ -1385,7 +1394,7 @@
             $(document).on('change', '.batch-input', function () {
                 const $row = $(this).closest('tr');
                 const selectedBatch = $(this).val(); // Get the selected batch number
-                const productName = $row.find('td:nth-child(2)').text(); // Get the product name
+                const productName = $row.find('.st_product').text(); // Get the product name
 
                 // Find the corresponding stock for the selected batch
                 const stock = stocks.find(p => p.product_name === productName && String(p.batch_no) === String(selectedBatch));

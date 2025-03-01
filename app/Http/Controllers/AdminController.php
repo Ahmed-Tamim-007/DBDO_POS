@@ -967,6 +967,7 @@ class AdminController extends Controller
     public function sales() {
         $customer_types = CustomerType::all();
         $stocks = Stock::all();
+        $products = Product::all();
         $heldSales = DB::table('hold_sales')
             ->selectRaw('invoiceNo, COUNT(*) as held_products, MAX(created_at) as date')
             ->groupBy('invoiceNo')
@@ -978,7 +979,7 @@ class AdminController extends Controller
         $sale_details = SaleDetail::all();
         $sale_returns = SaleReturn::all();
         $customer_points = CustomerPoint::where('id', 1)->first();
-        return view('admin.sales', compact('customer_types', 'stocks', 'heldSales', 'restoreSale', 'accounts', 'cardnames', 'sales', 'sale_details', 'sale_returns', 'customer_points'));
+        return view('admin.sales', compact('customer_types', 'stocks', 'products', 'heldSales', 'restoreSale', 'accounts', 'cardnames', 'sales', 'sale_details', 'sale_returns', 'customer_points'));
     }
     public function sales_search(Request $request)
     {

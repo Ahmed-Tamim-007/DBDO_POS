@@ -135,19 +135,27 @@
 
     <!-- JS For product search -->
     <script>
-        $(document).ready(function() {
-            $('#product-search_stock').on('keyup', function() {
+        $(document).ready(function () {
+            let isScanning = false; // Flag to differentiate scanning from typing
+            let lastAjaxRequest = null; // Store last AJAX request
+
+            // Manual Typing Search
+            $('#product-search_stock').on('keyup', function () {
+                if (isScanning) return; // Prevent interference if barcode scan is in progress
+
                 let query = $(this).val();
-                if (query.length > 0) { // Changed from > 1 to > 0
-                    $.ajax({
+                if (query.length > 0) {
+                    if (lastAjaxRequest) lastAjaxRequest.abort(); // Cancel previous request if exists
+
+                    lastAjaxRequest = $.ajax({
                         url: "{{ route('search.products') }}",
                         type: "GET",
                         data: { query: query },
-                        success: function(data) {
+                        success: function (data) {
                             $('#product-list_stock').empty();
                             if (data.length > 0) {
                                 data.forEach(product => {
-                                    $('#product-list_stock').append(`<a href="#" class="list-group-item list-group-item-action">${product.title}</a>`);
+                                    $('#product-list_stock').append(`<a href="#" class="list-group-item list-group-item-action" data-id="${product.id}">${product.title}</a>`);
                                 });
                             } else {
                                 $('#product-list_stock').append(`<div class="list-group-item">No products found</div>`);
@@ -159,11 +167,48 @@
                 }
             });
 
-            // Fill input when suggestion is clicked
-            $(document).on('click', '.list-group-item-action', function(e) {
+            // Handle Selection from Suggestions
+            $(document).on('click', '.list-group-item-action', function (e) {
                 e.preventDefault();
+
                 $('#product-search_stock').val($(this).text());
                 $('#product-list_stock').empty();
+            });
+
+            // Barcode Scanner Detection (Faster)
+            $('#product-search_stock').scannerDetection({
+                timeBeforeScanTest: 50, // Reduced for faster scan detection
+                avgTimeByChar: 20, // Faster character processing
+                onComplete: function (barcode) {
+                    isScanning = true; // Set flag to prevent keyup interference
+
+                    // Show scanned barcode instantly to prevent delay
+                    $('#product-search_stock').val('Scanning...');
+
+                    if (lastAjaxRequest) lastAjaxRequest.abort(); // Cancel any ongoing request
+
+                    lastAjaxRequest = $.ajax({
+                        url: "{{ route('search.products') }}",
+                        type: "GET",
+                        data: { query: barcode },
+                        success: function (data) {
+                            if (data.length > 0) {
+                                let product = data[0]; // Auto-select first matched product
+                                $('#product-search_stock').val(product.title);
+                            } else {
+                                $('#product-search_stock').val('');
+                                alert('No product found for this barcode!');
+                            }
+                            $('#product-list_stock').empty(); // Ensure suggestions are cleared
+                            $('#product-list_stock').focusout();
+                            isScanning = false; // Reset flag
+                        },
+                        error: function () {
+                            alert('Error searching for the scanned product.');
+                            isScanning = false;
+                        }
+                    });
+                }
             });
         });
     </script>
