@@ -2,7 +2,7 @@
 <html>
   <head>
     @include('admin.dash_head')
-    <title>Admin - Stock In List</title>
+    <title>DEV POS - Stock In List</title>
   </head>
   <body>
     <!-- Header -->

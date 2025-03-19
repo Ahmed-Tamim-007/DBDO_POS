@@ -3,7 +3,7 @@
   <head>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     @include('admin.dash_head')
-    <title>Admin - Stock Out</title>
+    <title>DEV POS - Stock Out</title>
     <style>
         .table thead tr:first-child {
             border-bottom: 1px solid rgba(0, 0, 0, 0.3); /* Adjust color and thickness as needed */
@@ -225,9 +225,9 @@
                 if (productName) {
                     $('select[name="batch_no"]').html('<option value="" selected>Loading...</option>');
 
-                    // Filter stocks for matching product name
+                    // Filter stocks for matching product name and non-zero quantity
                     let matchingBatches = stocks.filter(stock =>
-                        stock.product_name.trim().toLowerCase() === productName
+                        stock.product_name.trim().toLowerCase() === productName && stock.quantity > 0
                     );
 
                     if (matchingBatches.length > 0) {
@@ -240,8 +240,6 @@
                         $('select[name="batch_no"]').html('<option value="" selected>Select One</option>');
                         alert('No batches found for the entered product.');
                     }
-                    // setTimeout(function () {
-                    // }, 100);
                 } else {
                     $('select[name="batch_no"]').html('<option value="" selected>Select One</option>');
                 }
@@ -382,6 +380,7 @@
 
             // Sending Data to the functions-------------->
             $('#save-stock-out').on('click', function () {
+                $('#save-stock-out').prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Processing');
                 const stockDate = $('#stock_date').val().trim();
                 const stockInvoice = $('#stock_invoice').val().trim();
 

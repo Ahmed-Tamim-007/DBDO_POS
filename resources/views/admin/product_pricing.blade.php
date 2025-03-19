@@ -2,7 +2,7 @@
 <html>
   <head>
     @include('admin.dash_head')
-    <title>Admin - Products</title>
+    <title>DEV POS - Products</title>
   </head>
   <body>
     <!-- Header -->
@@ -223,9 +223,9 @@
                     return;
                 }
 
-                // Find matching stocks for the filtered products
+                // Find matching stocks for the filtered products, excluding stocks with 0 quantity
                 const matchingStocks = stocks.filter(stock =>
-                    filteredProducts.some(product => product.id == stock.product_id)
+                    filteredProducts.some(product => product.id == stock.product_id) && stock.quantity > 0
                 );
 
                 if (matchingStocks.length === 0) {
@@ -273,7 +273,7 @@
 
             // Sending Data to the backend-------------->
             $('#stock_update_btn').on('click', function () {
-                $('#stock_update_btn').prop('disabled', true);
+                $('#stock_update_btn').prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Processing');
 
                 const rows = [];
 

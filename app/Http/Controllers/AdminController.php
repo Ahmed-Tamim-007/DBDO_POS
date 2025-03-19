@@ -39,7 +39,8 @@ use Milon\Barcode\DNS1D;
 class AdminController extends Controller
 {
     // Dashboard functions
-    public function index() {
+    public function index(Request $request)
+    {
         // Calculate the total stock value
         $totalStockValue = DB::table('stocks')
             ->sum(DB::raw('purchase_price * quantity'));
@@ -48,16 +49,128 @@ class AdminController extends Controller
         $totalProductsInStock = DB::table('stocks')
             ->sum('quantity');
 
-        // Calculate the total sales for the last week
-        $fromDate = now()->subWeek()->startOfDay();
+        // Get the sales data for the last 4 weeks from today
+        $weeklySales = [];
+        $endDate = now(); // Today
+        for ($i = 0; $i < 4; $i++) {
+            $startDate = $endDate->copy()->subDays(6); // 7-day range
+            $sales = DB::table('sale_details')
+                ->whereBetween('created_at', [$startDate, $endDate])
+                ->sum('cashPaid');
+
+            $weeklySales[] = [
+                'week' => $startDate->format('d M') . ' - ' . $endDate->format('d M'),
+                'sales' => $sales
+            ];
+
+            // Move to the previous week
+            $endDate = $startDate->copy()->subDay();
+        }
+
+        // Default Profit/Loss Data (Today)
+        $fromDate = now()->startOfDay();
         $toDate = now()->endOfDay();
-        $lastWeekSales = DB::table('sale_details')
-            ->whereBetween('created_at', [$fromDate, $toDate])
-            ->sum('cashPaid');
+        $profitLossData = $this->calculateProfitLoss($fromDate, $toDate); // Call helper function
 
         $accounts = Account::all();
 
-        return view('admin.index', compact('totalStockValue', 'totalProductsInStock', 'lastWeekSales', 'fromDate', 'toDate', 'accounts'));
+        return view('admin.index', compact(
+            'totalStockValue',
+            'totalProductsInStock',
+            'weeklySales',
+            'accounts',
+            'profitLossData'
+        ));
+    }
+
+    private function calculateProfitLoss($fromDate, $toDate)
+    {
+        // Sales data grouped by day
+        $sales = DB::table('sale_details')
+            ->selectRaw('DATE(created_at) as date, SUM(cashPaid) as total_sales_amount, SUM(cashRound) as total_round_amount')
+            ->whereBetween('created_at', [$fromDate, $toDate])
+            ->groupBy(DB::raw('DATE(created_at)'))
+            ->get();
+
+        // Purchase cost data grouped by day
+        $purchaseCosts = DB::table('sales')
+            ->leftJoin('stock_ins', function ($join) {
+                $join->on('sales.product_id', '=', 'stock_ins.product_id')
+                    ->on('sales.batch_no', '=', 'stock_ins.batch_no');
+            })
+            ->selectRaw('DATE(sales.created_at) as date, SUM(stock_ins.purchase_price * sales.so_qty) as total_purchase_cost')
+            ->whereBetween('sales.created_at', [$fromDate, $toDate])
+            ->groupBy(DB::raw('DATE(sales.created_at)'))
+            ->get();
+
+        // Sale returns data grouped by day including buying price
+        $saleReturns = DB::table('sale_returns')
+            ->leftJoin('stock_ins', function ($join) {
+                $join->on('sale_returns.product_id', '=', 'stock_ins.product_id')
+                    ->on('sale_returns.batch_no', '=', 'stock_ins.batch_no');
+            })
+            ->selectRaw('DATE(sale_returns.created_at) as date, SUM(sale_returns.total) as total_returns_amount, SUM(stock_ins.purchase_price * sale_returns.return_qty) as total_returns_cost')
+            ->whereBetween('sale_returns.created_at', [$fromDate, $toDate])
+            ->groupBy(DB::raw('DATE(sale_returns.created_at)'))
+            ->get();
+
+        // Merge Data by Date
+        $profitLossData = collect();
+        $dates = $sales->pluck('date')->merge($purchaseCosts->pluck('date'))->merge($saleReturns->pluck('date'))->unique();
+
+        foreach ($dates as $date) {
+            $salesData = $sales->firstWhere('date', $date);
+            $purchaseData = $purchaseCosts->firstWhere('date', $date);
+            $returnsData = $saleReturns->firstWhere('date', $date);
+
+            $totalSalesAmount = $salesData->total_sales_amount ?? 0;
+            $totalPurchaseCost = $purchaseData->total_purchase_cost ?? 0;
+            $totalReturnsAmount = $returnsData->total_returns_amount ?? 0;
+            $totalReturnsCost = $returnsData->total_returns_cost ?? 0;
+            $totalRoundAmount = $salesData->total_round_amount ?? 0;
+
+            $profitLossData->push([
+                'date' => $date,
+                'total_sales_amount' => $totalSalesAmount,
+                'total_purchase_cost' => $totalPurchaseCost,
+                'total_returns_amount' => $totalReturnsAmount,
+                'total_round_amount' => $totalRoundAmount,
+                'total_returns_cost' => $totalReturnsCost,
+                'profit_or_loss' => $totalSalesAmount - $totalPurchaseCost - $totalReturnsAmount + $totalRoundAmount + $totalReturnsCost,
+            ]);
+        }
+
+        return $profitLossData;
+    }
+
+    public function filterProfitLoss(Request $request)
+    {
+        $filterType = $request->input('filter');
+
+        switch ($filterType) {
+            case 'today':
+                $fromDate = now()->startOfDay();
+                $toDate = now()->endOfDay();
+                break;
+            case 'last_week':
+                $fromDate = now()->subDays(6)->startOfDay();
+                $toDate = now()->endOfDay();
+                break;
+            case 'last_2_weeks':
+                $fromDate = now()->subDays(13)->startOfDay();
+                $toDate = now()->endOfDay();
+                break;
+            case 'last_month':
+                $fromDate = now()->subDays(29)->startOfDay();
+                $toDate = now()->endOfDay();
+                break;
+            default:
+                return response()->json(['error' => 'Invalid filter type'], 400);
+        }
+
+        $profitLossData = $this->calculateProfitLoss($fromDate, $toDate);
+
+        return response()->json($profitLossData);
     }
 
     // Users functions ------------------------------------------>

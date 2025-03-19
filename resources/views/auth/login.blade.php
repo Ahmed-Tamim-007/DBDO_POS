@@ -2,11 +2,23 @@
 <html>
   <head>
     @include('admin.dash_head')
-    <title>POS - Login Page</title>
+    <title>DEV POS - Login Page</title>
     <style>
         .form-control:focus {
             background-color: transparent;
             border-color: #17a2b8;
+        }
+
+        #logo_img {
+            height: 100px;
+            width: auto;
+        }
+
+        @media screen and (max-width: 450px) {
+            #logo_img {
+                height: 70px;
+                width: auto;
+            }
         }
     </style>
   </head>
@@ -17,11 +29,10 @@
                 <div class="row">
                     <!-- Logo & Information Panel-->
                     <div class="col-lg-6">
-                        <div class="info d-flex align-items-center" style="background-color: #17a2b8;">
+                        <div class="info d-flex align-items-center" style="background-color: white;">
                             <div class="logo mx-auto">
-                                <img src="{{asset('admin_css/img/logo.png')}}" alt="N/A" class="rounded-circle mx-auto mb-3" style="width: auto; height: 140px;">
-                                <h1>SAFI2 POS</h1>
-                                <h3 class="my-2">Log in to access your POS dashboard</h3>
+                                <img src="{{asset('admin_css/img/dev_pos-logo.png')}}" alt="N/A" class="mx-auto mb-3" id="logo_img">
+                                <h3 class="my-2 text-primary">Log in to access POS dashboard</h3>
                             </div>
                         </div>
                     </div>
@@ -65,7 +76,7 @@
             </div>
         </div>
         <div class="copyrights text-center">
-            <p class="no-margin-bottom">{{ \Carbon\Carbon::now()->year }} <span class="text-primary">&copy;</span> SAFI2 POS | Made with <span class="text-primary">&#10084;</span> By <a target="_blank" href="https://www.dbdo.devbangla.xyz">DBDO</a></p>
+            <p class="no-margin-bottom">{{ \Carbon\Carbon::now()->year }} <span class="text-primary">&copy;</span> DEV POS | Made by <a target="_blank" href="https://www.devbangla.xyz">Developer Bangladesh IT</a></p>
         </div>
     </div>
     <!-- JavaScript files-->

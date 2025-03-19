@@ -2,7 +2,7 @@
 <html>
 <head>
     @include('admin.dash_head')
-    <title>Admin - Add Sale</title>
+    <title>DEV POS - Add Sale</title>
     <style>
         input[type="text"] {
             border-radius: 5px;

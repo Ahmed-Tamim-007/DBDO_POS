@@ -3,7 +3,7 @@
   <head>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     @include('admin.dash_head')
-    <title>Admin - Add Stock</title>
+    <title>DEV POS - Add Stock</title>
     <style>
         .table thead tr:first-child {
             border-bottom: 1px solid rgba(0, 0, 0, 0.3); /* Adjust color and thickness as needed */
@@ -45,7 +45,9 @@
                                     </div>
                                     <div class="col-lg-3 col-md-6 mb-4">
                                         <label>Supplier</label>
-                                        <input type="text" name="supplier" class="form-control form-control-sm" required>
+                                        <input type="text" id="supplier_search" name="supplier" class="form-control form-control-sm" autocomplete="off" required>
+                                        <input type="hidden" name="supplierID" id="supplierID">
+                                        <div id="supplier_search_list" class="list-group" style="width: 90%;"></div>
                                     </div>
                                     <div class="col-lg-1 col-md-2 mb-4">
                                         <label>Quantity</label>
@@ -223,6 +225,64 @@
             });
         });
     </script>
+    <!-- JS For Supplier search -->
+    <script>
+        $(document).ready(function () {
+            $('#supplier_search').on('keyup', function () {
+                let query = $(this).val();
+
+                // Clear the phone and due if the input is empty
+                if (!query) {
+                    $('#supplier_search_list').html('');
+                    $('#customerID').val(''); // Clear hidden customer ID
+                    return;
+                }
+
+                $.ajax({
+                    url: "{{ route('search.suppliers') }}",
+                    type: "GET",
+                    data: { query: query },
+                    success: function (data) {
+                        let html = '';
+
+                        if (data.length > 0) {
+                            data.forEach(supplier => {
+                                html += `<a href="#" class="list-group-supplier list-group-supplier-action" data-id="${supplier.id}">
+                                            ${supplier.supplier_name.trim()} (${supplier.phone.trim()})</a>`;
+                            });
+                        } else {
+                            html = '<a href="#" class="list-group-supplier">No supplier found</a>';
+                        }
+
+                        $('#supplier_search_list').html(html);
+                    },
+                    error: function () {
+                        $('#supplier_search_list').html('<a href="#" class="list-group-supplier">An error occurred</a>');
+                    }
+                });
+            });
+
+            // Event delegation for dynamically added elements
+            $(document).on('click', '#supplier_search_list .list-group-supplier', function (e) {
+                e.preventDefault();
+
+                let selectedName = $(this).text().trim();
+                let supplierId = $(this).data('id');
+
+                $('#supplier_search').val(selectedName);
+                $('#supplierID').val(supplierId);
+                $('#supplier_search_list').html('');
+            });
+
+            // Listen for changes to the #supplier_search field
+            $('#supplier_search').on('input', function () {
+                if (!$(this).val().trim()) {
+                    $('#supplierID').val('');
+                    $('#supplier_search_list').html(''); // Clear suggestions
+                }
+            });
+        });
+    </script>
 
     <!-- JS For Table Row Append -->
     <script>
@@ -361,6 +421,7 @@
 
             // Sending Data to the functions-------------->
             $('#save-stock').on('click', function () {
+                $('#save-stock').prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Processing');
                 const stockDate = $('#stock_date').val().trim();
                 const stockInvoice = $('#stock_invoice').val().trim();
 

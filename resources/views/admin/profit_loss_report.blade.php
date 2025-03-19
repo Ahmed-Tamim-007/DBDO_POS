@@ -3,7 +3,7 @@
   <head>
     @include('admin.dash_head')
     <link rel="stylesheet" href="{{asset('admin_css/css/print.css')}}">
-    <title>Admin - Profit-Loss Report</title>
+    <title>DEV POS - Profit-Loss Report</title>
   </head>
   <body>
     <!-- Header -->

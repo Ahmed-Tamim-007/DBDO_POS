@@ -2,7 +2,7 @@
 <html>
   <head>
     @include('admin.dash_head')
-    <title>Admin - Add Transactions</title>
+    <title>DEV POS - Add Transactions</title>
     <style>
         .inline-radio {
             display: flex;
@@ -629,7 +629,7 @@
 
             // Sending Data to Backend
             $('#customer_trans_submit').on('click', function () {
-                $('#customer_trans_submit').prop('disabled', true);
+                $('#customer_trans_submit').prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Processing');
                 const transactionNO = $('input[name="transactionNO"]').val();
                 const customerID = $('input[name="customerID"]').val();
                 const amt_paid = $('input[name="amt_paid"]').val();

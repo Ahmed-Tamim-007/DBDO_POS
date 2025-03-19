@@ -1,30 +1,27 @@
 <header class="header">
     <nav class="navbar navbar-expand-lg">
-        <div class="search-panel">
-            <div class="search-inner d-flex align-items-center justify-content-center">
-            <div class="close-btn">Close <i class="fa fa-close"></i></div>
-            <form id="searchForm" action="#">
-                <div class="form-group">
-                <input type="search" name="search" placeholder="What are you searching for...">
-                <button type="submit" class="submit">Search</button>
-                </div>
-            </form>
-            </div>
-        </div>
         <div class="container-fluid d-flex align-items-center justify-content-between">
             <div class="navbar-header">
                 <!-- Navbar Header-->
                 <a href="{{url('/')}}" class="navbar-brand">
                     <div class="brand-text brand-big visible text-uppercase">
-                        <strong class="text-primary">SAFI2</strong><strong>POS</strong>
+                        <img src="{{ asset('admin_css/img/DEV_POS-logo.png') }}" height="35px" width="auto">
                     </div>
                     <div class="brand-text brand-sm">
-                        <strong class="text-primary">S</strong><strong>P</strong>
+                        <img src="{{ asset('admin_css/img/DEV_POS-icon.png') }}" height="35px" width="auto">
+                        <strong style="color: #019bee;">D</strong><strong style="color: #007bbf;">P</strong>
                     </div>
                 </a>
                 <!-- Sidebar Toggle Btn-->
                 <button class="sidebar-toggle"><i class="fa fa-bars"></i></button>
             </div>
+
+            <div class="time-greeting text-center d-none d-md-flex">
+                <span id="greeting">Good Morning,</span> {{ Auth::user()->name }}!
+                <i class="fas fa-clock"></i>
+                <span class="current-time" id="currentTime"></span>
+            </div>
+
             <div class="right-menu list-inline no-margin-bottom d-flex align-items-center">
                 <!-- Theme Toggle Button -->
                 <button id="theme-toggle" class="btn btn-outline-primary btn-sm" style="border-radius: 50%">
@@ -63,3 +60,41 @@
         </div>
     </nav>
 </header>
+
+<style>
+    .time-greeting {
+        font-size: 16px;
+        color: white;
+        background: linear-gradient(135deg, #019bee, #007bbf);
+        padding: 5px 15px;
+        font-weight: bold;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .time-greeting i {
+        color: #ffffff;
+    }
+
+    @media (max-width: 450px) {
+        .time-greeting {
+            display: none;
+        }
+    }
+</style>
+
+<script>
+    function updateClock() {
+        let now = new Date();
+        let hours = now.getHours();
+        let minutes = now.getMinutes().toString().padStart(2, "0");
+        let greeting = hours < 12 ? "Good Morning," : hours < 18 ? "Good Afternoon," : "Good Evening,";
+
+        document.getElementById("greeting").textContent = greeting;
+        document.getElementById("currentTime").innerHTML = now.toLocaleTimeString();
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+</script>

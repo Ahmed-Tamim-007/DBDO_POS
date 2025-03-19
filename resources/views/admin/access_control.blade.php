@@ -2,7 +2,7 @@
 <html>
   <head>
     @include('admin.dash_head')
-    <title>Admin - Access Control</title>
+    <title>DEV POS - Access Control</title>
     <style>
         /* Switch container */
 

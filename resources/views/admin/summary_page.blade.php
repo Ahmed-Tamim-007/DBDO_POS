@@ -2,7 +2,7 @@
 <html>
   <head>
     @include('admin.dash_head')
-    <title>Admin - Summary Report</title>
+    <title>DEV POS - Summary Report</title>
     <style>
         table th, td {
             padding: 8px;

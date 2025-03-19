@@ -3,7 +3,7 @@
   <head>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     @include('admin.dash_head')
-    <title>Admin - Sales</title>
+    <title>DEV POS - Sales</title>
     <style>
         .td_1 {
             width: 80%;
@@ -743,6 +743,7 @@
             });
         });
     </script>
+
     <!-- JS For customer search -->
     <script>
         $(document).ready(function () {
@@ -1345,6 +1346,7 @@
                             <td>
                                 <select class="form-control form-control-sm batch-input">
                                     ${productStocks
+                                        .filter(batch => batch.quantity > 0) // Exclude batches with zero quantity
                                         .map(batch => `<option value="${batch.batch_no}" ${batch.batch_no === stock.batch_no ? 'selected' : ''}>${batch.batch_no}</option>`)
                                         .join('')}
                                 </select>
@@ -1404,8 +1406,14 @@
                     $row.find('.qty-input').val(stock.quantity);
                     $row.find('.price-input').val(stock.sale_price);
 
+                    // Get the sale quantity and check against available stock
+                    let saleQty = parseFloat($row.find('.so-qty-input').val()) || 0;
+                    if (saleQty > stock.quantity) {
+                        saleQty = 1; // Reset to 1 if it exceeds available stock
+                        $row.find('.so-qty-input').val(saleQty);
+                    }
+
                     // Update the total price based on the new batch
-                    const saleQty = parseFloat($row.find('.so-qty-input').val()) || 0;
                     const total = saleQty * stock.sale_price; // Calculate the total price
                     $row.find('.total-input').val(total.toFixed(2));
                 } else {
@@ -1714,7 +1722,7 @@
 
             // Sending Data to the BackEnd ------------------------------->
             $('#add_sale_btn').on('click', function () {
-                $('#add_sale_btn').prop('disabled', true);
+                $('#add_sale_btn').prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Processing');
                 const cashTotal = parseFloat($('#grand_total').text() || "0.00").toFixed(2);
                 const cashDiscount = $('#dis_amt').text() || "0.00";
                 let cashRound = parseFloat($('#grand_round').text() || "0.00");
@@ -1928,7 +1936,7 @@
                 $('#sales_table tbody tr').each(function () {
                     rows.push({
                         product_id: $(this).find('td:eq(0)').text(),
-                        product_name: $(this).find('td:eq(1)').text(),
+                        product_name: $(this).find('.st_product').text(),
                         batch_no: $(this).find('.batch-input').val(),
                         so_qty: parseFloat($(this).find('.so-qty-input').val()) || 0,
                         price: parseFloat($(this).find('.price-input').val()) || 0,
@@ -1983,6 +1991,22 @@
                     const stock = productStocks.find(p => String(p.batch_no) === String(productBatch));
                     if (!stock) {
                         alert("Product with the specified batch not found.");
+                        // AJAX request to delete the record from the database
+                        $.ajax({
+                            url: '/delete-hold-sale', // Adjust the route as needed
+                            type: 'POST',
+                            data: {
+                                invoiceNo: invoiceNo,
+                                _token: $('meta[name="csrf-token"]').attr('content')
+                            },
+                            success: function (response) {
+                                // Remove the row from the table
+                                $(`button[data-invoice="${invoiceNo}"]`).closest('tr').remove();
+                            },
+                        });
+
+                        // Programmatically trigger the click event on Modal
+                        $('#restore_close').click();
                         return;
                     }
 

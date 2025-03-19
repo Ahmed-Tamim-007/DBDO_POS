@@ -2,7 +2,7 @@
 <html>
   <head>
     @include('admin.dash_head')
-    <title>Admin - Expense Categories</title>
+    <title>DEV POS - Expense Categories</title>
   </head>
   <body>
     <!-- Header -->

@@ -196,6 +196,7 @@ route::post('add_fund_trans', [AdminController::class, 'add_fund_trans'])-> midd
 // Profit/Loss Report Routes
 route::get('profit_loss_report', [ReportController::class, 'profit_loss_report'])-> middleware('auth', 'Admin');
 Route::post('/profit_loss_report', [ReportController::class, 'searchProfitLossReport'])->name('search.profit.loss.reports');
+Route::get('/profit-loss/filter', [AdminController::class, 'filterProfitLoss'])->name('profit.loss.filter');
 
 // Daily Summary Report Routes
 route::get('daily_summary', [ReportController::class, 'daily_summary'])-> middleware('auth', 'Admin');

@@ -2,7 +2,7 @@
 <html>
   <head>
     @include('admin.dash_head')
-    <title>Admin - Add Transactions</title>
+    <title>DEV POS - Add Transactions</title>
     <style>
         .crnt_balance {
             font-size: 13px;

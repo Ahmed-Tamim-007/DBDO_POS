@@ -2,7 +2,7 @@
 <html>
   <head>
     @include('admin.dash_head')
-    <title>POS - Customer Points</title>
+    <title>DEV POS - Customer Points</title>
   </head>
   <body>
     <!-- Header -->

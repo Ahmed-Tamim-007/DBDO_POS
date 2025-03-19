@@ -3,7 +3,7 @@
   <head>
     @include('admin.dash_head')
     <link rel="stylesheet" href="{{asset('admin_css/css/print.css')}}">
-    <title>Admin - Product Sales Report</title>
+    <title>DEV POS - Product Sales Report</title>
     <style>
         .is-invalid {
             border: 1px solid red !important;

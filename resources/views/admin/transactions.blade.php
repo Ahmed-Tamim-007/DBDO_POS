@@ -2,7 +2,7 @@
 <html>
   <head>
     @include('admin.dash_head')
-    <title>Admin - Transactions</title>
+    <title>DEV POS - Transactions</title>
     <style>
         #links_div a{
             display: block;

@@ -2,7 +2,7 @@
 <html>
   <head>
     @include('admin.dash_head')
-    <title>Admin - Banks & Cards</title>
+    <title>DEV POS - Banks & Cards</title>
   </head>
   <body>
     <!-- Header -->

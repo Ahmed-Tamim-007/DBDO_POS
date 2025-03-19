@@ -2,7 +2,7 @@
 <html>
   <head>
     @include('admin.dash_head')
-    <title>Admin - Sale Returns</title>
+    <title>DEV POS - Sale Returns</title>
     <style>
         #salesInfoTable td {
             padding: 1px 2px !important;
@@ -296,6 +296,7 @@
 
             // Attach event to the dynamically appended "Return" button
             $(document).on('click', '#return_btn', function () {
+                $('#return_btn').prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Processing');
 
                 let invoice_no = Date.now();
 
